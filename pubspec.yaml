@@ -1,0 +1,67 @@
+name: ninedoku
+description: "완전 오프라인 모바일 스도쿠 게임 - Ninedoku: Offline Sudoku"
+publish_to: 'none'
+version: 1.0.0+3
+
+environment:
+  sdk: ^3.12.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+
+  # 상태 관리
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # 라우팅
+  go_router: ^15.1.2
+
+  # 로컬 DB (3A단계에서 활성화)
+  # drift: ^2.26.0
+  # sqlite3_flutter_libs: ^0.5.32
+
+  # 설정 저장
+  shared_preferences: ^2.5.3
+
+  # 차트
+  fl_chart: ^0.70.2
+
+  # 로컬 알림 (4단계에서 활성화)
+  # flutter_local_notifications: ^19.1.0
+
+  # 유틸리티
+  path_provider: ^2.1.5
+  path: ^1.9.1
+  uuid: ^4.5.1
+  intl: ^0.20.2
+  url_launcher: ^6.3.1
+  share_plus: ^13.1.0
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^6.0.0
+  flutter_launcher_icons: ^0.14.3
+
+  # Drift 코드 생성 (3A단계에서 활성화)
+  # drift_dev: ^2.26.0
+  # build_runner: ^2.4.15
+
+  # Riverpod 코드 생성
+  riverpod_generator: ^2.6.5
+  custom_lint: ^0.7.5
+  riverpod_lint: ^2.6.5
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/app_icon.png"
+  adaptive_icon_background: "#4A90D9"
+  adaptive_icon_foreground: "assets/app_icon.png"
+  min_sdk_android: 21
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/
