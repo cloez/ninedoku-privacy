@@ -76,12 +76,13 @@ class _BinairoGameScreenState extends ConsumerState<BinairoGameScreen> {
     );
   }
 
-  /// 세로 모드 레이아웃 (기존)
+  /// 세로 모드 레이아웃
   Widget _buildPortraitLayout(BinairoState gameState) {
     return Column(
       children: [
         _GameInfoBar(gameState: gameState),
         const SizedBox(height: 8),
+        // 보드: 남은 공간 전부 차지 (힌트/컨트롤은 고정 영역)
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -94,8 +95,15 @@ class _BinairoGameScreenState extends ConsumerState<BinairoGameScreen> {
           ),
         ),
         const SizedBox(height: 8),
-        if (gameState.lastHintResult != null)
-          _HintMessageBar(message: gameState.lastHintResult!.message),
+        // 힌트: 항상 존재하되 내용만 변경 (레이아웃 흔들림 방지)
+        AnimatedSize(
+          duration: const Duration(milliseconds: 200),
+          alignment: Alignment.topCenter,
+          child: gameState.lastHintResult != null
+              ? _HintMessageBar(message: gameState.lastHintResult!.message)
+              : const SizedBox.shrink(),
+        ),
+        // 컨트롤 바
         _ControlBar(gameState: gameState),
         const SizedBox(height: 16),
       ],
@@ -151,10 +159,16 @@ class _BinairoGameScreenState extends ConsumerState<BinairoGameScreen> {
                 ),
                 const SizedBox(height: 2),
                 _GameInfoBar(gameState: gameState),
-                if (gameState.lastHintResult != null) ...[
-                  const SizedBox(height: 4),
-                  _HintMessageBar(message: gameState.lastHintResult!.message),
-                ],
+                AnimatedSize(
+                  duration: const Duration(milliseconds: 200),
+                  alignment: Alignment.topCenter,
+                  child: gameState.lastHintResult != null
+                      ? Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: _HintMessageBar(message: gameState.lastHintResult!.message),
+                        )
+                      : const SizedBox.shrink(),
+                ),
                 const Expanded(child: SizedBox()),
                 _ControlBar(gameState: gameState),
                 const SizedBox(height: 4),
@@ -526,7 +540,7 @@ class _BinairoPauseView extends ConsumerWidget {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text(AppStrings.get('binairo.pause.title')),
+          title: Text(AppStrings.get('pause.title')),
           automaticallyImplyLeading: false,
         ),
         body: SafeArea(
@@ -543,12 +557,12 @@ class _BinairoPauseView extends ConsumerWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    AppStrings.get('binairo.pause.message'),
+                    AppStrings.get('pause.message'),
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    '${AppStrings.get('binairo.pause.elapsed')}$timeText',
+                    '${AppStrings.get('pause.elapsed')}$timeText',
                     style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                           color: isDark ? Colors.white54 : Colors.black45,
                         ),
@@ -560,7 +574,7 @@ class _BinairoPauseView extends ConsumerWidget {
                       onPressed: () =>
                           ref.read(binairoNotifierProvider.notifier).resume(),
                       icon: const Icon(Icons.play_arrow_rounded),
-                      label: Text(AppStrings.get('binairo.pause.resume')),
+                      label: Text(AppStrings.get('pause.resume')),
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
@@ -572,7 +586,7 @@ class _BinairoPauseView extends ConsumerWidget {
                     child: OutlinedButton.icon(
                       onPressed: () => context.go(AppRoutes.binairo),
                       icon: const Icon(Icons.home_rounded),
-                      label: Text(AppStrings.get('binairo.pause.home')),
+                      label: Text(AppStrings.get('pause.home')),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                       ),
@@ -590,7 +604,7 @@ class _BinairoPauseView extends ConsumerWidget {
                             : AppColors.wrongNumberLight,
                       ),
                       label: Text(
-                        AppStrings.get('binairo.pause.giveUp'),
+                        AppStrings.get('pause.giveUp'),
                         style: TextStyle(
                           color: isDark
                               ? AppColors.wrongNumberDark
