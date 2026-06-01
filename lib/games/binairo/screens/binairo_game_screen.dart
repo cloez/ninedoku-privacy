@@ -1,0 +1,680 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../app/router.dart';
+import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/constants/app_colors.dart';
+import '../binairo_notifier.dart';
+import '../binairo_state.dart';
+import '../widgets/binairo_board_widget.dart';
+
+/// Binairo 게임 플레이 화면
+class BinairoGameScreen extends ConsumerStatefulWidget {
+  const BinairoGameScreen({super.key});
+
+  @override
+  ConsumerState<BinairoGameScreen> createState() => _BinairoGameScreenState();
+}
+
+class _BinairoGameScreenState extends ConsumerState<BinairoGameScreen> {
+  @override
+  Widget build(BuildContext context) {
+    final gameState = ref.watch(binairoNotifierProvider);
+
+    // 게임 상태 없으면 홈으로
+    if (gameState == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) context.go(AppRoutes.binairo);
+      });
+      return const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      );
+    }
+
+    // 완료 시 결과 표시
+    if (gameState.isCompleted && !gameState.isAutoCompleting) {
+      return _BinairoResultView(gameState: gameState);
+    }
+
+    // 일시정지 시
+    if (gameState.isPaused) {
+      return _BinairoPauseView(gameState: gameState);
+    }
+
+    // 게임 플레이 화면
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) _showExitDialog(context);
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(AppStrings.get('binairo.title')),
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back_rounded),
+            onPressed: () => _showExitDialog(context),
+            tooltip: AppStrings.get('binairo.back'),
+          ),
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.pause_rounded),
+              onPressed: () => ref.read(binairoNotifierProvider.notifier).pause(),
+              tooltip: AppStrings.get('binairo.pause'),
+            ),
+          ],
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              // 게임 정보 바
+              _GameInfoBar(gameState: gameState),
+              const SizedBox(height: 8),
+              // 보드
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 500),
+                      child: const BinairoBoardWidget(),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              // 힌트 메시지 표시
+              if (gameState.lastHintResult != null)
+                _HintMessageBar(message: gameState.lastHintResult!.message),
+              // 하단 조작 버튼
+              _ControlBar(gameState: gameState),
+              const SizedBox(height: 16),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 나가기 확인 다이얼로그
+  void _showExitDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(AppStrings.get('binairo.exit.title')),
+        content: Text(AppStrings.get('binairo.exit.message')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(AppStrings.get('cancel')),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              ref.read(binairoNotifierProvider.notifier).pause();
+              context.go(AppRoutes.binairo);
+            },
+            child: Text(AppStrings.get('binairo.exit.leave')),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 게임 정보 바 (난이도, 크기, 타이머)
+class _GameInfoBar extends StatelessWidget {
+  final BinairoState gameState;
+  const _GameInfoBar({required this.gameState});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final seconds = gameState.elapsedSeconds;
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    final timeText =
+        '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          // 난이도 + 크기
+          Text(
+            '${gameState.difficulty.label} (${gameState.size}x${gameState.size})',
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: isDark ? Colors.white70 : Colors.black54,
+                ),
+          ),
+          // 실수
+          Row(
+            children: [
+              Icon(Icons.close_rounded, size: 16,
+                  color: isDark ? Colors.red.shade300 : Colors.red.shade400),
+              const SizedBox(width: 2),
+              Text(
+                '${gameState.mistakeCount}',
+                style: TextStyle(
+                  color: isDark ? Colors.red.shade300 : Colors.red.shade400,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          ),
+          // 타이머
+          Row(
+            children: [
+              Icon(Icons.timer_outlined, size: 16,
+                  color: isDark ? Colors.white54 : Colors.black45),
+              const SizedBox(width: 4),
+              Text(
+                timeText,
+                style: TextStyle(
+                  color: isDark ? Colors.white70 : Colors.black54,
+                  fontFeatures: const [FontFeature.tabularFigures()],
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 하단 조작 버튼 바
+class _ControlBar extends ConsumerWidget {
+  final BinairoState gameState;
+  const _ControlBar({required this.gameState});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final notifier = ref.read(binairoNotifierProvider.notifier);
+    final hasSelection = gameState.selectedCell != null;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          // [0] 버튼
+          _ActionButton(
+            label: '0',
+            icon: null,
+            onPressed: hasSelection
+                ? () {
+                    final (row, col) = gameState.selectedCell!;
+                    notifier.setCell(row, col, 0);
+                  }
+                : null,
+            isDark: isDark,
+            large: true,
+          ),
+          // [1] 버튼
+          _ActionButton(
+            label: '1',
+            icon: null,
+            onPressed: hasSelection
+                ? () {
+                    final (row, col) = gameState.selectedCell!;
+                    notifier.setCell(row, col, 1);
+                  }
+                : null,
+            isDark: isDark,
+            large: true,
+          ),
+          // [삭제] 버튼
+          _ActionButton(
+            label: null,
+            icon: Icons.backspace_outlined,
+            onPressed: hasSelection
+                ? () {
+                    final (row, col) = gameState.selectedCell!;
+                    notifier.clearCell(row, col);
+                  }
+                : null,
+            isDark: isDark,
+          ),
+          // [되돌리기] 버튼
+          _ActionButton(
+            label: null,
+            icon: Icons.undo_rounded,
+            onPressed: gameState.undoStack.isNotEmpty
+                ? () => notifier.undo()
+                : null,
+            isDark: isDark,
+          ),
+          // [힌트] 버튼
+          _ActionButton(
+            label: null,
+            icon: Icons.lightbulb_outline_rounded,
+            onPressed: () => notifier.getHint(),
+            isDark: isDark,
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 액션 버튼
+class _ActionButton extends StatelessWidget {
+  final String? label;
+  final IconData? icon;
+  final VoidCallback? onPressed;
+  final bool isDark;
+  final bool large;
+
+  const _ActionButton({
+    this.label,
+    this.icon,
+    this.onPressed,
+    required this.isDark,
+    this.large = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final buttonSize = large ? 56.0 : 48.0;
+    final enabled = onPressed != null;
+
+    return SizedBox(
+      width: buttonSize,
+      height: buttonSize,
+      child: Material(
+        color: enabled
+            ? (isDark ? Colors.white10 : Colors.black.withValues(alpha: 0.05))
+            : Colors.transparent,
+        borderRadius: BorderRadius.circular(12),
+        child: InkWell(
+          onTap: onPressed,
+          borderRadius: BorderRadius.circular(12),
+          child: Center(
+            child: label != null
+                ? Text(
+                    label!,
+                    style: TextStyle(
+                      fontSize: large ? 22 : 18,
+                      fontWeight: FontWeight.bold,
+                      color: enabled
+                          ? (isDark ? Colors.white : Colors.black87)
+                          : (isDark ? Colors.white24 : Colors.black26),
+                    ),
+                  )
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        icon,
+                        size: 20,
+                        color: enabled
+                            ? (isDark ? Colors.white70 : Colors.black54)
+                            : (isDark ? Colors.white24 : Colors.black26),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        // 아이콘별 짧은 라벨 (사용자 피드백: 아이콘만으로는 불명확)
+                        icon == Icons.backspace_outlined ? '삭제'
+                          : icon == Icons.undo_rounded ? '되돌리기'
+                          : '힌트',
+                        style: TextStyle(
+                          fontSize: 9,
+                          color: enabled
+                              ? (isDark ? Colors.white54 : Colors.black45)
+                              : (isDark ? Colors.white24 : Colors.black26),
+                        ),
+                      ),
+                    ],
+                  ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 힌트 메시지 표시 바
+class _HintMessageBar extends StatelessWidget {
+  final String message;
+  const _HintMessageBar({required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.amber.shade900.withValues(alpha: 0.3)
+            : Colors.amber.shade50,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(
+          color: isDark ? Colors.amber.shade700 : Colors.amber.shade200,
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.lightbulb_rounded, size: 16,
+              color: isDark ? Colors.amber.shade300 : Colors.amber.shade700),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                fontSize: 13,
+                color: isDark ? Colors.amber.shade100 : Colors.amber.shade900,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 일시정지 화면
+class _BinairoPauseView extends ConsumerWidget {
+  final BinairoState gameState;
+  const _BinairoPauseView({required this.gameState});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final seconds = gameState.elapsedSeconds;
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    final timeText =
+        '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) ref.read(binairoNotifierProvider.notifier).resume();
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(AppStrings.get('binairo.pause.title')),
+          automaticallyImplyLeading: false,
+        ),
+        body: SafeArea(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.pause_circle_outline_rounded,
+                    size: 80,
+                    color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    AppStrings.get('binairo.pause.message'),
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    '${AppStrings.get('binairo.pause.elapsed')}$timeText',
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                          color: isDark ? Colors.white54 : Colors.black45,
+                        ),
+                  ),
+                  const SizedBox(height: 48),
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () =>
+                          ref.read(binairoNotifierProvider.notifier).resume(),
+                      icon: const Icon(Icons.play_arrow_rounded),
+                      label: Text(AppStrings.get('binairo.pause.resume')),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.go(AppRoutes.binairo),
+                      icon: const Icon(Icons.home_rounded),
+                      label: Text(AppStrings.get('binairo.pause.home')),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: TextButton.icon(
+                      onPressed: () => _showGiveUpDialog(context, ref),
+                      icon: Icon(
+                        Icons.flag_outlined,
+                        color: isDark
+                            ? AppColors.wrongNumberDark
+                            : AppColors.wrongNumberLight,
+                      ),
+                      label: Text(
+                        AppStrings.get('binairo.pause.giveUp'),
+                        style: TextStyle(
+                          color: isDark
+                              ? AppColors.wrongNumberDark
+                              : AppColors.wrongNumberLight,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showGiveUpDialog(BuildContext context, WidgetRef ref) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(AppStrings.get('binairo.giveUp.title')),
+        content: Text(AppStrings.get('binairo.giveUp.message')),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(AppStrings.get('cancel')),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              ref.read(binairoNotifierProvider.notifier).giveUp();
+              context.go(AppRoutes.binairo);
+            },
+            child: Text(
+              AppStrings.get('binairo.giveUp.action'),
+              style: const TextStyle(color: Colors.red),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 결과 화면
+class _BinairoResultView extends ConsumerWidget {
+  final BinairoState gameState;
+  const _BinairoResultView({required this.gameState});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final grade = gameState.grade;
+    final seconds = gameState.elapsedSeconds;
+    final minutes = seconds ~/ 60;
+    final secs = seconds % 60;
+    final timeText =
+        '${minutes.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+
+    // 등급별 색상
+    final gradeColor = _gradeColor(grade, isDark);
+
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop) {
+          ref.read(binairoNotifierProvider.notifier).giveUp();
+          context.go(AppRoutes.binairo);
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+          child: Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(32),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  // 등급 표시
+                  Container(
+                    width: 80,
+                    height: 80,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: gradeColor.withValues(alpha: 0.15),
+                      border: Border.all(color: gradeColor, width: 3),
+                    ),
+                    child: Center(
+                      child: Text(
+                        grade.symbol,
+                        style: TextStyle(
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                          color: gradeColor,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    grade.label,
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                          color: gradeColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 24),
+
+                  // 게임 통계
+                  Text(
+                    AppStrings.get('binairo.result.completed'),
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                  ),
+                  const SizedBox(height: 16),
+                  _StatRow(
+                    label: AppStrings.get('binairo.result.time'),
+                    value: timeText,
+                    isDark: isDark,
+                  ),
+                  _StatRow(
+                    label: AppStrings.get('binairo.result.difficulty'),
+                    value: '${gameState.difficulty.label} (${gameState.size}x${gameState.size})',
+                    isDark: isDark,
+                  ),
+                  _StatRow(
+                    label: AppStrings.get('binairo.result.mistakes'),
+                    value: '${gameState.mistakeCount}',
+                    isDark: isDark,
+                  ),
+                  _StatRow(
+                    label: AppStrings.get('binairo.result.hints'),
+                    value: '${gameState.hintCount}',
+                    isDark: isDark,
+                  ),
+                  const SizedBox(height: 32),
+
+                  // 버튼
+                  SizedBox(
+                    width: double.infinity,
+                    child: FilledButton.icon(
+                      onPressed: () {
+                        ref.read(binairoNotifierProvider.notifier).giveUp();
+                        context.go(AppRoutes.binairo);
+                      },
+                      icon: const Icon(Icons.home_rounded),
+                      label: Text(AppStrings.get('binairo.result.home')),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        ref.read(binairoNotifierProvider.notifier).startNewGame(
+                              mode: gameState.mode,
+                              difficulty: gameState.difficulty,
+                            );
+                      },
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: Text(AppStrings.get('binairo.result.newGame')),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Color _gradeColor(BinairoGrade grade, bool isDark) {
+    switch (grade) {
+      case BinairoGrade.perfect:
+        return Colors.amber.shade600;
+      case BinairoGrade.excellent:
+        return isDark ? Colors.green.shade300 : Colors.green.shade600;
+      case BinairoGrade.great:
+        return isDark ? Colors.blue.shade300 : Colors.blue.shade600;
+      case BinairoGrade.good:
+        return isDark ? Colors.grey.shade400 : Colors.grey.shade600;
+    }
+  }
+}
+
+/// 통계 행
+class _StatRow extends StatelessWidget {
+  final String label;
+  final String value;
+  final bool isDark;
+  const _StatRow({required this.label, required this.value, required this.isDark});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            label,
+            style: TextStyle(
+              color: isDark ? Colors.white54 : Colors.black54,
+            ),
+          ),
+          Text(
+            value,
+            style: const TextStyle(fontWeight: FontWeight.w600),
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -25,6 +25,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -49,6 +50,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -79,6 +81,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
             gameProvider.overrideWith((ref) {
               final n = GameNotifier();
               n.restoreGame(savedState!);
@@ -114,6 +117,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            // hub에서 시작 → 온보딩으로 리다이렉트 확인
           ],
           child: const NinedokuApp(),
         ),
@@ -134,6 +138,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            // hub에서 시작 → 온보딩으로 리다이렉트
           ],
           child: const NinedokuApp(),
         ),
@@ -157,6 +162,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            // hub에서 시작 → 온보딩으로 리다이렉트
           ],
           child: const NinedokuApp(),
         ),
@@ -196,6 +202,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -217,6 +224,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -245,6 +253,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -271,6 +280,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -299,6 +309,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -332,6 +343,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -358,6 +370,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -398,6 +411,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -436,6 +450,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -462,6 +477,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -487,6 +503,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
@@ -511,6 +528,7 @@ void main() {
         ProviderScope(
           overrides: [
             sharedPreferencesProvider.overrideWithValue(prefs),
+            initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
           child: const NinedokuApp(),
         ),
