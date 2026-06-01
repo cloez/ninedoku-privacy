@@ -8,35 +8,26 @@ import '../../game/game_state.dart';
 import '../../../core/sudoku/board.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../core/settings/settings_service.dart';
+import '../../../core/storage/storage_providers.dart';
 
-/// 홈 화면 (S-02)
-class HomeScreen extends ConsumerWidget {
+/// 홈 화면 (S-02) — 스도쿠 전용 홈
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
-  /// 앱 종료 확인 다이얼로그
-  Future<bool> _showExitConfirm(BuildContext context) async {
-    final s = AppStrings.get;
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(s('exit.title')),
-        content: Text(s('exit.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(s('cancel')),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(s('exit.quit')),
-          ),
-        ],
-      ),
-    );
-    if (result == true) {
-      SystemNavigator.pop();
-    }
-    return false;
+  @override
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // 스도쿠 진입 시 마지막 게임 경로 저장
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final prefs = ref.read(sharedPreferencesProvider);
+      SettingsService(prefs).setLastGameRoute('/');
+    });
   }
 
   /// 진행 중 게임이 있을 때 새 게임 시작 경고
@@ -65,53 +56,51 @@ class HomeScreen extends ConsumerWidget {
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final gameState = ref.watch(gameProvider);
     final hasOngoingGame = gameState != null && !gameState.isCompleted;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final s = AppStrings.get;
 
+    // 하드웨어 백키 → 게임 허브로 이동
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _showExitConfirm(context);
+        // 게임 메인에서는 하드웨어 백키 무시 (허브 이동은 아이콘으로만)
       },
       child: Scaffold(
+      appBar: AppBar(
+        title: Text(s('game.sudoku.name')),
+        leading: IconButton(
+          icon: const Icon(Icons.apps_rounded),
+          onPressed: () => context.go(AppRoutes.hub),
+          tooltip: AppStrings.get('hub.title'),
+        ),
+        actions: [
+          IconButton(
+            onPressed: () => context.push(AppRoutes.tutorial),
+            icon: const Icon(Icons.help_outline_rounded),
+            tooltip: s('home.tutorial'),
+          ),
+          IconButton(
+            onPressed: () => context.push(AppRoutes.settings),
+            icon: const Icon(Icons.settings_rounded),
+            tooltip: s('home.settings'),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    onPressed: () => context.push(AppRoutes.tutorial),
-                    icon: const Icon(Icons.help_outline_rounded),
-                    tooltip: s('home.tutorial'),
-                  ),
-                  IconButton(
-                    onPressed: () => context.push(AppRoutes.settings),
-                    icon: const Icon(Icons.settings_rounded),
-                    tooltip: s('home.settings'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
               Icon(
                 Icons.grid_on_rounded,
                 size: 64,
                 color: isDark ? AppColors.primaryDark : AppColors.primaryLight,
               ),
               const SizedBox(height: 12),
-              Text(
-                s('appTitle'),
-                style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-              const SizedBox(height: 8),
               Text(
                 s('home.subtitle'),
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
@@ -324,27 +313,84 @@ class _ChipLabel extends StatelessWidget {
   }
 }
 
-/// 빈 상태 안내
+/// 스도쿠 규칙 + 빈 상태 안내 카드
 class _EmptyStateHint extends StatelessWidget {
   final bool isDark;
   const _EmptyStateHint({required this.isDark});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(
-          Icons.auto_awesome_rounded,
-          size: 40,
-          color: isDark ? Colors.white24 : Colors.black26,
+    final titleColor = isDark ? Colors.white70 : Colors.black87;
+    final bodyColor = isDark ? Colors.white54 : Colors.black54;
+    final ruleColor = isDark ? Colors.white54 : Colors.black54;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              AppStrings.get('sudoku.about.title'),
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: titleColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              AppStrings.get('sudoku.about.desc'),
+              style: TextStyle(fontSize: 13, color: bodyColor, height: 1.5),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              AppStrings.get('sudoku.rules.title'),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: titleColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            _ruleRow('1', AppStrings.get('sudoku.rules.r1'), ruleColor),
+            const SizedBox(height: 6),
+            _ruleRow('2', AppStrings.get('sudoku.rules.r2'), ruleColor),
+            const SizedBox(height: 6),
+            _ruleRow('3', AppStrings.get('sudoku.rules.r3'), ruleColor),
+            const SizedBox(height: 16),
+            Center(
+              child: Text(
+                AppStrings.get('home.emptyHint'),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark ? Colors.white38 : Colors.black38,
+                ),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
-        Text(
-          AppStrings.get('home.emptyHint'),
-          style: TextStyle(
-            fontSize: 14,
-            color: isDark ? Colors.white38 : Colors.black38,
+      ),
+    );
+  }
+
+  Widget _ruleRow(String num, String text, Color color) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 20, height: 20,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(10),
           ),
+          child: Center(
+            child: Text(num, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color)),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(text, style: TextStyle(fontSize: 13, color: color, height: 1.4)),
         ),
       ],
     );

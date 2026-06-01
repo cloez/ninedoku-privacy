@@ -197,15 +197,17 @@ class GameHubScreen extends ConsumerWidget {
                         ),
                     textAlign: TextAlign.center,
                   ),
-                  const SizedBox(height: 8),
-                  // 이어하기 표시 (스도쿠만 — 추후 진행 중 게임 체크 로직 추가)
-                  if (game.id == 'sudoku')
-                    Text(
-                      '${s('hub.continue')} ▶',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colorScheme.primary,
-                          ),
-                    ),
+                  const SizedBox(height: 4),
+                  // 게임 설명 (한 줄)
+                  Text(
+                    s(game.descriptionKey),
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ),
             ),

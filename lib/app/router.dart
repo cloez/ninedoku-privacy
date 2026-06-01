@@ -43,8 +43,13 @@ final routerProvider = Provider<GoRouter>((ref) {
   final settings = ref.read(settingsProvider);
   final locationOverride = ref.read(initialLocationProvider);
 
+  // 마지막 게임 경로로 자동 복귀 (온보딩 완료 후에만)
+  final lastGameRoute = settings.lastGameRoute;
+  final effectiveInitial = locationOverride
+      ?? ((!settings.isFirstLaunch && lastGameRoute != null) ? lastGameRoute : AppRoutes.hub);
+
   return GoRouter(
-    initialLocation: locationOverride ?? AppRoutes.hub,
+    initialLocation: effectiveInitial,
     redirect: (context, state) {
       // 첫 실행 시 온보딩으로 리다이렉트
       if (settings.isFirstLaunch && state.matchedLocation == AppRoutes.hub) {
@@ -82,11 +87,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: AppRoutes.statistics,
-        builder: (context, state) => const StatisticsScreen(),
+        builder: (context, state) => StatisticsScreen(initialTab: state.extra as String?),
       ),
       GoRoute(
         path: AppRoutes.badges,
-        builder: (context, state) => const BadgesScreen(),
+        builder: (context, state) => BadgesScreen(initialTab: state.extra as String?),
       ),
       GoRoute(
         path: AppRoutes.dailyPuzzle,
@@ -104,12 +109,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.tutorial,
         builder: (context, state) => const TutorialScreen(),
       ),
-      // 바이네리 홈
+      // 비나이로 홈
       GoRoute(
         path: AppRoutes.binairo,
         builder: (context, state) => const BinairoHomeScreen(),
       ),
-      // 바이네리 게임 플레이
+      // 비나이로 게임 플레이
       GoRoute(
         path: AppRoutes.binairoGame,
         builder: (context, state) => const BinairoGameScreen(),

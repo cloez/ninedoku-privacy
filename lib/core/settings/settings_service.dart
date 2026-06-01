@@ -14,6 +14,7 @@ class SettingsService {
   static const _keyCustomTheme = 'custom_theme';
   static const _keyLastDifficulty = 'last_difficulty';
   static const _keyAutoComplete = 'auto_complete';
+  static const _keyLastGameRoute = 'last_game_route';
 
   final SharedPreferences _prefs;
 
@@ -94,5 +95,14 @@ class SettingsService {
   bool get isFirstLaunch => _prefs.getBool(_keyFirstLaunch) ?? true;
   Future<void> setFirstLaunchDone() async {
     await _prefs.setBool(_keyFirstLaunch, false);
+  }
+
+  // 마지막 게임 경로 (앱 재시작 시 자동 복귀용)
+  String? get lastGameRoute => _prefs.getString(_keyLastGameRoute);
+  Future<void> setLastGameRoute(String route) async {
+    await _prefs.setString(_keyLastGameRoute, route);
+  }
+  Future<void> clearLastGameRoute() async {
+    await _prefs.remove(_keyLastGameRoute);
   }
 }

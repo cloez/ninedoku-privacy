@@ -62,14 +62,8 @@ class BinairoBoardWidget extends ConsumerWidget {
         return GestureDetector(
           onTap: () {
             final notifier = ref.read(binairoNotifierProvider.notifier);
-            // 셀 선택 및 토글
-            if (state.selectedCell == (row, col)) {
-              // 이미 선택된 셀 재탭 → 토글
-              notifier.toggleCell(row, col);
-            } else {
-              // 새 셀 선택
-              notifier.selectCell(row, col);
-            }
+            // 입력 모드에 따라 즉시 동작 (선택 없이 바로 배치)
+            notifier.tapCell(row, col);
           },
           behavior: HitTestBehavior.opaque,
           child: const SizedBox.expand(),
@@ -261,45 +255,37 @@ class _BinairoBoardPainter extends CustomPainter {
     );
   }
 
-  /// 셀 값 그리기
+  /// 셀 값 그리기 — 흑백 원형 디자인
   void _drawCellValue(Canvas canvas, int row, int col, int size) {
     final value = state.current.getValue(row, col);
     if (value == -1) return;
 
-    final idx = row * size + col;
-    final isFixed = state.current.fixed.contains(idx);
+    // 원 중심점과 반지름 — 모든 원 동일 크기
+    final cx = col * cellSize + cellSize / 2;
+    final cy = row * cellSize + cellSize / 2;
+    final radius = cellSize * 0.32;
+    const strokeWidth = 2.5;
 
-    // 색상 결정
-    Color textColor;
-    if (isFixed) {
-      textColor = isDark ? AppColors.fixedNumberDark : AppColors.fixedNumberLight;
+    // 규칙 위반(3연속) 시에만 빨간색 표시
+    final isViolation = _hasTripleViolation(row, col);
+    final circleColor = isViolation
+        ? (isDark ? Colors.red.shade400 : Colors.red.shade600)
+        : (isDark ? Colors.white.withValues(alpha: 0.9) : Colors.black87);
+
+    if (value == 0) {
+      // ● 검은 원 (채워진 원)
+      final paint = Paint()
+        ..color = circleColor
+        ..style = PaintingStyle.fill;
+      canvas.drawCircle(Offset(cx, cy), radius, paint);
     } else {
-      // 유저 입력값이 정답과 다르면 빨간색
-      final correctValue = state.solution.getValue(row, col);
-      if (value != correctValue) {
-        textColor = isDark ? AppColors.wrongNumberDark : AppColors.wrongNumberLight;
-      } else {
-        textColor = isDark ? AppColors.userNumberDark : AppColors.userNumberLight;
-      }
+      // ○ 흰 원 (테두리 원) — 외곽 기준으로 검은 원과 동일 크기
+      final strokePaint = Paint()
+        ..color = circleColor
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth;
+      canvas.drawCircle(Offset(cx, cy), radius - strokeWidth / 2, strokePaint);
     }
-
-    final textSpan = TextSpan(
-      text: '$value',
-      style: TextStyle(
-        color: textColor,
-        fontSize: cellSize * 0.5,
-        fontWeight: isFixed ? FontWeight.w800 : FontWeight.w500,
-      ),
-    );
-
-    final textPainter = TextPainter(
-      text: textSpan,
-      textDirection: TextDirection.ltr,
-    )..layout();
-
-    final x = col * cellSize + (cellSize - textPainter.width) / 2;
-    final y = row * cellSize + (cellSize - textPainter.height) / 2;
-    textPainter.paint(canvas, Offset(x, y));
   }
 
   @override

@@ -461,7 +461,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // 홈 화면 확인
-      expect(find.text('Ninedoku'), findsWidgets);
+      expect(find.text('스도쿠'), findsOneWidget);
       expect(find.text('새 게임'), findsOneWidget);
     });
 
@@ -857,7 +857,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // 1. 홈 화면 확인
-      expect(find.text('Ninedoku'), findsWidgets);
+      expect(find.text('스도쿠'), findsOneWidget);
 
       // 2. 튜토리얼 이동
       await tester.tap(find.byIcon(Icons.help_outline_rounded));
@@ -907,7 +907,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // 홈 복귀 확인
-      expect(find.text('Ninedoku'), findsWidgets);
+      expect(find.text('스도쿠'), findsOneWidget);
     });
 
     testWidgets('튜토리얼에서 AppBar 뒤로가기 시 홈으로 복귀', (tester) async {
@@ -935,7 +935,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // 홈 복귀 확인
-      expect(find.text('Ninedoku'), findsWidgets);
+      expect(find.text('스도쿠'), findsOneWidget);
     });
 
     testWidgets('홈 → 오늘의 퍼즐 → 캘린더 네비게이션', (tester) async {

@@ -3,6 +3,11 @@ import 'dart:convert';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../core/storage/storage_providers.dart';
+import '../../core/storage/game_storage_service.dart';
+import '../../features/badges/badge_definitions.dart';
+import 'binairo_badge_service.dart';
+import 'binairo_storage_service.dart';
 import 'engine/binairo_generator.dart';
 import 'engine/binairo_hint.dart';
 import 'engine/binairo_solver.dart';
@@ -16,9 +21,23 @@ class BinairoNotifier extends StateNotifier<BinairoState?> with WidgetsBindingOb
   Timer? _timer;
   final SharedPreferences? _prefs;
 
+  /// 완료 기록 저장 서비스
+  BinairoStorageService? _storageService;
+
+  /// 배지 평가 서비스
+  BinairoBadgeService? _badgeService;
+
+  /// 마지막으로 새로 획득한 배지 목록 (결과 화면 표시용)
+  List<BadgeDefinition> lastNewBadges = [];
+
   BinairoNotifier({SharedPreferences? prefs})
       : _prefs = prefs,
         super(null) {
+    // SharedPreferences가 있으면 서비스 초기화
+    if (prefs != null) {
+      _storageService = BinairoStorageService(prefs);
+      _badgeService = BinairoBadgeService(prefs);
+    }
     WidgetsBinding.instance.addObserver(this);
     _tryRestore();
   }
@@ -81,6 +100,7 @@ class BinairoNotifier extends StateNotifier<BinairoState?> with WidgetsBindingOb
     required BinairoDifficulty difficulty,
   }) {
     _timer?.cancel();
+    lastNewBadges = []; // 이전 배지 결과 초기화
 
     final seed = DateTime.now().millisecondsSinceEpoch;
     final result = BinairoGenerator.generate(
@@ -106,6 +126,7 @@ class BinairoNotifier extends StateNotifier<BinairoState?> with WidgetsBindingOb
   /// 오늘의 퍼즐 시작 (날짜 기반 시드)
   void startDailyPuzzle() {
     _timer?.cancel();
+    lastNewBadges = []; // 이전 배지 결과 초기화
 
     final now = DateTime.now();
     final seed = now.year * 10000 + now.month * 100 + now.day;
@@ -130,6 +151,43 @@ class BinairoNotifier extends StateNotifier<BinairoState?> with WidgetsBindingOb
 
     _startTimer();
     _autoSave();
+  }
+
+  /// 입력 모드 변경 (● / ○ / 지우개)
+  void setInputMode(BinairoInputMode mode) {
+    if (state == null) return;
+    state = state!.copyWith(inputMode: mode);
+  }
+
+  /// 셀 탭 — 현재 입력 모드에 따라 동작
+  void tapCell(int row, int col) {
+    if (state == null || state!.isCompleted || state!.isAutoCompleting) return;
+
+    final idx = row * state!.size + col;
+    if (state!.current.fixed.contains(idx)) return;
+
+    final currentValue = state!.current.getValue(row, col);
+
+    switch (state!.inputMode) {
+      case BinairoInputMode.black:
+        // 이미 검은 원이면 지우기, 아니면 검은 원 배치
+        if (currentValue == 0) {
+          _applyValue(row, col, currentValue, -1);
+        } else {
+          _applyValue(row, col, currentValue, 0);
+        }
+      case BinairoInputMode.white:
+        // 이미 흰 원이면 지우기, 아니면 흰 원 배치
+        if (currentValue == 1) {
+          _applyValue(row, col, currentValue, -1);
+        } else {
+          _applyValue(row, col, currentValue, 1);
+        }
+      case BinairoInputMode.erase:
+        if (currentValue != -1) {
+          _applyValue(row, col, currentValue, -1);
+        }
+    }
   }
 
   /// 셀 선택
@@ -348,6 +406,38 @@ class BinairoNotifier extends StateNotifier<BinairoState?> with WidgetsBindingOb
       _timer?.cancel();
       state = state!.copyWith(isCompleted: true);
       _clearSave();
+
+      // 완료 기록 저장 및 배지 평가
+      _saveCompletionAndEvaluateBadges();
+    }
+  }
+
+  /// 완료 기록 저장 + 배지 평가
+  void _saveCompletionAndEvaluateBadges() {
+    if (state == null || _storageService == null) return;
+
+    try {
+      // CompletedGameRecord 생성
+      final record = CompletedGameRecord(
+        mode: state!.mode.name,
+        difficulty: state!.difficulty.name,
+        elapsedSeconds: state!.elapsedSeconds,
+        mistakeCount: state!.mistakeCount,
+        hintCount: state!.hintCount,
+        grade: state!.grade.symbol,
+        completedAt: DateTime.now(),
+      );
+
+      // 기록 저장
+      _storageService!.saveCompletedGame(record);
+
+      // 배지 평가
+      if (_badgeService != null) {
+        final allRecords = _storageService!.loadCompletedGames();
+        lastNewBadges = _badgeService!.evaluateNewBadges(allRecords);
+      }
+    } catch (_) {
+      // 저장/평가 실패 시 게임 완료 상태에 영향 없음
     }
   }
 
@@ -371,11 +461,14 @@ final binairoProvider = StateNotifierProvider<BinairoNotifier, BinairoState?>((r
   return BinairoNotifier();
 });
 
-/// SharedPreferences 포함 Provider (앱 초기화 시 override 용)
-final binairoPrefsProvider = Provider<SharedPreferences?>((ref) => null);
-
 /// SharedPreferences가 주입된 BinairoNotifier
+/// (sharedPreferencesProvider를 직접 사용하여 별도 오버라이드 불필요)
 final binairoNotifierProvider = StateNotifierProvider<BinairoNotifier, BinairoState?>((ref) {
-  final prefs = ref.watch(binairoPrefsProvider);
-  return BinairoNotifier(prefs: prefs);
+  try {
+    final prefs = ref.watch(sharedPreferencesProvider);
+    return BinairoNotifier(prefs: prefs);
+  } catch (_) {
+    // 테스트 등에서 sharedPreferencesProvider가 없으면 prefs 없이 생성
+    return BinairoNotifier();
+  }
 });

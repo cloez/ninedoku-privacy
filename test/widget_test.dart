@@ -42,8 +42,8 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    // 홈 화면에 앱 타이틀 표시 확인
-    expect(find.text('Ninedoku'), findsWidgets);
+    // 스도쿠 홈 타이틀 표시 확인
+    expect(find.text('스도쿠'), findsOneWidget);
     // 새 게임 버튼 존재 확인
     expect(find.text('새 게임'), findsOneWidget);
   });

@@ -41,6 +41,8 @@ class _BinairoGameScreenState extends ConsumerState<BinairoGameScreen> {
       return _BinairoPauseView(gameState: gameState);
     }
 
+    final isLandscape = MediaQuery.of(context).orientation == Orientation.landscape;
+
     // 게임 플레이 화면
     return PopScope(
       canPop: false,
@@ -48,50 +50,119 @@ class _BinairoGameScreenState extends ConsumerState<BinairoGameScreen> {
         if (!didPop) _showExitDialog(context);
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(AppStrings.get('binairo.title')),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back_rounded),
-            onPressed: () => _showExitDialog(context),
-            tooltip: AppStrings.get('binairo.back'),
-          ),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.pause_rounded),
-              onPressed: () => ref.read(binairoNotifierProvider.notifier).pause(),
-              tooltip: AppStrings.get('binairo.pause'),
-            ),
-          ],
-        ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              // 게임 정보 바
-              _GameInfoBar(gameState: gameState),
-              const SizedBox(height: 8),
-              // 보드
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 500),
-                      child: const BinairoBoardWidget(),
-                    ),
-                  ),
+        appBar: isLandscape
+            ? null // 가로 모드에서는 앱바 숨기고 공간 활용
+            : AppBar(
+                title: Text(AppStrings.get('binairo.title')),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back_rounded),
+                  onPressed: () => _showExitDialog(context),
+                  tooltip: AppStrings.get('binairo.back'),
                 ),
+                actions: [
+                  IconButton(
+                    icon: const Icon(Icons.pause_rounded),
+                    onPressed: () => ref.read(binairoNotifierProvider.notifier).pause(),
+                    tooltip: AppStrings.get('binairo.pause'),
+                  ),
+                ],
               ),
-              const SizedBox(height: 8),
-              // 힌트 메시지 표시
-              if (gameState.lastHintResult != null)
-                _HintMessageBar(message: gameState.lastHintResult!.message),
-              // 하단 조작 버튼
-              _ControlBar(gameState: gameState),
-              const SizedBox(height: 16),
-            ],
-          ),
+        body: SafeArea(
+          child: isLandscape
+              ? _buildLandscapeLayout(context, ref, gameState)
+              : _buildPortraitLayout(gameState),
         ),
       ),
+    );
+  }
+
+  /// 세로 모드 레이아웃 (기존)
+  Widget _buildPortraitLayout(BinairoState gameState) {
+    return Column(
+      children: [
+        _GameInfoBar(gameState: gameState),
+        const SizedBox(height: 8),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: const BinairoBoardWidget(),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (gameState.lastHintResult != null)
+          _HintMessageBar(message: gameState.lastHintResult!.message),
+        _ControlBar(gameState: gameState),
+        const SizedBox(height: 16),
+      ],
+    );
+  }
+
+  /// 가로 모드 레이아웃: 보드 좌측, 컨트롤+정보 우측 (스도쿠와 동일 패턴)
+  Widget _buildLandscapeLayout(BuildContext context, WidgetRef ref, BinairoState gameState) {
+    return Row(
+      children: [
+        // 좌측: 보드 (높이 최대 활용)
+        Expanded(
+          flex: 5,
+          child: Padding(
+            padding: const EdgeInsets.all(4),
+            child: Center(child: const BinairoBoardWidget()),
+          ),
+        ),
+        // 우측: 정보 + 컨트롤
+        Expanded(
+          flex: 4,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+            child: Column(
+              children: [
+                // 가로 모드 상단: 뒤로가기 + 게임명 + 일시정지
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 40, height: 40,
+                      child: IconButton(
+                        icon: const Icon(Icons.arrow_back_rounded, size: 20),
+                        onPressed: () => _showExitDialog(context),
+                        padding: EdgeInsets.zero,
+                      ),
+                    ),
+                    Expanded(
+                      child: Text(
+                        AppStrings.get('binairo.title'),
+                        style: Theme.of(context).textTheme.titleSmall,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                    SizedBox(
+                      width: 40, height: 40,
+                      child: IconButton(
+                        icon: const Icon(Icons.pause_rounded, size: 20),
+                        onPressed: () => ref.read(binairoNotifierProvider.notifier).pause(),
+                        padding: EdgeInsets.zero,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 2),
+                _GameInfoBar(gameState: gameState),
+                if (gameState.lastHintResult != null) ...[
+                  const SizedBox(height: 4),
+                  _HintMessageBar(message: gameState.lastHintResult!.message),
+                ],
+                const Expanded(child: SizedBox()),
+                _ControlBar(gameState: gameState),
+                const SizedBox(height: 4),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -194,64 +265,70 @@ class _ControlBar extends ConsumerWidget {
     final notifier = ref.read(binairoNotifierProvider.notifier);
     final hasSelection = gameState.selectedCell != null;
 
+    final currentMode = gameState.inputMode;
+
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // [0] 버튼
-          _ActionButton(
-            label: '0',
-            icon: null,
-            onPressed: hasSelection
-                ? () {
-                    final (row, col) = gameState.selectedCell!;
-                    notifier.setCell(row, col, 0);
-                  }
-                : null,
-            isDark: isDark,
-            large: true,
+          // 입력 모드 토글 바 (● / ○ / 지우개)
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: BoxDecoration(
+              color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.04),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // ● 검은 원
+                _ToggleButton(
+                  label: '●',
+                  isSelected: currentMode == BinairoInputMode.black,
+                  onTap: () => notifier.setInputMode(BinairoInputMode.black),
+                  isDark: isDark,
+                ),
+                const SizedBox(width: 4),
+                // ○ 흰 원
+                _ToggleButton(
+                  label: '○',
+                  isSelected: currentMode == BinairoInputMode.white,
+                  onTap: () => notifier.setInputMode(BinairoInputMode.white),
+                  isDark: isDark,
+                ),
+                const SizedBox(width: 4),
+                // 지우개
+                _ToggleButton(
+                  icon: Icons.auto_fix_high_rounded,
+                  isSelected: currentMode == BinairoInputMode.erase,
+                  onTap: () => notifier.setInputMode(BinairoInputMode.erase),
+                  isDark: isDark,
+                ),
+              ],
+            ),
           ),
-          // [1] 버튼
-          _ActionButton(
-            label: '1',
-            icon: null,
-            onPressed: hasSelection
-                ? () {
-                    final (row, col) = gameState.selectedCell!;
-                    notifier.setCell(row, col, 1);
-                  }
-                : null,
-            isDark: isDark,
-            large: true,
-          ),
-          // [삭제] 버튼
-          _ActionButton(
-            label: null,
-            icon: Icons.backspace_outlined,
-            onPressed: hasSelection
-                ? () {
-                    final (row, col) = gameState.selectedCell!;
-                    notifier.clearCell(row, col);
-                  }
-                : null,
-            isDark: isDark,
-          ),
-          // [되돌리기] 버튼
-          _ActionButton(
-            label: null,
-            icon: Icons.undo_rounded,
-            onPressed: gameState.undoStack.isNotEmpty
-                ? () => notifier.undo()
-                : null,
-            isDark: isDark,
-          ),
-          // [힌트] 버튼
-          _ActionButton(
-            label: null,
-            icon: Icons.lightbulb_outline_rounded,
-            onPressed: () => notifier.getHint(),
-            isDark: isDark,
+          const SizedBox(height: 8),
+          // 보조 버튼 (되돌리기 / 힌트)
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _ActionButton(
+                label: null,
+                icon: Icons.undo_rounded,
+                onPressed: gameState.undoStack.isNotEmpty
+                    ? () => notifier.undo()
+                    : null,
+                isDark: isDark,
+              ),
+              const SizedBox(width: 16),
+              _ActionButton(
+                label: null,
+                icon: Icons.lightbulb_outline_rounded,
+                onPressed: () => notifier.getHint(),
+                isDark: isDark,
+              ),
+            ],
           ),
         ],
       ),
@@ -329,6 +406,59 @@ class _ActionButton extends StatelessWidget {
                     ],
                   ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 입력 모드 토글 버튼 (● / ○ / 지우개)
+class _ToggleButton extends StatelessWidget {
+  final String? label;
+  final IconData? icon;
+  final bool isSelected;
+  final VoidCallback onTap;
+  final bool isDark;
+
+  const _ToggleButton({
+    this.label,
+    this.icon,
+    required this.isSelected,
+    required this.onTap,
+    required this.isDark,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final selectedBg = isDark ? Colors.blue.shade700 : Colors.blue.shade100;
+    final unselectedBg = Colors.transparent;
+    final selectedFg = isDark ? Colors.white : Colors.blue.shade800;
+    final unselectedFg = isDark ? Colors.white54 : Colors.black45;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        width: 56,
+        height: 44,
+        decoration: BoxDecoration(
+          color: isSelected ? selectedBg : unselectedBg,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: label != null
+              ? Text(
+                  label!,
+                  style: TextStyle(
+                    fontSize: 24,
+                    color: isSelected ? selectedFg : unselectedFg,
+                  ),
+                )
+              : Icon(
+                  icon,
+                  size: 22,
+                  color: isSelected ? selectedFg : unselectedFg,
+                ),
         ),
       ),
     );
@@ -506,13 +636,78 @@ class _BinairoPauseView extends ConsumerWidget {
   }
 }
 
-/// 결과 화면
-class _BinairoResultView extends ConsumerWidget {
+/// 결과 화면 (배지 획득 팝업 포함 — 스도쿠와 동일)
+class _BinairoResultView extends ConsumerStatefulWidget {
   final BinairoState gameState;
   const _BinairoResultView({required this.gameState});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_BinairoResultView> createState() => _BinairoResultViewState();
+}
+
+class _BinairoResultViewState extends ConsumerState<_BinairoResultView> {
+  bool _badgePopupShown = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _showBadgePopupIfNeeded();
+    });
+  }
+
+  /// 배지 획득 팝업 (스도쿠 ResultScreen과 동일한 연출)
+  void _showBadgePopupIfNeeded() {
+    if (_badgePopupShown) return;
+    final newBadges = ref.read(binairoNotifierProvider.notifier).lastNewBadges;
+    if (newBadges.isEmpty) return;
+    _badgePopupShown = true;
+
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('🎉 ', style: TextStyle(fontSize: 24)),
+            Text(AppStrings.get('result.newBadges')),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: newBadges.map((badge) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: 6),
+            child: Row(
+              children: [
+                Text(badge.icon, style: const TextStyle(fontSize: 32)),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(badge.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(badge.description, style: const TextStyle(fontSize: 12)),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          )).toList(),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(AppStrings.get('confirm')),
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ref = this.ref;
+    final gameState = widget.gameState;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final grade = gameState.grade;
     final seconds = gameState.elapsedSeconds;
@@ -598,24 +793,14 @@ class _BinairoResultView extends ConsumerWidget {
                     value: '${gameState.hintCount}',
                     isDark: isDark,
                   ),
+                  // 새로 획득한 배지 표시 (스도쿠와 동일)
+                  _buildNewBadgesSection(ref, context),
                   const SizedBox(height: 32),
 
-                  // 버튼
+                  // 버튼 (스도쿠와 동일한 배치: 새 게임 상단, 홈 하단)
                   SizedBox(
                     width: double.infinity,
-                    child: FilledButton.icon(
-                      onPressed: () {
-                        ref.read(binairoNotifierProvider.notifier).giveUp();
-                        context.go(AppRoutes.binairo);
-                      },
-                      icon: const Icon(Icons.home_rounded),
-                      label: Text(AppStrings.get('binairo.result.home')),
-                    ),
-                  ),
-                  const SizedBox(height: 12),
-                  SizedBox(
-                    width: double.infinity,
-                    child: OutlinedButton.icon(
+                    child: ElevatedButton.icon(
                       onPressed: () {
                         ref.read(binairoNotifierProvider.notifier).startNewGame(
                               mode: gameState.mode,
@@ -623,7 +808,25 @@ class _BinairoResultView extends ConsumerWidget {
                             );
                       },
                       icon: const Icon(Icons.refresh_rounded),
-                      label: Text(AppStrings.get('binairo.result.newGame')),
+                      label: Text(AppStrings.get('result.newGame')),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  SizedBox(
+                    width: double.infinity,
+                    child: OutlinedButton.icon(
+                      onPressed: () {
+                        ref.read(binairoNotifierProvider.notifier).giveUp();
+                        context.go(AppRoutes.binairo);
+                      },
+                      icon: const Icon(Icons.home_rounded),
+                      label: Text(AppStrings.get('result.home')),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 14),
+                      ),
                     ),
                   ),
                 ],
@@ -632,6 +835,37 @@ class _BinairoResultView extends ConsumerWidget {
           ),
         ),
       ),
+    );
+  }
+
+  /// 새 배지 섹션 (스도쿠 _NewBadgesSection과 동일한 디자인)
+  Widget _buildNewBadgesSection(WidgetRef ref, BuildContext context) {
+    final badges = ref.read(binairoNotifierProvider.notifier).lastNewBadges;
+    if (badges.isEmpty) return const SizedBox.shrink();
+
+    return Column(
+      children: [
+        const SizedBox(height: 24),
+        Text(
+          AppStrings.get('result.newBadges'),
+          style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+                color: const Color(0xFFFFD700),
+              ),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 12,
+          runSpacing: 8,
+          alignment: WrapAlignment.center,
+          children: badges.map((badge) {
+            return Chip(
+              avatar: Text(badge.icon, style: const TextStyle(fontSize: 18)),
+              label: Text(badge.name),
+            );
+          }).toList(),
+        ),
+      ],
     );
   }
 

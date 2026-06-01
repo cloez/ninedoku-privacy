@@ -1,5 +1,8 @@
 import 'binairo_board.dart';
 
+/// 값(0/1)을 원형 기호로 변환하는 헬퍼
+String _symbol(int value) => value == 0 ? '●' : '○';
+
 /// Binairo 힌트 결과
 class BinairoHintResult {
   /// 힌트 단계 (1~4)
@@ -102,7 +105,7 @@ class BinairoHintEngine {
     int col,
   ) {
     final candidates = _getCandidates(board, row, col);
-    final candidateStr = candidates.map((v) => '$v').join(', ');
+    final candidateStr = candidates.map((v) => _symbol(v)).join(', ');
 
     return BinairoHintResult(
       level: 2,
@@ -152,7 +155,7 @@ class BinairoHintEngine {
       row: row,
       col: col,
       value: answer,
-      message: '정답은 $answer 입니다.',
+      message: '정답은 ${_symbol(answer)} 입니다.',
     );
   }
 
@@ -361,8 +364,8 @@ class BinairoHintEngine {
     if (tripleForced != null) {
       return _TechniqueInfo(
         technique: '3연속 회피',
-        message: '이 셀 주변에 같은 숫자가 2개 연속입니다. '
-            '3연속을 방지하려면 $answer 을(를) 넣어야 합니다.',
+        message: '이 셀 주변에 같은 원이 2개 연속입니다. '
+            '3연속을 방지하려면 ${_symbol(answer)}을(를) 넣어야 합니다.',
         highlightRows: [row],
         highlightCols: [col],
       );
@@ -378,24 +381,24 @@ class BinairoHintEngine {
       if (isRowForced && isColForced) {
         return _TechniqueInfo(
           technique: '행/열 균형',
-          message: '${row + 1}행과 ${col + 1}열 모두에서 한 숫자가 이미 $half개입니다. '
-              '$answer 만 가능합니다.',
+          message: '${row + 1}행과 ${col + 1}열 모두에서 ${_symbol(1 - answer)}이(가) 이미 $half개입니다. '
+              '${_symbol(answer)}만 가능합니다.',
           highlightRows: [row],
           highlightCols: [col],
         );
       } else if (isRowForced) {
         return _TechniqueInfo(
           technique: '행 균형',
-          message: '${row + 1}행에서 ${1 - answer}이(가) 이미 $half개입니다. '
-              '이 셀은 $answer 이어야 합니다.',
+          message: '${row + 1}행에서 ${_symbol(1 - answer)}이(가) 이미 $half개입니다. '
+              '이 셀은 ${_symbol(answer)} 이어야 합니다.',
           highlightRows: [row],
           highlightCols: [],
         );
       } else {
         return _TechniqueInfo(
           technique: '열 균형',
-          message: '${col + 1}열에서 ${1 - answer}이(가) 이미 $half개입니다. '
-              '이 셀은 $answer 이어야 합니다.',
+          message: '${col + 1}열에서 ${_symbol(1 - answer)}이(가) 이미 $half개입니다. '
+              '이 셀은 ${_symbol(answer)} 이어야 합니다.',
           highlightRows: [],
           highlightCols: [col],
         );
@@ -407,7 +410,7 @@ class BinairoHintEngine {
     if (candidates.length == 1) {
       return _TechniqueInfo(
         technique: '소거법',
-        message: '3연속 규칙과 균형 규칙을 모두 적용하면 $answer 만 가능합니다.',
+        message: '3연속 규칙과 균형 규칙을 모두 적용하면 ${_symbol(answer)}만 가능합니다.',
         highlightRows: [row],
         highlightCols: [col],
       );
@@ -416,7 +419,7 @@ class BinairoHintEngine {
     // 4. 고급 추론 (유일성 등)
     return _TechniqueInfo(
       technique: '고급 추론',
-      message: '행/열의 패턴을 분석하면 이 셀은 $answer 이어야 합니다. '
+      message: '행/열의 패턴을 분석하면 이 셀은 ${_symbol(answer)} 이어야 합니다. '
           '유일성 규칙(동일 행/열 불가)을 고려해 보세요.',
       highlightRows: [row],
       highlightCols: [col],

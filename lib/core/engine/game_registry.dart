@@ -5,8 +5,11 @@ class GameInfo {
   /// 게임 고유 식별자 (예: 'sudoku', 'binairo')
   final String id;
 
-  /// 다국어 키 (예: 'game.sudoku.name')
+  /// 다국어 이름 키 (예: 'game.sudoku.name')
   final String nameKey;
+
+  /// 다국어 설명 키 (예: 'game.sudoku.desc')
+  final String descriptionKey;
 
   /// 게임 아이콘
   final IconData icon;
@@ -14,7 +17,7 @@ class GameInfo {
   /// 게임 이모지
   final String emoji;
 
-  /// 라우트 경로 (예: '/home', '/binairo')
+  /// 라우트 경로 (예: '/', '/binairo')
   final String routePath;
 
   /// 표시 순서
@@ -26,6 +29,7 @@ class GameInfo {
   const GameInfo({
     required this.id,
     required this.nameKey,
+    required this.descriptionKey,
     required this.icon,
     required this.emoji,
     required this.routePath,
@@ -47,15 +51,17 @@ class GameRegistry {
     GameInfo(
       id: 'sudoku',
       nameKey: 'game.sudoku.name',
+      descriptionKey: 'game.sudoku.desc',
       icon: Icons.grid_on_rounded,
       emoji: '\u{1F522}', // 숫자 이모지
-      routePath: '/home',
+      routePath: '/', // AppRoutes.home = '/'
       order: 0,
     ),
-    // 바이네리 — 추후 추가 예정
+    // 비나이로
     GameInfo(
       id: 'binairo',
       nameKey: 'game.binairo.name',
+      descriptionKey: 'game.binairo.desc',
       icon: Icons.circle_outlined,
       emoji: '\u{26AA}', // 흰 동그라미 이모지
       routePath: '/binairo',

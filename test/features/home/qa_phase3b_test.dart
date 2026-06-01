@@ -32,8 +32,8 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // 앱 타이틀 표시
-      expect(find.text('Ninedoku'), findsWidgets);
+      // 스도쿠 홈 타이틀 표시
+      expect(find.text('스도쿠'), findsOneWidget);
       // 서브 타이틀 표시
       expect(find.text('마음을 편안하게, 한 칸씩'), findsOneWidget);
       // 새 게임 버튼
@@ -150,7 +150,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // 홈 화면 표시
-      expect(find.text('Ninedoku'), findsWidgets);
+      expect(find.text('스도쿠'), findsOneWidget);
       expect(find.text('새 게임'), findsOneWidget);
     });
 

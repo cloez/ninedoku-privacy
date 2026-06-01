@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
 import '../../../shared/constants/app_colors.dart';
+import '../../../core/settings/settings_service.dart';
+import '../../../core/storage/storage_providers.dart';
 import '../binairo_notifier.dart';
 import '../binairo_state.dart';
 
@@ -17,16 +19,30 @@ class BinairoHomeScreen extends ConsumerStatefulWidget {
 
 class _BinairoHomeScreenState extends ConsumerState<BinairoHomeScreen> {
   @override
+  void initState() {
+    super.initState();
+    // 비나이로 진입 시 마지막 게임 경로 저장
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final prefs = ref.read(sharedPreferencesProvider);
+      SettingsService(prefs).setLastGameRoute(AppRoutes.binairo);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final gameState = ref.watch(binairoNotifierProvider);
     final hasOngoingGame = gameState != null && !gameState.isCompleted;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    return Scaffold(
+    // 게임 메인에서는 하드웨어 백키 무시 (허브 이동은 아이콘으로만)
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, _) {},
+      child: Scaffold(
       appBar: AppBar(
         title: Text(AppStrings.get('binairo.title')),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_rounded),
+          icon: const Icon(Icons.apps_rounded),
           onPressed: () => context.go(AppRoutes.hub),
           tooltip: AppStrings.get('binairo.backToHub'),
         ),
@@ -96,6 +112,28 @@ class _BinairoHomeScreenState extends ConsumerState<BinairoHomeScreen> {
                   ),
                 ),
               ),
+              const SizedBox(height: 24),
+
+              // 통계/배지 버튼
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.push(AppRoutes.statistics, extra: 'binairo'),
+                      icon: const Icon(Icons.bar_chart_rounded, size: 20),
+                      label: Text(AppStrings.get('binairo.statistics')),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => context.push(AppRoutes.badges, extra: 'binairo'),
+                      icon: const Icon(Icons.emoji_events_rounded, size: 20),
+                      label: Text(AppStrings.get('binairo.badges')),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 32),
 
               // 규칙 안내
@@ -104,6 +142,7 @@ class _BinairoHomeScreenState extends ConsumerState<BinairoHomeScreen> {
           ),
         ),
       ),
+    ),
     );
   }
 
@@ -336,35 +375,89 @@ class _ChipLabel extends StatelessWidget {
         text,
         style: TextStyle(
           fontSize: 12,
-          color: isDark ? Colors.white60 : Colors.black54,
+          color: isDark ? Colors.white54 : Colors.black54,
         ),
       ),
     );
   }
 }
 
-/// 규칙 안내 힌트
+/// 게임 소개 + 규칙 카드
 class _RulesHint extends StatelessWidget {
   final bool isDark;
   const _RulesHint({required this.isDark});
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Icon(
-          Icons.lightbulb_outline_rounded,
-          size: 36,
-          color: isDark ? Colors.white24 : Colors.black26,
+    final titleColor = isDark ? Colors.white70 : Colors.black87;
+    final bodyColor = isDark ? Colors.white54 : Colors.black54;
+    final ruleColor = isDark ? Colors.white54 : Colors.black54;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // 게임 소개
+            Text(
+              AppStrings.get('binairo.about.title'),
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.bold,
+                color: titleColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              AppStrings.get('binairo.about.desc'),
+              style: TextStyle(fontSize: 13, color: bodyColor, height: 1.5),
+            ),
+            const SizedBox(height: 16),
+            // 규칙
+            Text(
+              AppStrings.get('binairo.rules.title'),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: titleColor,
+              ),
+            ),
+            const SizedBox(height: 8),
+            _ruleRow('1', AppStrings.get('binairo.rules.r1'), ruleColor),
+            const SizedBox(height: 6),
+            _ruleRow('2', AppStrings.get('binairo.rules.r2'), ruleColor),
+            const SizedBox(height: 6),
+            _ruleRow('3', AppStrings.get('binairo.rules.r3'), ruleColor),
+            const SizedBox(height: 12),
+            // 조작법
+            Text(
+              AppStrings.get('binairo.rules.howToPlay'),
+              style: TextStyle(fontSize: 12, color: bodyColor, height: 1.4),
+            ),
+          ],
         ),
-        const SizedBox(height: 8),
-        Text(
-          AppStrings.get('binairo.rules.hint'),
-          style: TextStyle(
-            fontSize: 13,
-            color: isDark ? Colors.white38 : Colors.black38,
+      ),
+    );
+  }
+
+  Widget _ruleRow(String num, String text, Color color) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          width: 20, height: 20,
+          decoration: BoxDecoration(
+            color: color.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(10),
           ),
-          textAlign: TextAlign.center,
+          child: Center(
+            child: Text(num, style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: color)),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(text, style: TextStyle(fontSize: 13, color: color, height: 1.4)),
         ),
       ],
     );

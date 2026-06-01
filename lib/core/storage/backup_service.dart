@@ -6,6 +6,8 @@ import 'game_storage_service.dart';
 import '../settings/settings_service.dart';
 import '../../features/badges/badge_service.dart';
 import '../../features/daily_puzzle/daily_puzzle_service.dart';
+import '../../games/binairo/binairo_storage_service.dart';
+import '../../games/binairo/binairo_badge_service.dart';
 
 /// 백업/복원 서비스
 class BackupService {
@@ -19,6 +21,8 @@ class BackupService {
     final settings = SettingsService(_prefs);
     final badgeService = BadgeService(_prefs);
     final dailyService = DailyPuzzleService(_prefs);
+    final binairoStorage = BinairoStorageService(_prefs);
+    final binairoBadges = BinairoBadgeService(_prefs);
 
     final data = {
       'version': 1,
@@ -26,6 +30,9 @@ class BackupService {
       'completedGames': storage.loadCompletedGames().map((r) => r.toJson()).toList(),
       'badges': badgeService.getAcquiredBadgeIds().toList(),
       'dailyRecords': dailyService.exportRecords(),
+      // 비나이로 데이터
+      'binairoCompletedGames': binairoStorage.loadCompletedGames().map((r) => r.toJson()).toList(),
+      'binairoBadges': binairoBadges.getAcquiredBadgeIds().toList(),
       'settings': {
         'language': settings.language,
         'fontScale': settings.fontScale,
@@ -60,12 +67,16 @@ class BackupService {
       final settings = SettingsService(_prefs);
       final badgeService = BadgeService(_prefs);
       final dailyService = DailyPuzzleService(_prefs);
+      final binairoStorage = BinairoStorageService(_prefs);
+      final binairoBadges = BinairoBadgeService(_prefs);
 
       // 덮어쓰기 모드: 기존 데이터 초기화
       if (overwrite) {
         storage.clearCompletedGames();
         badgeService.clearAll();
         dailyService.clearRecords();
+        binairoStorage.clearCompletedGames();
+        binairoBadges.clearAll();
       }
 
       // 게임 기록 복원
@@ -87,6 +98,22 @@ class BackupService {
       // 일일 퍼즐 기록 복원
       if (data['dailyRecords'] != null) {
         dailyService.importRecords(data['dailyRecords'] as Map<String, dynamic>);
+      }
+
+      // 비나이로 게임 기록 복원
+      if (data['binairoCompletedGames'] != null) {
+        final games = (data['binairoCompletedGames'] as List)
+            .map((e) => CompletedGameRecord.fromJson(e as Map<String, dynamic>))
+            .toList();
+        for (final game in games) {
+          await binairoStorage.saveCompletedGame(game);
+        }
+      }
+
+      // 비나이로 배지 복원
+      if (data['binairoBadges'] != null) {
+        final badges = (data['binairoBadges'] as List).cast<String>();
+        binairoBadges.restoreBadges(badges);
       }
 
       // 설정 복원
@@ -124,8 +151,12 @@ class BackupService {
     final storage = GameStorageService(_prefs);
     final badgeService = BadgeService(_prefs);
     final dailyService = DailyPuzzleService(_prefs);
+    final binairoStorage = BinairoStorageService(_prefs);
+    final binairoBadges = BinairoBadgeService(_prefs);
     return storage.loadCompletedGames().isNotEmpty ||
         badgeService.getAcquiredBadgeIds().isNotEmpty ||
-        dailyService.exportRecords().isNotEmpty;
+        dailyService.exportRecords().isNotEmpty ||
+        binairoStorage.loadCompletedGames().isNotEmpty ||
+        binairoBadges.getAcquiredBadgeIds().isNotEmpty;
   }
 }

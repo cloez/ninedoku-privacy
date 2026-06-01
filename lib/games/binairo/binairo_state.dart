@@ -29,6 +29,13 @@ enum BinairoDifficulty {
   int get code => index;
 }
 
+/// 입력 모드 (토글 선택)
+enum BinairoInputMode {
+  black,  // ● 검은 원 배치
+  white,  // ○ 흰 원 배치
+  erase,  // 지우개
+}
+
 /// Undo 액션 타입
 enum BinairoUndoActionType { setValue, clearValue }
 
@@ -169,6 +176,9 @@ class BinairoState {
   /// 마지막 힌트 결과 (UI 표시용)
   final BinairoHintResult? lastHintResult;
 
+  /// 현재 입력 모드 (● / ○ / 지우개)
+  final BinairoInputMode inputMode;
+
   const BinairoState({
     required this.puzzle,
     required this.solution,
@@ -186,6 +196,7 @@ class BinairoState {
     this.currentHintLevel = 0,
     this.hintTargetCell,
     this.lastHintResult,
+    this.inputMode = BinairoInputMode.black,
   });
 
   /// 완료 등급
@@ -217,6 +228,7 @@ class BinairoState {
     bool clearHintTarget = false,
     BinairoHintResult? lastHintResult,
     bool clearLastHint = false,
+    BinairoInputMode? inputMode,
   }) {
     return BinairoState(
       puzzle: puzzle ?? this.puzzle,
@@ -235,6 +247,7 @@ class BinairoState {
       currentHintLevel: currentHintLevel ?? this.currentHintLevel,
       hintTargetCell: clearHintTarget ? null : (hintTargetCell ?? this.hintTargetCell),
       lastHintResult: clearLastHint ? null : (lastHintResult ?? this.lastHintResult),
+      inputMode: inputMode ?? this.inputMode,
     );
   }
 

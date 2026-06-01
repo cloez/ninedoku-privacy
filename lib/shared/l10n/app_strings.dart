@@ -363,12 +363,22 @@ class AppStrings {
     'hub.exitTitle': '종료 확인',
     'hub.exitMessage': '앱을 종료하시겠습니까?',
 
-    // 게임 이름
-    'game.sudoku.name': '스도쿠',
-    'game.binairo.name': '바이네리',
+    // 스도쿠 규칙 설명
+    'sudoku.about.title': '스도쿠란?',
+    'sudoku.about.desc': '스도쿠는 간단한 규칙과 복잡한 해법을 지닌 논리 퍼즐입니다. 3×3 형태의 지역으로 분할된 9×9 격자 판에 1부터 9까지의 숫자를 채워야 합니다.',
+    'sudoku.rules.title': '규칙',
+    'sudoku.rules.r1': '각 가로줄에는 1부터 9까지의 숫자가 오직 한 번씩만 들어가야 합니다.',
+    'sudoku.rules.r2': '각 세로줄에는 1부터 9까지의 숫자가 오직 한 번씩만 들어가야 합니다.',
+    'sudoku.rules.r3': '각 3×3 지역에는 1부터 9까지의 숫자가 오직 한 번씩만 들어가야 합니다.',
 
-    // 바이네리 게임
-    'binairo.title': '바이네리',
+    // 게임 이름 + 설명
+    'game.sudoku.name': '스도쿠',
+    'game.sudoku.desc': '숫자 논리 퍼즐의 정석',
+    'game.binairo.name': '비나이로',
+    'game.binairo.desc': '0과 1로 채우는 이진 퍼즐',
+
+    // 비나이로 게임
+    'binairo.title': '비나이로',
     'binairo.subtitle': '0과 1로 채우는 논리 퍼즐',
     'binairo.back': '뒤로',
     'binairo.backToHub': '게임 허브로',
@@ -377,7 +387,14 @@ class AppStrings {
     'binairo.dailyPuzzle': '오늘의 퍼즐',
     'binairo.selectDifficulty': '난이도 선택',
     'binairo.pause': '일시정지',
-    'binairo.rules.hint': '규칙: 0과 1로 격자를 채우세요. 같은 숫자 3연속 금지, 행열 균등, 동일 행열 금지.',
+    'binairo.rules.hint': '규칙: 검은 원과 흰 원으로 격자를 채우세요.',
+    'binairo.about.title': '비나이로란?',
+    'binairo.about.desc': '비나이로(Binairo)는 간단한 규칙과 도전적인 해법을 가진 논리 퍼즐입니다. 빈 칸에 검은 원(●)과 흰 원(○)을 채워 보드를 완성하세요.',
+    'binairo.rules.title': '규칙',
+    'binairo.rules.r1': '각 가로줄과 세로줄은 반드시 같은 수의 검은 원과 흰 원을 가져야 합니다.',
+    'binairo.rules.r2': '3개 이상의 같은 원이 일렬로 나열될 수 없습니다.',
+    'binairo.rules.r3': '완성된 보드에서 동일한 가로줄이나 세로줄이 없어야 합니다.',
+    'binairo.rules.howToPlay': '칸을 탭하면 검은 원(●)이 배치되고, 한 번 더 탭하면 흰 원(○)으로 바뀝니다. 다시 탭하면 빈 칸으로 돌아갑니다.',
     'binairo.exit.title': '게임 나가기',
     'binairo.exit.message': '현재 진행 상황이 저장됩니다.',
     'binairo.exit.leave': '나가기',
@@ -400,6 +417,40 @@ class AppStrings {
     'binairo.newGame.warning.title': '진행 중인 게임',
     'binairo.newGame.warning.message': '진행 중인 게임이 있습니다. 새 게임을 시작하시겠습니까?',
     'binairo.newGame.warning.confirm': '새 게임 시작',
+
+    // 탭 필터 (통계/배지)
+    'stats.tab.all': '전체',
+    'stats.tab.sudoku': '스도쿠',
+    'stats.tab.binairo': '비나이로',
+    'badge.tab.all': '전체',
+    'badge.tab.sudoku': '스도쿠',
+    'badge.tab.binairo': '비나이로',
+
+    // 비나이로 홈 통계/배지 버튼
+    'binairo.statistics': '통계',
+    'binairo.badges': '배지',
+
+    // 비나이로 배지 이름/설명
+    'badge.binairo_first_clear.name': '비나이로 입문',
+    'badge.binairo_first_clear.desc': '비나이로 첫 완료',
+    'badge.binairo_games_10.name': '비나이로 열정',
+    'badge.binairo_games_10.desc': '10게임 완료',
+    'badge.binairo_games_50.name': '비나이로 베테랑',
+    'badge.binairo_games_50.desc': '50게임 완료',
+    'badge.binairo_speed.name': '속도의 비나이로',
+    'badge.binairo_speed.desc': '6×6를 1분 이내 완료',
+    'badge.binairo_perfect.name': '비나이로 퍼펙트',
+    'badge.binairo_perfect.desc': '실수와 힌트 없이 완료',
+    'badge.binairo_no_hint.name': '독립 해결사',
+    'badge.binairo_no_hint.desc': '힌트 없이 10게임 완료',
+    'badge.binairo_master.name': '마스터 정복',
+    'badge.binairo_master.desc': '14×14 마스터 첫 클리어',
+    'badge.binairo_challenge.name': '비나이로 도전자',
+    'badge.binairo_challenge.desc': '도전 모드 클리어',
+    'badge.binairo_streak_3.name': '연속 비나이로',
+    'badge.binairo_streak_3.desc': '3일 연속 플레이',
+    'badge.binairo_all_s.name': '비나이로 달인',
+    'badge.binairo_all_s.desc': '모든 난이도 S등급',
 
     // 접근성
     'a11y.timer.resume': '타이머 재개',
@@ -710,8 +761,17 @@ class AppStrings {
     'hub.exitMessage': 'Are you sure you want to exit?',
 
     // 게임 이름
+    'sudoku.about.title': 'What is Sudoku?',
+    'sudoku.about.desc': 'Sudoku is a logic puzzle with simple rules and complex solutions. Fill a 9×9 grid divided into 3×3 regions with numbers 1 through 9.',
+    'sudoku.rules.title': 'Rules',
+    'sudoku.rules.r1': 'Each row must contain the numbers 1 to 9 exactly once.',
+    'sudoku.rules.r2': 'Each column must contain the numbers 1 to 9 exactly once.',
+    'sudoku.rules.r3': 'Each 3×3 region must contain the numbers 1 to 9 exactly once.',
+
     'game.sudoku.name': 'Sudoku',
+    'game.sudoku.desc': 'The classic number logic puzzle',
     'game.binairo.name': 'Binairo',
+    'game.binairo.desc': 'Fill the grid with 0s and 1s',
 
     // Binairo game
     'binairo.title': 'Binairo',
@@ -723,7 +783,14 @@ class AppStrings {
     'binairo.dailyPuzzle': "Today's Puzzle",
     'binairo.selectDifficulty': 'Select Difficulty',
     'binairo.pause': 'Pause',
-    'binairo.rules.hint': 'Rules: Fill with 0 and 1. No triple, equal count, unique rows/cols.',
+    'binairo.rules.hint': 'Rules: Fill the grid with black and white circles.',
+    'binairo.about.title': 'What is Binairo?',
+    'binairo.about.desc': 'Binairo is a logic puzzle with simple rules and challenging solutions. Fill the empty cells with black circles (●) and white circles (○) to complete the board.',
+    'binairo.rules.title': 'Rules',
+    'binairo.rules.r1': 'Each row and column must have an equal number of black and white circles.',
+    'binairo.rules.r2': 'No more than two of the same color can be adjacent in a row.',
+    'binairo.rules.r3': 'Each completed row and column must be unique.',
+    'binairo.rules.howToPlay': 'Tap a cell to place a black circle (●), tap again for a white circle (○), and tap once more to clear it.',
     'binairo.exit.title': 'Leave Game',
     'binairo.exit.message': 'Your progress will be saved.',
     'binairo.exit.leave': 'Leave',
@@ -746,6 +813,40 @@ class AppStrings {
     'binairo.newGame.warning.title': 'Game in Progress',
     'binairo.newGame.warning.message': 'You have a game in progress. Start a new game?',
     'binairo.newGame.warning.confirm': 'Start New',
+
+    // 탭 필터 (통계/배지)
+    'stats.tab.all': 'All',
+    'stats.tab.sudoku': 'Sudoku',
+    'stats.tab.binairo': 'Binairo',
+    'badge.tab.all': 'All',
+    'badge.tab.sudoku': 'Sudoku',
+    'badge.tab.binairo': 'Binairo',
+
+    // 비나이로 홈 통계/배지 버튼
+    'binairo.statistics': 'Statistics',
+    'binairo.badges': 'Badges',
+
+    // 비나이로 배지 이름/설명
+    'badge.binairo_first_clear.name': 'Binairo Beginner',
+    'badge.binairo_first_clear.desc': 'Complete first Binairo',
+    'badge.binairo_games_10.name': 'Binairo Passion',
+    'badge.binairo_games_10.desc': 'Complete 10 games',
+    'badge.binairo_games_50.name': 'Binairo Veteran',
+    'badge.binairo_games_50.desc': 'Complete 50 games',
+    'badge.binairo_speed.name': 'Speed Binairo',
+    'badge.binairo_speed.desc': 'Complete 6×6 within 1 minute',
+    'badge.binairo_perfect.name': 'Binairo Perfect',
+    'badge.binairo_perfect.desc': 'Complete without mistakes or hints',
+    'badge.binairo_no_hint.name': 'Independent Solver',
+    'badge.binairo_no_hint.desc': 'Complete 10 games without hints',
+    'badge.binairo_master.name': 'Master Conquest',
+    'badge.binairo_master.desc': 'First clear on 14×14 Master',
+    'badge.binairo_challenge.name': 'Binairo Challenger',
+    'badge.binairo_challenge.desc': 'Clear challenge mode',
+    'badge.binairo_streak_3.name': 'Binairo Streak',
+    'badge.binairo_streak_3.desc': 'Play 3 days in a row',
+    'badge.binairo_all_s.name': 'Binairo Master',
+    'badge.binairo_all_s.desc': 'S-rank on all difficulties',
 
     'a11y.timer.resume': 'Resume timer',
     'a11y.timer.pause': 'Pause timer',
@@ -1055,8 +1156,17 @@ class AppStrings {
     'hub.exitMessage': 'アプリを終了しますか？',
 
     // 게임 이름
+    'sudoku.about.title': '数独とは？',
+    'sudoku.about.desc': '数独はシンプルなルールと複雑な解法を持つロジックパズルです。3×3のブロックに分割された9×9のマスに1から9の数字を埋めます。',
+    'sudoku.rules.title': 'ルール',
+    'sudoku.rules.r1': '各行には1から9の数字が1つずつ入ります。',
+    'sudoku.rules.r2': '各列には1から9の数字が1つずつ入ります。',
+    'sudoku.rules.r3': '各3×3ブロックには1から9の数字が1つずつ入ります。',
+
     'game.sudoku.name': '数独',
+    'game.sudoku.desc': '数字ロジックパズルの定番',
     'game.binairo.name': 'バイナイロ',
+    'game.binairo.desc': '0と1で埋めるバイナリパズル',
 
     'binairo.title': 'バイナイロ',
     'binairo.subtitle': '0と1でグリッドを埋めるロジックパズル',
@@ -1067,7 +1177,14 @@ class AppStrings {
     'binairo.dailyPuzzle': '今日のパズル',
     'binairo.selectDifficulty': '難易度を選択',
     'binairo.pause': '一時停止',
-    'binairo.rules.hint': 'ルール: 0と1で埋める。3連続禁止、行列均等、同一行列禁止。',
+    'binairo.rules.hint': 'ルール: 黒と白の丸でグリッドを埋めてください。',
+    'binairo.about.title': 'バイナイロとは？',
+    'binairo.about.desc': 'バイナイロは、シンプルなルールと挑戦的な解法を持つロジックパズルです。空のマスに黒丸(●)と白丸(○)を埋めてボードを完成させましょう。',
+    'binairo.rules.title': 'ルール',
+    'binairo.rules.r1': '各行と各列には、同じ数の黒丸と白丸が必要です。',
+    'binairo.rules.r2': '同じ色が3つ以上連続してはいけません。',
+    'binairo.rules.r3': '完成したボードで同一の行や列があってはいけません。',
+    'binairo.rules.howToPlay': 'マスをタップすると黒丸(●)が配置され、もう一度タップすると白丸(○)に変わります。もう一度タップすると空に戻ります。',
     'binairo.exit.title': 'ゲームを離れる',
     'binairo.exit.message': '進行状況は保存されます。',
     'binairo.exit.leave': '離れる',
@@ -1090,6 +1207,40 @@ class AppStrings {
     'binairo.newGame.warning.title': '進行中のゲーム',
     'binairo.newGame.warning.message': '進行中のゲームがあります。新しいゲームを始めますか？',
     'binairo.newGame.warning.confirm': '新しく始める',
+
+    // タブフィルター（統計/バッジ）
+    'stats.tab.all': 'すべて',
+    'stats.tab.sudoku': '数独',
+    'stats.tab.binairo': 'バイナイロ',
+    'badge.tab.all': 'すべて',
+    'badge.tab.sudoku': '数独',
+    'badge.tab.binairo': 'バイナイロ',
+
+    // ビナイロホーム 統計/バッジボタン
+    'binairo.statistics': '統計',
+    'binairo.badges': 'バッジ',
+
+    // ビナイロバッジ名/説明
+    'badge.binairo_first_clear.name': 'バイナイロ入門',
+    'badge.binairo_first_clear.desc': 'バイナイロ初クリア',
+    'badge.binairo_games_10.name': 'バイナイロ情熱',
+    'badge.binairo_games_10.desc': '10ゲームクリア',
+    'badge.binairo_games_50.name': 'バイナイロベテラン',
+    'badge.binairo_games_50.desc': '50ゲームクリア',
+    'badge.binairo_speed.name': 'スピードバイナイロ',
+    'badge.binairo_speed.desc': '6×6を1分以内にクリア',
+    'badge.binairo_perfect.name': 'バイナイロパーフェクト',
+    'badge.binairo_perfect.desc': 'ミスとヒントなしでクリア',
+    'badge.binairo_no_hint.name': '独立解決者',
+    'badge.binairo_no_hint.desc': 'ヒントなしで10ゲームクリア',
+    'badge.binairo_master.name': 'マスター制覇',
+    'badge.binairo_master.desc': '14×14マスター初クリア',
+    'badge.binairo_challenge.name': 'バイナイロチャレンジャー',
+    'badge.binairo_challenge.desc': 'チャレンジモードクリア',
+    'badge.binairo_streak_3.name': '連続バイナイロ',
+    'badge.binairo_streak_3.desc': '3日連続プレイ',
+    'badge.binairo_all_s.name': 'バイナイロ達人',
+    'badge.binairo_all_s.desc': '全難易度Sランク',
 
     'a11y.timer.resume': 'タイマー再開',
     'a11y.timer.pause': 'タイマー一時停止',
@@ -1399,8 +1550,17 @@ class AppStrings {
     'hub.exitMessage': '确定要退出应用吗？',
 
     // 게임 이름
+    'sudoku.about.title': '什么是数独？',
+    'sudoku.about.desc': '数独是一种规则简单但解法复杂的逻辑谜题。在被分为3×3区域的9×9网格中填入1到9的数字。',
+    'sudoku.rules.title': '规则',
+    'sudoku.rules.r1': '每行必须包含1到9的数字，且不重复。',
+    'sudoku.rules.r2': '每列必须包含1到9的数字，且不重复。',
+    'sudoku.rules.r3': '每个3×3区域必须包含1到9的数字，且不重复。',
+
     'game.sudoku.name': '数独',
+    'game.sudoku.desc': '经典数字逻辑谜题',
     'game.binairo.name': '二进制谜题',
+    'game.binairo.desc': '用0和1填充网格',
 
     'binairo.title': '二进制谜题',
     'binairo.subtitle': '用0和1填充网格的逻辑谜题',
@@ -1411,7 +1571,14 @@ class AppStrings {
     'binairo.dailyPuzzle': '今日谜题',
     'binairo.selectDifficulty': '选择难度',
     'binairo.pause': '暂停',
-    'binairo.rules.hint': '规则：用0和1填充。禁止三连、行列均等、行列唯一。',
+    'binairo.rules.hint': '规则：用黑白圆填充网格。',
+    'binairo.about.title': '什么是二进制谜题？',
+    'binairo.about.desc': '二进制谜题(Binairo)是一种规则简单但解法富有挑战性的逻辑谜题。在空格中填入黑圆(●)和白圆(○)来完成棋盘。',
+    'binairo.rules.title': '规则',
+    'binairo.rules.r1': '每行每列必须有相同数量的黑圆和白圆。',
+    'binairo.rules.r2': '同色不能连续出现3个以上。',
+    'binairo.rules.r3': '完成的棋盘中不能有相同的行或列。',
+    'binairo.rules.howToPlay': '点击格子放置黑圆(●)，再次点击变为白圆(○)，再次点击清空。',
     'binairo.exit.title': '离开游戏',
     'binairo.exit.message': '当前进度将被保存。',
     'binairo.exit.leave': '离开',
@@ -1434,6 +1601,40 @@ class AppStrings {
     'binairo.newGame.warning.title': '游戏进行中',
     'binairo.newGame.warning.message': '有正在进行的游戏。是否开始新游戏？',
     'binairo.newGame.warning.confirm': '开始新游戏',
+
+    // 标签筛选（统计/徽章）
+    'stats.tab.all': '全部',
+    'stats.tab.sudoku': '数独',
+    'stats.tab.binairo': '二进制',
+    'badge.tab.all': '全部',
+    'badge.tab.sudoku': '数独',
+    'badge.tab.binairo': '二进制',
+
+    // 二进制首页 统计/徽章按钮
+    'binairo.statistics': '统计',
+    'binairo.badges': '徽章',
+
+    // 二进制徽章名称/描述
+    'badge.binairo_first_clear.name': '二进制入门',
+    'badge.binairo_first_clear.desc': '首次完成二进制',
+    'badge.binairo_games_10.name': '二进制热情',
+    'badge.binairo_games_10.desc': '完成10局游戏',
+    'badge.binairo_games_50.name': '二进制老手',
+    'badge.binairo_games_50.desc': '完成50局游戏',
+    'badge.binairo_speed.name': '速度二进制',
+    'badge.binairo_speed.desc': '1分钟内完成6×6',
+    'badge.binairo_perfect.name': '二进制完美',
+    'badge.binairo_perfect.desc': '无失误无提示完成',
+    'badge.binairo_no_hint.name': '独立解题者',
+    'badge.binairo_no_hint.desc': '无提示完成10局',
+    'badge.binairo_master.name': '大师征服',
+    'badge.binairo_master.desc': '首次通关14×14大师',
+    'badge.binairo_challenge.name': '二进制挑战者',
+    'badge.binairo_challenge.desc': '通关挑战模式',
+    'badge.binairo_streak_3.name': '连续二进制',
+    'badge.binairo_streak_3.desc': '连续3天游戏',
+    'badge.binairo_all_s.name': '二进制达人',
+    'badge.binairo_all_s.desc': '所有难度S评级',
 
     'a11y.timer.resume': '恢复计时',
     'a11y.timer.pause': '暂停计时',
