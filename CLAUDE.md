@@ -125,6 +125,9 @@ export PATH="/d/flutter/bin:$PATH" && export TEMP="/d/temp" && export TMP="/d/te
 
 # AAB 빌드
 export PATH="/d/flutter/bin:$PATH" && export PUB_CACHE="/d/pub-cache" && export ANDROID_SDK_ROOT="D:/Android/SDK" && export TEMP="/d/temp" && export TMP="/d/temp" && cd "/d/00. Workspace/sudoku" && flutter build appbundle --release
+
+# APK 빌드 + 실기기 설치 (USB 연결)
+export PATH="/d/flutter/bin:$PATH" && export PUB_CACHE="/d/pub-cache" && export ANDROID_SDK_ROOT="D:/Android/SDK" && export TEMP="/d/temp" && export TMP="/d/temp" && cd "/d/00. Workspace/sudoku" && flutter build apk --release && "D:/Android/SDK/platform-tools/adb.exe" install -r "build/app/outputs/flutter-apk/app-release.apk"
 ```
 
 ## 코딩 규칙
@@ -139,4 +142,5 @@ export PATH="/d/flutter/bin:$PATH" && export PUB_CACHE="/d/pub-cache" && export 
 ## 현재 상태
 
 - R0 (Sudoku): ✅ 완료 (v1.0.0+3, 640개 테스트, Play Store Alpha)
-- R1 (Binairo): ⏳ 대기 — 다음 작업 대상
+- R1 (Binairo): ✅ 완료 (v1.1.0+4, 725개 테스트, 84개 비나이로 테스트, APK 설치 완료)
+- R2 (Minesweeper): ⏳ 대기 — 다음 작업 대상
