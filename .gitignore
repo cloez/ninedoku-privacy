@@ -1,0 +1,32 @@
+# Flutter/Dart 빌드 산출물
+**/build/
+**/.dart_tool/
+**/.pub-cache/
+**/.pub/
+**/coverage/
+**/.buildlog/
+
+# IDE
+**/.idea/
+**/.vscode/
+**/*.iml
+
+# Flutter 자동 생성 파일
+**/.flutter-plugins-dependencies
+**/.metadata
+
+# 서명 키 (절대 커밋 금지)
+**/keystore/
+**/*.jks
+**/*.keystore
+**/key.properties
+**/Android_keystore.zip
+
+# 스토어 에셋 (별도 관리)
+**/tools/store_assets/
+
+# 기타
+**/*.pdf
+**/.DS_Store
+**/*.log
+**/*.pyc
