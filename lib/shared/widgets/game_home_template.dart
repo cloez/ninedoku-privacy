@@ -235,6 +235,7 @@ class KPHeroCard extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 // 3D 아이콘 + 별 캐릭터
                 Stack(
