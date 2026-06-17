@@ -1,29 +1,34 @@
+import '../../shared/l10n/app_strings.dart';
 import 'engine/binairo_board.dart';
 import 'engine/binairo_hint.dart';
 
 /// Binairo 게임 모드
 enum BinairoGameMode {
-  classic('클래식'),
-  relax('릴렉스'),
-  dailyPuzzle('오늘의 퍼즐'),
-  quickPlay('빠른 게임'),
-  challenge('도전');
+  classic('mode.classic'),
+  relax('mode.relax'),
+  dailyPuzzle('mode.dailyPuzzle'),
+  quickPlay('mode.quickPlay'),
+  challenge('mode.challenge');
 
-  const BinairoGameMode(this.label);
-  final String label;
+  const BinairoGameMode(this.labelKey);
+  final String labelKey;
+  // 현재 언어에 맞는 표시명 (다국어)
+  String get label => AppStrings.get(labelKey);
 }
 
 /// Binairo 난이도 (격자 크기와 연동)
 enum BinairoDifficulty {
-  beginner(6, '입문'),
-  easy(8, '쉬움'),
-  medium(10, '보통'),
-  hard(12, '어려움'),
-  master(14, '마스터');
+  beginner(6, 'difficulty.beginner'),
+  easy(8, 'difficulty.easy'),
+  medium(10, 'difficulty.medium'),
+  hard(12, 'difficulty.hard'),
+  master(14, 'difficulty.master');
 
-  const BinairoDifficulty(this.gridSize, this.label);
+  const BinairoDifficulty(this.gridSize, this.labelKey);
   final int gridSize;
-  final String label;
+  final String labelKey;
+  // 현재 언어에 맞는 표시명 (다국어)
+  String get label => AppStrings.get(labelKey);
 
   /// 난이도 코드 (0~4, 제너레이터 연동)
   int get code => index;
@@ -56,14 +61,16 @@ class BinairoUndoAction {
 
 /// 완료 시 등급
 enum BinairoGrade {
-  perfect('S', '퍼펙트'),
-  excellent('A', '훌륭함'),
-  great('B', '좋음'),
-  good('C', '보통');
+  perfect('S', 'grade.perfect'),
+  excellent('A', 'grade.excellent'),
+  great('B', 'grade.great'),
+  good('C', 'grade.good');
 
-  const BinairoGrade(this.symbol, this.label);
+  const BinairoGrade(this.symbol, this.labelKey);
   final String symbol;
-  final String label;
+  final String labelKey;
+  // 현재 언어에 맞는 표시명 (다국어)
+  String get label => AppStrings.get(labelKey);
 
   /// 등급 산정
   static BinairoGrade evaluate({
@@ -125,6 +132,11 @@ enum BinairoGrade {
 
 /// Binairo 게임 상태
 class BinairoState {
+  /// 진행률 (0.0~1.0): 결정된 셀 / 전체.
+  double get progress {
+    final t = current.totalCells; if (t == 0) return 1.0; return current.filledCellCount / t;
+  }
+
   /// 퍼즐 보드 (초기 상태)
   final BinairoBoard puzzle;
 

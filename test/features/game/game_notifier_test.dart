@@ -232,6 +232,8 @@ void main() {
       notifier.inputNumber(5);
       expect(notifier.testState!.board.currentBoard[emptyRow][emptyCol], 5);
 
+      // 셀우선 모드에선 입력 후 포커스가 해제되므로 삭제 전 다시 선택
+      notifier.selectCell(emptyRow, emptyCol);
       notifier.deleteValue();
       expect(notifier.testState!.board.currentBoard[emptyRow][emptyCol], 0);
     });
@@ -243,12 +245,12 @@ void main() {
       );
 
       final beforeHint = notifier.testState!.hintCount;
-      // 점진적 힌트: 4단계까지 호출해야 정답 공개 + 카운트 증가
-      notifier.useHint(); // 1단계: 영역 강조
-      notifier.useHint(); // 2단계: 후보 안내
-      notifier.useHint(); // 3단계: 기법 설명
-      notifier.useHint(); // 4단계: 정답 공개
-      expect(notifier.testState!.hintCount, beforeHint + 1);
+      // 점진적 힌트 (새 비용 정책: L1 +1, L4 +1 = 총 +2)
+      notifier.useHint(); // 1단계: 영역 강조 (+1)
+      notifier.useHint(); // 2단계: 후보 안내 (비용 없음)
+      notifier.useHint(); // 3단계: 기법 설명 (비용 없음)
+      notifier.useHint(); // 4단계: 정답 공개 (+1)
+      expect(notifier.testState!.hintCount, beforeHint + 2);
       // 힌트 셀이 선택되어야 함
       expect(notifier.testState!.selectedCell, isNotNull);
     });

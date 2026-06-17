@@ -7,6 +7,8 @@ import 'package:share_plus/share_plus.dart';
 import '../../../core/storage/storage_providers.dart';
 import '../../../core/storage/backup_service.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/services/sound_manager.dart';
+import '../../../shared/utils/motion_helper.dart' as motion_helper;
 import 'theme_select_screen.dart';
 
 /// 설정 화면 (S-13)
@@ -105,6 +107,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             value: settings.soundEnabled,
             onChanged: (value) async {
               await settings.setSoundEnabled(value);
+              SoundManager().setEnabled(value);
               ref.invalidate(settingsProvider);
             },
           ),
@@ -114,6 +117,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             value: settings.vibrationEnabled,
             onChanged: (value) async {
               await settings.setVibrationEnabled(value);
+              ref.invalidate(settingsProvider);
+            },
+          ),
+          SwitchListTile(
+            title: Text(s('settings.reduceEffects')),
+            subtitle: Text(s('settings.reduceEffects.desc')),
+            value: settings.reduceEffects,
+            onChanged: (value) async {
+              await settings.setReduceEffects(value);
+              // 글로벌 효과 줄이기 플래그 즉시 반영 (위젯이 prefs 없이도 동작)
+              motion_helper.setReduceEffects(value);
               ref.invalidate(settingsProvider);
             },
           ),
@@ -164,7 +178,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             onTap: () {
               showLicensePage(
                 context: context,
-                applicationName: 'Ninedoku',
+                applicationName: 'K-Puzzles',
                 applicationVersion: '1.0.0',
               );
             },
@@ -210,7 +224,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       await SharePlus.instance.share(
         ShareParams(
           files: [XFile(file.path)],
-          subject: 'Ninedoku ${AppStrings.get('settings.backup.title')}',
+          subject: 'K-Puzzles ${AppStrings.get('settings.backup.title')}',
         ),
       );
     } catch (e) {
@@ -346,28 +360,50 @@ class _ThemeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(_iconForMode(currentMode)),
-      title: Text(AppStrings.get('settings.theme')),
-      trailing: SegmentedButton<ThemeMode>(
-        segments: const [
-          ButtonSegment(
-            value: ThemeMode.system,
-            icon: Icon(Icons.brightness_auto_rounded, size: 18),
+    // 라벨이 긴 언어(스페인어/프랑스어/힌디어/아랍어 등)에서도 글자가 세로로 깨지지 않도록
+    // 라벨을 위, 세그먼트를 아래로 분리 배치
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(_iconForMode(currentMode)),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  AppStrings.get('settings.theme'),
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ),
+            ],
           ),
-          ButtonSegment(
-            value: ThemeMode.light,
-            icon: Icon(Icons.light_mode_rounded, size: 18),
-          ),
-          ButtonSegment(
-            value: ThemeMode.dark,
-            icon: Icon(Icons.dark_mode_rounded, size: 18),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: SegmentedButton<ThemeMode>(
+              segments: const [
+                ButtonSegment(
+                  value: ThemeMode.system,
+                  icon: Icon(Icons.brightness_auto_rounded, size: 18),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.light,
+                  icon: Icon(Icons.light_mode_rounded, size: 18),
+                ),
+                ButtonSegment(
+                  value: ThemeMode.dark,
+                  icon: Icon(Icons.dark_mode_rounded, size: 18),
+                ),
+              ],
+              selected: {currentMode},
+              onSelectionChanged: (set) => onChanged(set.first),
+              showSelectedIcon: false,
+              style: const ButtonStyle(visualDensity: VisualDensity.compact),
+            ),
           ),
         ],
-        selected: {currentMode},
-        onSelectionChanged: (set) => onChanged(set.first),
-        showSelectedIcon: false,
-        style: const ButtonStyle(visualDensity: VisualDensity.compact),
       ),
     );
   }
@@ -394,19 +430,43 @@ class _FontScaleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = AppStrings.get;
-    return ListTile(
-      leading: const Icon(Icons.text_fields_rounded),
-      title: Text(s('settings.fontSize')),
-      trailing: SegmentedButton<double>(
-        segments: [
-          ButtonSegment(value: 1.0, label: Text(s('settings.fontDefault'))),
-          ButtonSegment(value: 1.3, label: Text(s('settings.fontLarge'))),
-          ButtonSegment(value: 1.6, label: Text(s('settings.fontXLarge'))),
+    // 라벨이 긴 언어에서도 글자가 세로로 깨지지 않도록 라벨/세그먼트 분리 배치
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.text_fields_rounded),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Text(
+                  s('settings.fontSize'),
+                  style: Theme.of(context).textTheme.bodyLarge,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          SizedBox(
+            width: double.infinity,
+            child: SegmentedButton<double>(
+              segments: [
+                ButtonSegment(
+                    value: 1.0, label: Text(s('settings.fontDefault'))),
+                ButtonSegment(
+                    value: 1.3, label: Text(s('settings.fontLarge'))),
+                ButtonSegment(
+                    value: 1.6, label: Text(s('settings.fontXLarge'))),
+              ],
+              selected: {currentScale},
+              onSelectionChanged: (set) => onChanged(set.first),
+              showSelectedIcon: false,
+              style: const ButtonStyle(visualDensity: VisualDensity.compact),
+            ),
+          ),
         ],
-        selected: {currentScale},
-        onSelectionChanged: (set) => onChanged(set.first),
-        showSelectedIcon: false,
-        style: const ButtonStyle(visualDensity: VisualDensity.compact),
       ),
     );
   }
@@ -602,7 +662,7 @@ class _CryptoCard extends StatelessWidget {
 
 /// 광고 배너 — 외부 브라우저로 열기
 class _AdBanner extends StatelessWidget {
-  static const _adUrl = 'https://bit.ly/4wT5dxi';
+  static const _adUrl = 'https://m.site.naver.com/2anPf';
 
   const _AdBanner();
 

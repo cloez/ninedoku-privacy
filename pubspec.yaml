@@ -1,7 +1,7 @@
 name: ninedoku
 description: "오프라인 논리 퍼즐 - Ninedoku: Logic Puzzles"
 publish_to: 'none'
-version: 1.1.0+4
+version: 1.0.1+4
 
 environment:
   sdk: ^3.12.0
@@ -38,6 +38,9 @@ dependencies:
   intl: ^0.20.2
   url_launcher: ^6.3.1
   share_plus: ^13.1.0
+
+  # 사운드 (Game Feel v1.0.1+6)
+  audioplayers: ^6.0.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -57,11 +60,17 @@ flutter_launcher_icons:
   android: true
   ios: true
   image_path: "assets/app_icon.png"
-  adaptive_icon_background: "#4A90D9"
-  adaptive_icon_foreground: "assets/app_icon.png"
+  # Adaptive icon — Android 8+
+  # foreground: 마크만(75% 축소된 안전 영역) 사용
+  # background: 마크와 동일한 네이비 색상
+  adaptive_icon_background: "#122B5E"
+  adaptive_icon_foreground: "assets/app_icon_foreground.png"
+  adaptive_icon_monochrome: "assets/app_icon_monochrome.png"
   min_sdk_android: 21
+  remove_alpha_ios: true
 
 flutter:
   uses-material-design: true
   assets:
     - assets/
+    - assets/sounds/

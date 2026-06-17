@@ -6,8 +6,12 @@ import '../../../shared/l10n/app_strings.dart';
 import '../game_notifier.dart';
 import '../game_state.dart';
 import '../../../core/sudoku/difficulty.dart';
+import '../../../core/sudoku/hint_engine.dart';
+import '../../../core/sudoku/technique_analyzer.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../badges/badge_definitions.dart';
+import '../../../shared/widgets/animated_trophy.dart';
+import '../../../shared/widgets/count_up_text.dart';
 
 /// 결과 화면 (S-07)
 class ResultScreen extends ConsumerStatefulWidget {
@@ -131,6 +135,15 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                       icon: Icons.timer_outlined,
                       label: AppStrings.get('result.time'),
                       value: _formatTime(gameState.elapsedSeconds),
+                      // 시간 카운트업 (0 → 경과 초)
+                      valueWidget: CountUpText(
+                        value: gameState.elapsedSeconds,
+                        formatter: _formatTime,
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
                     ),
                     const Divider(height: 24),
                     _StatRow(
@@ -144,15 +157,39 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
                       label: AppStrings.get('result.mistakes'),
                       value: '${gameState.mistakeCount}${AppStrings.get('result.count.suffix')}',
                       isWarning: gameState.mistakeCount > 0,
+                      // 실수 카운트업
+                      valueWidget: CountUpText(
+                        value: gameState.mistakeCount,
+                        formatter: (v) => '$v${AppStrings.get('result.count.suffix')}',
+                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                              fontWeight: FontWeight.w600,
+                              color: gameState.mistakeCount > 0
+                                  ? (isDark
+                                      ? AppColors.wrongNumberDark
+                                      : AppColors.wrongNumberLight)
+                                  : null,
+                            ),
+                      ),
                     ),
                     const Divider(height: 24),
                     _StatRow(
                       icon: Icons.lightbulb_outline_rounded,
                       label: AppStrings.get('result.hints'),
                       value: '${gameState.hintCount}${AppStrings.get('result.count.suffix')}',
+                      // 힌트 카운트업
+                      valueWidget: CountUpText(
+                        value: gameState.hintCount,
+                        formatter: (v) => '$v${AppStrings.get('result.count.suffix')}',
+                        style: Theme.of(context)
+                            .textTheme
+                            .bodyLarge
+                            ?.copyWith(fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ],
                 ),
+                // H4: 이번 게임에서 학습한 기법 (1개 이상일 때만)
+                _UsedTechniquesSection(usedTechniques: gameState.usedTechniques),
                 // 새로 획득한 배지
                 _NewBadgesSection(
                   badges: ref.read(gameProvider.notifier).lastNewBadges,
@@ -230,31 +267,34 @@ class _GradeBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = _badgeColor;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      decoration: BoxDecoration(
-        color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: color, width: 2),
-      ),
-      child: Column(
-        children: [
-          Text(
-            grade.symbol,
-            style: TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-              color: color,
+    return AnimatedTrophy(
+      glowColor: color,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(color: color, width: 2),
+        ),
+        child: Column(
+          children: [
+            Text(
+              grade.symbol,
+              style: TextStyle(
+                fontSize: 40,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
-          ),
-          Text(
-            AppStrings.get('grade.${grade.name}'),
-            style: TextStyle(
-              fontSize: 14,
-              color: color,
+            Text(
+              AppStrings.get('grade.${grade.name}'),
+              style: TextStyle(
+                fontSize: 14,
+                color: color,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -296,12 +336,15 @@ class _StatRow extends StatelessWidget {
   final String label;
   final String value;
   final bool isWarning;
+  // 카운트업 등 커스텀 위젯이 필요한 경우 (예: 시간/실수/힌트)
+  final Widget? valueWidget;
 
   const _StatRow({
     required this.icon,
     required this.label,
     required this.value,
     this.isWarning = false,
+    this.valueWidget,
   });
 
   @override
@@ -317,13 +360,14 @@ class _StatRow extends StatelessWidget {
         const SizedBox(width: 12),
         Text(label, style: Theme.of(context).textTheme.bodyMedium),
         const Spacer(),
-        Text(
-          value,
-          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: valueColor,
-              ),
-        ),
+        valueWidget ??
+            Text(
+              value,
+              style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    fontWeight: FontWeight.w600,
+                    color: valueColor,
+                  ),
+            ),
       ],
     );
   }
@@ -369,6 +413,31 @@ class _GradeCriteria extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// H4: 이번 게임에서 학습한 기법 목록 — 0개면 비표시
+class _UsedTechniquesSection extends StatelessWidget {
+  final Set<SolvingTechnique> usedTechniques;
+  const _UsedTechniquesSection({required this.usedTechniques});
+
+  @override
+  Widget build(BuildContext context) {
+    if (usedTechniques.isEmpty) return const SizedBox.shrink();
+    final names = usedTechniques
+        .map((t) => AppStrings.get(HintEngine.techniqueKeyOf(t)))
+        .join(', ');
+    return Padding(
+      padding: const EdgeInsets.only(top: 20, left: 8, right: 8),
+      child: Text(
+        '${AppStrings.get('result.usedTechniques.title')}: $names',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+          fontSize: 12,
+          color: Theme.of(context).textTheme.bodySmall?.color,
+        ),
       ),
     );
   }

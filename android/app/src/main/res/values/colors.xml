@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="ic_launcher_background">#4A90D9</color>
+    <color name="ic_launcher_background">#122B5E</color>
+    <!-- 네이티브 스플래시 배경 — Flutter SplashScreen과 동일 네이비로 연속성 확보 -->
+    <color name="splash_background">#122B5E</color>
 </resources>

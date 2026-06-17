@@ -16,7 +16,7 @@ void main() {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
         ],
-        child: const NinedokuApp(),
+        child: const KPuzzlesApp(),
       ),
     );
     await tester.pumpAndSettle();
@@ -37,7 +37,7 @@ void main() {
           sharedPreferencesProvider.overrideWithValue(prefs),
           initialLocationProvider.overrideWithValue(AppRoutes.home),
         ],
-        child: const NinedokuApp(),
+        child: const KPuzzlesApp(),
       ),
     );
     await tester.pumpAndSettle();
@@ -57,7 +57,7 @@ void main() {
         overrides: [
           sharedPreferencesProvider.overrideWithValue(prefs),
         ],
-        child: const NinedokuApp(),
+        child: const KPuzzlesApp(),
       ),
     );
     await tester.pumpAndSettle();

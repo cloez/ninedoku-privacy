@@ -10,6 +10,7 @@ import '../../core/sudoku/puzzle_cache_service.dart';
 import '../../core/sudoku/technique_analyzer.dart';
 import '../../core/utils/feedback_service.dart';
 import '../../core/settings/settings_service.dart';
+import '../../shared/services/sound_manager.dart';
 import 'game_state.dart';
 import '../../core/storage/game_storage_service.dart';
 import '../../core/storage/storage_providers.dart';
@@ -172,14 +173,55 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
         return;
       }
     }
-    state = state!.copyWith(selectedCell: (row, col));
+    // 셀우선 모드: 셀 선택 변경 시 숫자 하이라이트 해제
+    if (state!.inputMode == InputMode.cellFirst && state!.selectedNumber != null) {
+      state = state!.copyWith(
+        selectedCell: (row, col),
+        clearSelectedNumber: true,
+      );
+    } else {
+      state = state!.copyWith(selectedCell: (row, col));
+    }
   }
 
   /// 숫자 입력
   void inputNumber(int value) {
-    if (state == null || state!.isCompleted || state!.isGameOver || state!.isAutoCompleting || state!.selectedCell == null) return;
+    if (state == null || state!.isCompleted || state!.isGameOver || state!.isAutoCompleting) return;
+
+    // 숫자 패드 입력은 힌트 사이클을 종료한다 — 힌트 셀/배너 강조 잔존 방지
+    if (state!.currentHintLevel > 0) {
+      state = state!.copyWith(
+        currentHintLevel: 0,
+        clearHintTarget: true,
+        clearLastHint: true,
+      );
+    }
+
+    // 셀우선 모드: 선택된 셀이 없거나 고정 셀이면 입력 없이 selectedNumber만 갱신
+    // (보드의 같은 숫자 하이라이트 트리거용 — 셀 포커스는 해제하여 시각 충돌 방지)
+    if (state!.inputMode == InputMode.cellFirst) {
+      final sel = state!.selectedCell;
+      if (sel == null) {
+        state = state!.copyWith(selectedNumber: value);
+        return;
+      }
+      final (sr, sc) = sel;
+      if (state!.board.isFixed[sr][sc]) {
+        state = state!.copyWith(selectedNumber: value, clearSelectedCell: true);
+        return;
+      }
+    } else {
+      // 숫자우선 모드: selectedCell이 없으면 입력 불가 (기존 동작 유지)
+      if (state!.selectedCell == null) return;
+    }
+
     final (row, col) = state!.selectedCell!;
     if (state!.board.isFixed[row][col]) return;
+
+    // 셀우선 모드: 입력과 동시에 하이라이트용 selectedNumber도 갱신
+    if (state!.inputMode == InputMode.cellFirst) {
+      state = state!.copyWith(selectedNumber: value);
+    }
 
     if (state!.isMemoMode) {
       _toggleNote(row, col, value);
@@ -189,6 +231,16 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
         deleteValue();
       } else {
         _setValue(row, col, value);
+      }
+      // 셀우선 모드: 일반 입력 후 셀 포커스 해제
+      // (selectedNumber 강조와의 시각 충돌 방지, 메모 모드는 연속 입력 위해 유지)
+      // 단, _setValue 호출로 자동완성/게임완료가 트리거된 경우는 selectedCell을 건드리지 않음
+      // (자동완성 흐름의 후속 처리/추임새 평가가 selectedCell에 의존할 수 있음)
+      if (state != null &&
+          state!.inputMode == InputMode.cellFirst &&
+          !state!.isAutoCompleting &&
+          !state!.isCompleted) {
+        state = state!.copyWith(clearSelectedCell: true);
       }
     }
   }
@@ -221,6 +273,7 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
     if (newBoard.isWrong(row, col)) {
       mistakes++;
       _feedback?.onMistake();
+      SoundManager().play(SoundManager.kMistake);
       // 릴렉스 모드: 실수 표시 꺼져 있으면 일시 플래시로 피드백
       if (!state!.showMistakes) {
         wrongFlash = (row, col);
@@ -231,8 +284,18 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
       }
     } else {
       _feedback?.onNumberInput();
+      SoundManager().play(SoundManager.kClick);
       // 정답이면 관련 메모 자동 제거
       newBoard = newBoard.autoRemoveNotes(row, col, value);
+    }
+
+    // 라인/박스 완성 검사 (정답 입력 시점, 전체 완성 시에는 중복 회피)
+    List<({String type, int index})> completedLines = const [];
+    if (isCorrect && !newBoard.isCompleted) {
+      completedLines = _findNewlyCompletedLines(newBoard, row, col);
+      if (completedLines.isNotEmpty) {
+        SoundManager().play(SoundManager.kLineComplete);
+      }
     }
 
     final newUndo = [...state!.undoStack, undoAction];
@@ -277,6 +340,7 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
       );
       _timer?.cancel();
       _feedback?.onGameComplete();
+      SoundManager().play(SoundManager.kGameComplete);
       if (mistakes == 0) {
         state = state!.copyWith(lastEncouragement: Encouragement.perfect);
       }
@@ -294,7 +358,20 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
         clearEncouragement: encouragement == null,
         wrongFlashCell: wrongFlash,
         clearWrongFlash: wrongFlash == null,
+        recentlyCompletedLines:
+            completedLines.isNotEmpty ? completedLines : null,
       );
+
+      // 완성 라인 펄스 트리거 → 700ms 후 자동 클리어
+      if (completedLines.isNotEmpty) {
+        Future.delayed(const Duration(milliseconds: 700), () {
+          // dispose 이후 state 접근 방지
+          if (!mounted) return;
+          if (state != null && state!.recentlyCompletedLines.isNotEmpty) {
+            state = state!.copyWith(recentlyCompletedLines: const []);
+          }
+        });
+      }
 
       if (gameOver) {
         _timer?.cancel();
@@ -305,6 +382,7 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
       if (newBoard.isCompleted) {
         _timer?.cancel();
         _feedback?.onGameComplete();
+        SoundManager().play(SoundManager.kGameComplete);
         if (mistakes == 0) {
           state = state!.copyWith(lastEncouragement: Encouragement.perfect);
         }
@@ -345,12 +423,19 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
         }
       }
       if (nextCount < 9) {
-        state = state!.copyWith(selectedNumber: next);
+        // 새 숫자로 이동 시 이전 셀 포커스도 함께 해제 (잔존 강조 방지)
+        state = state!.copyWith(
+          selectedNumber: next,
+          clearSelectedCell: true,
+        );
         return;
       }
     }
     // 모든 숫자 완성 시 선택 해제
-    state = state!.copyWith(clearSelectedNumber: true);
+    state = state!.copyWith(
+      clearSelectedNumber: true,
+      clearSelectedCell: true,
+    );
   }
 
   /// 정답 입력 시 해당 셀에 필요한 기법 분석 → 추임새 결정
@@ -630,6 +715,14 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
   /// 숫자 우선 모드에서 숫자 선택 (같은 숫자 재선택 시 해제)
   void selectNumber(int number) {
     if (state == null || state!.isCompleted) return;
+    // 숫자 선택은 힌트 사이클을 종료한다 (셀/배너 강조 잔존 방지)
+    if (state!.currentHintLevel > 0) {
+      state = state!.copyWith(
+        currentHintLevel: 0,
+        clearHintTarget: true,
+        clearLastHint: true,
+      );
+    }
     if (state!.selectedNumber == number) {
       state = state!.copyWith(clearSelectedNumber: true);
     } else {
@@ -656,17 +749,31 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
     );
     if (hint == null) return;
     _feedback?.onHintUsed();
+    SoundManager().play(SoundManager.kHint);
 
-    // 4단계(정답 공개)에서만 실제 값 입력 + 힌트 카운트 증가
+    // 비용 정책 (변경): Level 1에서 +1, Level 4에서 +1 (총 2)
+    // Level 2~3은 같은 사이클 내 추가 비용 없음
     if (nextLevel == HintLevel.revealAnswer) {
       _applyRevealHint(hint);
     } else {
-      // 1~3단계: 정보만 제공 (힌트 결과를 상태에 저장)
+      // 1~3단계: 정보만 제공
+      // 새 사이클 시작(Level 1 진입) 시 hintCount += 1
+      final isNewCycle = nextLevel == HintLevel.highlightRegion;
+      // H4: L2~L3 진입 시점에 기법 학습 기록 누적 (technique이 확정된 경우만)
+      Set<SolvingTechnique>? newUsedTechniques;
+      if (nextLevel != HintLevel.highlightRegion && hint.technique != null) {
+        final current = state!.usedTechniques;
+        if (!current.contains(hint.technique)) {
+          newUsedTechniques = {...current, hint.technique!};
+        }
+      }
       state = state!.copyWith(
         selectedCell: (hint.row, hint.col),
         lastHintResult: hint,
         currentHintLevel: nextLevel.index + 1,
         hintTargetCell: (hint.row, hint.col),
+        hintCount: isNewCycle ? state!.hintCount + 1 : state!.hintCount,
+        usedTechniques: newUsedTechniques,
       );
     }
   }
@@ -709,6 +816,13 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
       var newBoard = state!.board.setValue(hint.row, hint.col, hint.answer!);
       newBoard = newBoard.autoRemoveNotes(hint.row, hint.col, hint.answer!);
 
+      // H4: L4 진입 시 기법 학습 기록 누적
+      Set<SolvingTechnique>? newUsedTechniques;
+      if (hint.technique != null &&
+          !state!.usedTechniques.contains(hint.technique)) {
+        newUsedTechniques = {...state!.usedTechniques, hint.technique!};
+      }
+
       state = state!.copyWith(
         board: newBoard,
         hintCount: state!.hintCount + 1,
@@ -717,7 +831,17 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
         currentHintLevel: 0,
         clearHintTarget: true,
         clearLastHint: true,
+        usedTechniques: newUsedTechniques,
+        // H3: L4 글로우 트리거 — 800ms 후 자동 클리어
+        recentlyRevealedHintCell: (hint.row, hint.col),
       );
+      // 800ms 후 글로우 종료
+      Future.delayed(const Duration(milliseconds: 800), () {
+        if (!mounted) return;
+        if (state != null && state!.recentlyRevealedHintCell != null) {
+          state = state!.copyWith(clearRecentlyRevealedHintCell: true);
+        }
+      });
 
       if (newBoard.isCompleted) {
         _timer?.cancel();
@@ -756,6 +880,7 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
     if (state == null || state!.isCompleted || state!.isPaused) return;
     _timer?.cancel();
     state = state!.copyWith(isPaused: true);
+    SoundManager().play(SoundManager.kPause);
     _autoSave();
   }
 
@@ -763,6 +888,7 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
   void resume() {
     if (state == null || state!.isCompleted || !state!.isPaused) return;
     state = state!.copyWith(isPaused: false);
+    SoundManager().play(SoundManager.kPause);
     _startTimer();
   }
 
@@ -807,7 +933,10 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
       final badgeService = BadgeService(_prefs);
       final records = _storage.loadCompletedGames();
       lastNewBadges = badgeService.evaluateNewBadges(records);
-      if (lastNewBadges.isNotEmpty) _feedback?.onBadgeEarned();
+      if (lastNewBadges.isNotEmpty) {
+        _feedback?.onBadgeEarned();
+        SoundManager().play(SoundManager.kBadge);
+      }
 
       // 오늘의 퍼즐 완료 기록
       if (state!.mode == GameMode.dailyPuzzle) {
@@ -815,6 +944,80 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
         dailyService.markCompleted(now, perfect: state!.grade == Grade.perfect);
       }
     }
+  }
+
+  // === 체크포인트 (메모리 저장) ===
+  GameState? _checkpoint;
+
+  /// 체크포인트가 저장되어 있는지 여부
+  bool get hasCheckpoint => _checkpoint != null;
+
+  /// 현재 상태를 체크포인트로 저장
+  void saveCheckpoint() {
+    if (state == null || state!.isCompleted) return;
+    _checkpoint = state;
+  }
+
+  /// 체크포인트로 복원
+  void restoreCheckpoint() {
+    if (_checkpoint == null) return;
+    state = _checkpoint;
+  }
+
+  /// 체크포인트 삭제
+  void clearCheckpoint() {
+    _checkpoint = null;
+  }
+
+  /// 입력한 셀이 속한 행/열/3x3 박스 중 새로 완성된 것을 모두 반환.
+  /// (해당 라인이 1~9로 모두 채워졌고 오답이 없는 경우)
+  List<({String type, int index})> _findNewlyCompletedLines(
+    SudokuBoard board,
+    int row,
+    int col,
+  ) {
+    final result = <({String type, int index})>[];
+    try {
+      // 행 검사
+      var rowOk = true;
+      for (var c = 0; c < 9; c++) {
+        if (board.currentBoard[row][c] == 0 || board.isWrong(row, c)) {
+          rowOk = false;
+          break;
+        }
+      }
+      if (rowOk) result.add((type: 'row', index: row));
+
+      // 열 검사
+      var colOk = true;
+      for (var r = 0; r < 9; r++) {
+        if (board.currentBoard[r][col] == 0 || board.isWrong(r, col)) {
+          colOk = false;
+          break;
+        }
+      }
+      if (colOk) result.add((type: 'col', index: col));
+
+      // 3x3 박스 검사
+      final boxR = (row ~/ 3) * 3;
+      final boxC = (col ~/ 3) * 3;
+      var boxOk = true;
+      for (var r = boxR; r < boxR + 3 && boxOk; r++) {
+        for (var c = boxC; c < boxC + 3; c++) {
+          if (board.currentBoard[r][c] == 0 || board.isWrong(r, c)) {
+            boxOk = false;
+            break;
+          }
+        }
+      }
+      if (boxOk) {
+        final boxIdx = (boxR ~/ 3) * 3 + (boxC ~/ 3);
+        result.add((type: 'box', index: boxIdx));
+      }
+    } catch (_) {
+      // 인덱스 안전 처리
+    }
+    return result;
   }
 }
 

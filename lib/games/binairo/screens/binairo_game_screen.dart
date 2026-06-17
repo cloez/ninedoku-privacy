@@ -4,9 +4,14 @@ import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
 import '../../../shared/constants/app_colors.dart';
+import '../../../shared/widgets/checkpoint_button.dart';
 import '../binairo_notifier.dart';
 import '../binairo_state.dart';
 import '../widgets/binairo_board_widget.dart';
+import '../../../shared/widgets/loading_indicator.dart';
+import '../../../shared/widgets/board_progress_bar.dart';
+import '../../../shared/widgets/animated_trophy.dart';
+import '../../../shared/widgets/count_up_text.dart';
 
 /// Binairo 게임 플레이 화면
 class BinairoGameScreen extends ConsumerStatefulWidget {
@@ -26,9 +31,7 @@ class _BinairoGameScreenState extends ConsumerState<BinairoGameScreen> {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted) context.go(AppRoutes.binairo);
       });
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const GameLoadingScreen();
     }
 
     // 완료 시 결과 표시
@@ -81,7 +84,11 @@ class _BinairoGameScreenState extends ConsumerState<BinairoGameScreen> {
     return Column(
       children: [
         _GameInfoBar(gameState: gameState),
-        const SizedBox(height: 8),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+          child: BoardProgressBar(progress: gameState.progress),
+        ),
+        const SizedBox(height: 4),
         // 보드: 남은 공간 전부 차지 (힌트/컨트롤은 고정 영역)
         Expanded(
           child: Padding(
@@ -159,6 +166,10 @@ class _BinairoGameScreenState extends ConsumerState<BinairoGameScreen> {
                 ),
                 const SizedBox(height: 2),
                 _GameInfoBar(gameState: gameState),
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: BoardProgressBar(progress: gameState.progress),
+                ),
                 AnimatedSize(
                   duration: const Duration(milliseconds: 200),
                   alignment: Alignment.topCenter,
@@ -236,12 +247,12 @@ class _GameInfoBar extends StatelessWidget {
           Row(
             children: [
               Icon(Icons.close_rounded, size: 16,
-                  color: isDark ? Colors.red.shade300 : Colors.red.shade400),
+                  color: isDark ? Colors.red.shade400 : Colors.red.shade400),
               const SizedBox(width: 2),
               Text(
                 '${gameState.mistakeCount}',
                 style: TextStyle(
-                  color: isDark ? Colors.red.shade300 : Colors.red.shade400,
+                  color: isDark ? Colors.red.shade400 : Colors.red.shade400,
                   fontSize: 14,
                 ),
               ),
@@ -341,6 +352,24 @@ class _ControlBar extends ConsumerWidget {
                 icon: Icons.lightbulb_outline_rounded,
                 onPressed: () => notifier.getHint(),
                 isDark: isDark,
+              ),
+              const SizedBox(width: 16),
+              // 체크포인트 버튼 (탭: 저장/복원, 길게: 삭제)
+              CheckpointButton(
+                hasCheckpoint: notifier.hasCheckpoint,
+                onTap: () {
+                  if (notifier.hasCheckpoint) {
+                    notifier.restoreCheckpoint();
+                    showCheckpointToast(context, 'checkpoint.restored');
+                  } else {
+                    notifier.saveCheckpoint();
+                    showCheckpointToast(context, 'checkpoint.saved');
+                  }
+                },
+                onLongPress: () {
+                  notifier.clearCheckpoint();
+                  showCheckpointToast(context, 'checkpoint.cleared');
+                },
               ),
             ],
           ),
@@ -666,7 +695,8 @@ class _BinairoResultViewState extends ConsumerState<_BinairoResultView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _showBadgePopupIfNeeded();
+      // UX: 결과 화면 인라인 배지 칩과 다이얼로그가 중복되므로 다이얼로그 비활성화
+      // _showBadgePopupIfNeeded();
     });
   }
 
@@ -750,24 +780,43 @@ class _BinairoResultViewState extends ConsumerState<_BinairoResultView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   // 등급 표시
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: gradeColor.withValues(alpha: 0.15),
-                      border: Border.all(color: gradeColor, width: 3),
-                    ),
-                    child: Center(
-                      child: Text(
-                        grade.symbol,
+                  AnimatedTrophy(
+
+                    glowColor: gradeColor,
+
+                    child: Container(
+
+                      width: 80,
+
+                      height: 80,
+
+                      decoration: BoxDecoration(
+
+                        shape: BoxShape.circle,
+
+                        color: gradeColor.withValues(alpha: 0.15),
+
+                        border: Border.all(color: gradeColor, width: 3),
+
+                      ),
+
+                      child: Center(
+
+                        child: Text(
+
+                          grade.symbol,
                         style: TextStyle(
                           fontSize: 36,
                           fontWeight: FontWeight.bold,
                           color: gradeColor,
                         ),
+
+                        ),
+
                       ),
+
                     ),
+
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -790,6 +839,7 @@ class _BinairoResultViewState extends ConsumerState<_BinairoResultView> {
                   _StatRow(
                     label: AppStrings.get('binairo.result.time'),
                     value: timeText,
+                    valueWidget: CountUpText(value: gameState.elapsedSeconds, formatter: (v) => '${(v ~/ 60).toString().padLeft(2, "0")}:${(v % 60).toString().padLeft(2, "0")}', style: const TextStyle(fontWeight: FontWeight.w600)),
                     isDark: isDark,
                   ),
                   _StatRow(
@@ -902,7 +952,8 @@ class _StatRow extends StatelessWidget {
   final String label;
   final String value;
   final bool isDark;
-  const _StatRow({required this.label, required this.value, required this.isDark});
+  final Widget? valueWidget;
+  const _StatRow({required this.label, required this.value, required this.isDark, this.valueWidget});
 
   @override
   Widget build(BuildContext context) {
@@ -917,7 +968,7 @@ class _StatRow extends StatelessWidget {
               color: isDark ? Colors.white54 : Colors.black54,
             ),
           ),
-          Text(
+          valueWidget ?? Text(
             value,
             style: const TextStyle(fontWeight: FontWeight.w600),
           ),

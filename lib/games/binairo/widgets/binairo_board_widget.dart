@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/constants/app_colors.dart';
+import '../../../shared/widgets/last_change_pulse.dart';
+import '../../../shared/widgets/line_complete_pulse.dart';
 import '../binairo_notifier.dart';
 import '../binairo_state.dart';
 
@@ -25,17 +27,31 @@ class BinairoBoardWidget extends ConsumerWidget {
         final boardSize = maxSide - 4; // 약간의 여백
         final cellSize = boardSize / size;
 
+        // 게임 완료 시 보드 전체 Jade Bloom 펄스
+        final completedLines = gameState.isCompleted
+            ? const [CompletedLine('all', 0)]
+            : const <CompletedLine>[];
         return Center(
-          child: SizedBox(
-            width: boardSize,
-            height: boardSize,
-            child: CustomPaint(
-              painter: _BinairoBoardPainter(
-                state: gameState,
-                isDark: isDark,
-                cellSize: cellSize,
+          child: LastChangePulse(
+            lastChangedCell: gameState.selectedCell,
+            cellSize: cellSize,
+            child: LineCompletePulse(
+              lines: completedLines,
+              cellSize: cellSize,
+              gridWidth: size,
+              gridHeight: size,
+              child: SizedBox(
+                width: boardSize,
+                height: boardSize,
+                child: CustomPaint(
+                  painter: _BinairoBoardPainter(
+                    state: gameState,
+                    isDark: isDark,
+                    cellSize: cellSize,
+                  ),
+                  child: _buildGestureGrid(ref, gameState, cellSize, size),
+                ),
               ),
-              child: _buildGestureGrid(ref, gameState, cellSize, size),
             ),
           ),
         );

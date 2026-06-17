@@ -6,6 +6,8 @@ import '../../../shared/l10n/app_strings.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../../core/settings/settings_service.dart';
 import '../../../core/storage/storage_providers.dart';
+import '../../../shared/widgets/back_press_exit.dart';
+import '../../../features/tutorial/screens/tutorial_screen_v2.dart';
 import '../binairo_notifier.dart';
 import '../binairo_state.dart';
 
@@ -34,10 +36,7 @@ class _BinairoHomeScreenState extends ConsumerState<BinairoHomeScreen> {
     final hasOngoingGame = gameState != null && !gameState.isCompleted;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
-    // 게임 메인에서는 하드웨어 백키 무시 (허브 이동은 아이콘으로만)
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {},
+    return BackPressExit(
       child: Scaffold(
       appBar: AppBar(
         title: Text(AppStrings.get('binairo.title')),
@@ -46,6 +45,13 @@ class _BinairoHomeScreenState extends ConsumerState<BinairoHomeScreen> {
           onPressed: () => context.go(AppRoutes.hub),
           tooltip: AppStrings.get('binairo.backToHub'),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.help_outline_rounded),
+            onPressed: () => showTutorialBottomSheet(context, 'binairo'),
+            tooltip: AppStrings.get('help.rules'),
+          ),
+        ],
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -137,7 +143,8 @@ class _BinairoHomeScreenState extends ConsumerState<BinairoHomeScreen> {
               const SizedBox(height: 32),
 
               // 규칙 안내
-              if (!hasOngoingGame) _RulesHint(isDark: isDark),
+              // 게임 설명/규칙은 진행 중 게임 여부와 무관하게 항상 표시
+              _RulesHint(isDark: isDark),
             ],
           ),
         ),
@@ -175,13 +182,35 @@ class _BinairoHomeScreenState extends ConsumerState<BinairoHomeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
+      isScrollControlled: true, // 컨텐츠 전체 크기 사용 (하단 잘림 방지)
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
       builder: (ctx) => SafeArea(
+        top: false, // 모달이라 상단 padding 불필요
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 16,
+            bottom: 16 + MediaQuery.of(ctx).viewInsets.bottom, // 키보드/시스템바 대응
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // 시각적 핸들 (BottomSheet 힌트)
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: Theme.of(ctx).colorScheme.onSurface.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+              ),
               Text(
                 AppStrings.get('binairo.selectDifficulty'),
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
@@ -344,15 +373,15 @@ class _DifficultyTile extends StatelessWidget {
   Color _difficultyColor() {
     switch (difficulty) {
       case BinairoDifficulty.beginner:
-        return Colors.green;
+        return DifficultyTokens.beginnerColor(isDark);
       case BinairoDifficulty.easy:
-        return Colors.lightGreen;
+        return DifficultyTokens.easyColor(isDark);
       case BinairoDifficulty.medium:
-        return Colors.orange;
+        return DifficultyTokens.mediumColor(isDark);
       case BinairoDifficulty.hard:
-        return Colors.deepOrange;
+        return DifficultyTokens.hardColor(isDark);
       case BinairoDifficulty.master:
-        return Colors.purple;
+        return DifficultyTokens.masterColor(isDark);
     }
   }
 }

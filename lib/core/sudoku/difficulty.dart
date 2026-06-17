@@ -1,23 +1,28 @@
+import '../../shared/l10n/app_strings.dart';
+
 /// 난이도 정의
 enum Difficulty {
-  beginner(code: 0, label: '입문', emptyCellRange: (30, 35)),
-  easy(code: 1, label: '쉬움', emptyCellRange: (36, 40)),
-  medium(code: 2, label: '보통', emptyCellRange: (41, 46)),
-  hard(code: 3, label: '어려움', emptyCellRange: (47, 52)),
-  expert(code: 4, label: '전문가', emptyCellRange: (53, 58)),
-  master(code: 5, label: '마스터', emptyCellRange: (59, 62));
+  beginner(code: 0, labelKey: 'difficulty.beginner', emptyCellRange: (30, 35)),
+  easy(code: 1, labelKey: 'difficulty.easy', emptyCellRange: (36, 40)),
+  medium(code: 2, labelKey: 'difficulty.medium', emptyCellRange: (41, 46)),
+  hard(code: 3, labelKey: 'difficulty.hard', emptyCellRange: (47, 52)),
+  expert(code: 4, labelKey: 'difficulty.expert', emptyCellRange: (53, 58)),
+  master(code: 5, labelKey: 'difficulty.master', emptyCellRange: (59, 62));
 
   const Difficulty({
     required this.code,
-    required this.label,
+    required this.labelKey,
     required this.emptyCellRange,
   });
 
   /// 난이도 코드 (seed 생성용)
   final int code;
 
-  /// 한글 라벨
-  final String label;
+  /// 다국어 라벨 키
+  final String labelKey;
+
+  /// 현재 언어에 맞는 라벨 (다국어)
+  String get label => AppStrings.get(labelKey);
 
   /// 빈 칸 개수 범위 (최소, 최대)
   final (int, int) emptyCellRange;

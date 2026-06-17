@@ -124,8 +124,8 @@ void main() {
       expect(state.hintTargetCell, isNotNull);
       expect(state.lastHintResult, isNotNull);
       expect(state.lastHintResult!.level, equals(HintLevel.highlightRegion));
-      // 아직 힌트 카운트는 증가하지 않음 (4단계에서만 증가)
-      expect(state.hintCount, equals(0));
+      // L1 진입 시 +1 (신규 정책: L1 +1, L4 +1, 총 2)
+      expect(state.hintCount, equals(1));
     });
 
     test('같은 셀에서 연속 힌트 시 단계가 올라감', () {
@@ -151,9 +151,9 @@ void main() {
       expect(notifier.testState!.currentHintLevel, equals(3));
       expect(notifier.testState!.lastHintResult!.level, equals(HintLevel.explainTechnique));
 
-      // 4단계 — 정답 공개 + 힌트 카운트 증가
+      // 4단계 — 정답 공개 + 힌트 카운트 추가 증가 (L1 +1 + L4 +1 = 총 2)
       notifier.useHint();
-      expect(notifier.testState!.hintCount, equals(1));
+      expect(notifier.testState!.hintCount, equals(2));
       // 힌트 상태 초기화됨
       expect(notifier.testState!.currentHintLevel, equals(0));
       expect(notifier.testState!.hintTargetCell, isNull);

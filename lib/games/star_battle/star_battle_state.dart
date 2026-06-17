@@ -1,0 +1,315 @@
+import '../../shared/l10n/app_strings.dart';
+import 'engine/star_battle_board.dart';
+import 'engine/star_battle_hint.dart';
+
+/// Star Battle 게임 모드
+enum StarBattleGameMode {
+  classic('mode.classic'),
+  relax('mode.relax'),
+  dailyPuzzle('mode.dailyPuzzle');
+
+  const StarBattleGameMode(this.labelKey);
+  final String labelKey;
+  // 현재 언어에 맞는 표시명 (다국어)
+  String get label => AppStrings.get(labelKey);
+}
+
+/// Star Battle 난이도
+enum StarBattleDifficulty {
+  beginner(6, 1, 'difficulty.beginner'),
+  easy(7, 1, 'difficulty.easy'),
+  medium(8, 1, 'difficulty.medium'),
+  hard(9, 2, 'difficulty.hard'),
+  master(10, 2, 'difficulty.master');
+
+  const StarBattleDifficulty(this.gridSize, this.starCount, this.labelKey);
+  final int gridSize;
+  final int starCount;
+  final String labelKey;
+  // 현재 언어에 맞는 표시명 (다국어)
+  String get label => AppStrings.get(labelKey);
+
+  /// 난이도 코드 (0~4, 제너레이터 연동)
+  int get code => index;
+}
+
+/// 입력 모드 (토글 선택)
+enum StarBattleInputMode {
+  star,   // ★ 별 배치
+  cross,  // X 표시
+  erase,  // 지우개
+}
+
+/// Undo 액션 타입
+enum StarBattleUndoActionType { setValue, clearValue }
+
+/// Undo 스택 항목
+class StarBattleUndoAction {
+  final StarBattleUndoActionType type;
+  final int row;
+  final int col;
+  final int previousValue; // -1(빈칸), 0(X), 1(★)
+
+  const StarBattleUndoAction({
+    required this.type,
+    required this.row,
+    required this.col,
+    required this.previousValue,
+  });
+}
+
+/// 완료 시 등급
+enum StarBattleGrade {
+  perfect('S', 'grade.perfect'),
+  excellent('A', 'grade.excellent'),
+  great('B', 'grade.great'),
+  good('C', 'grade.good');
+
+  const StarBattleGrade(this.symbol, this.labelKey);
+  final String symbol;
+  final String labelKey;
+  // 현재 언어에 맞는 표시명 (다국어)
+  String get label => AppStrings.get(labelKey);
+
+  /// 등급 산정
+  static StarBattleGrade evaluate({
+    required int mistakes,
+    required int hints,
+    int? elapsedSeconds,
+    StarBattleDifficulty? difficulty,
+  }) {
+    // 난이도별 임계값
+    final thresholds = gradeThresholds(difficulty);
+
+    if (mistakes > thresholds.cMistakes || hints > thresholds.cHints) return good;
+    if (mistakes > thresholds.bMistakes || hints > thresholds.bHints) return great;
+
+    // 실수 0, 힌트 0이면 시간 고려
+    if (mistakes == 0 && hints == 0) {
+      if (elapsedSeconds != null && difficulty != null) {
+        final baseTime = baseTimeForDifficulty(difficulty);
+        if (elapsedSeconds <= baseTime) return perfect;
+        if (elapsedSeconds <= baseTime * 2) return excellent;
+        return excellent; // 시간 초과해도 노미스 노힌트면 최소 A
+      }
+      return perfect;
+    }
+
+    return excellent;
+  }
+
+  /// 난이도별 등급 임계값
+  static ({int bMistakes, int bHints, int cMistakes, int cHints}) gradeThresholds(
+    StarBattleDifficulty? difficulty,
+  ) {
+    switch (difficulty) {
+      case StarBattleDifficulty.hard:
+      case StarBattleDifficulty.master:
+        return (bMistakes: 2, bHints: 2, cMistakes: 4, cHints: 4);
+      default:
+        return (bMistakes: 1, bHints: 1, cMistakes: 3, cHints: 3);
+    }
+  }
+
+  /// 난이도별 기준 시간 (초)
+  static int baseTimeForDifficulty(StarBattleDifficulty difficulty) {
+    switch (difficulty) {
+      case StarBattleDifficulty.beginner:
+        return 60;   // 1분
+      case StarBattleDifficulty.easy:
+        return 120;  // 2분
+      case StarBattleDifficulty.medium:
+        return 300;  // 5분
+      case StarBattleDifficulty.hard:
+        return 600;  // 10분
+      case StarBattleDifficulty.master:
+        return 1200; // 20분
+    }
+  }
+}
+
+/// Star Battle 게임 상태
+class StarBattleState {
+  /// 진행률 (0.0~1.0): 결정된 셀 / 전체.
+  double get progress {
+    final t = current.totalCells; if (t == 0) return 1.0; return (t - current.emptyCellCount) / t;
+  }
+
+  /// 퍼즐 보드 (초기 상태 — 영역 정보 포함)
+  final StarBattleBoard puzzle;
+
+  /// 정답 보드
+  final StarBattleBoard solution;
+
+  /// 현재 보드 (플레이어 입력 반영)
+  final StarBattleBoard current;
+
+  /// 격자 크기
+  int get size => current.size;
+
+  /// 행/열/영역당 별 수
+  int get starCount => current.starCount;
+
+  /// 게임 모드
+  final StarBattleGameMode mode;
+
+  /// 난이도
+  final StarBattleDifficulty difficulty;
+
+  /// 경과 시간 (초)
+  final int elapsedSeconds;
+
+  /// 실수 횟수
+  final int mistakeCount;
+
+  /// 힌트 사용 횟수
+  final int hintCount;
+
+  /// 일시정지 여부
+  final bool isPaused;
+
+  /// 완료 여부
+  final bool isCompleted;
+
+  /// 자동완성 진행 중 여부
+  final bool isAutoCompleting;
+
+  /// Undo 스택
+  final List<StarBattleUndoAction> undoStack;
+
+  /// 선택된 셀 (row, col)
+  final (int, int)? selectedCell;
+
+  /// 현재 힌트 레벨 (0: 없음, 1~4: 단계)
+  final int currentHintLevel;
+
+  /// 힌트 대상 셀
+  final (int, int)? hintTargetCell;
+
+  /// 마지막 힌트 결과 (UI 표시용)
+  final StarBattleHintResult? lastHintResult;
+
+  /// 현재 입력 모드 (★ / X / 지우개)
+  final StarBattleInputMode inputMode;
+
+  const StarBattleState({
+    required this.puzzle,
+    required this.solution,
+    required this.current,
+    required this.mode,
+    required this.difficulty,
+    this.elapsedSeconds = 0,
+    this.mistakeCount = 0,
+    this.hintCount = 0,
+    this.isPaused = false,
+    this.isCompleted = false,
+    this.isAutoCompleting = false,
+    this.undoStack = const [],
+    this.selectedCell,
+    this.currentHintLevel = 0,
+    this.hintTargetCell,
+    this.lastHintResult,
+    this.inputMode = StarBattleInputMode.star,
+  });
+
+  /// 완료 등급
+  StarBattleGrade get grade => StarBattleGrade.evaluate(
+        mistakes: mistakeCount,
+        hints: hintCount,
+        elapsedSeconds: elapsedSeconds,
+        difficulty: difficulty,
+      );
+
+  /// copyWith
+  StarBattleState copyWith({
+    StarBattleBoard? puzzle,
+    StarBattleBoard? solution,
+    StarBattleBoard? current,
+    StarBattleGameMode? mode,
+    StarBattleDifficulty? difficulty,
+    int? elapsedSeconds,
+    int? mistakeCount,
+    int? hintCount,
+    bool? isPaused,
+    bool? isCompleted,
+    bool? isAutoCompleting,
+    List<StarBattleUndoAction>? undoStack,
+    (int, int)? selectedCell,
+    bool clearSelectedCell = false,
+    int? currentHintLevel,
+    (int, int)? hintTargetCell,
+    bool clearHintTarget = false,
+    StarBattleHintResult? lastHintResult,
+    bool clearLastHint = false,
+    StarBattleInputMode? inputMode,
+  }) {
+    return StarBattleState(
+      puzzle: puzzle ?? this.puzzle,
+      solution: solution ?? this.solution,
+      current: current ?? this.current,
+      mode: mode ?? this.mode,
+      difficulty: difficulty ?? this.difficulty,
+      elapsedSeconds: elapsedSeconds ?? this.elapsedSeconds,
+      mistakeCount: mistakeCount ?? this.mistakeCount,
+      hintCount: hintCount ?? this.hintCount,
+      isPaused: isPaused ?? this.isPaused,
+      isCompleted: isCompleted ?? this.isCompleted,
+      isAutoCompleting: isAutoCompleting ?? this.isAutoCompleting,
+      undoStack: undoStack ?? this.undoStack,
+      selectedCell: clearSelectedCell ? null : (selectedCell ?? this.selectedCell),
+      currentHintLevel: currentHintLevel ?? this.currentHintLevel,
+      hintTargetCell: clearHintTarget ? null : (hintTargetCell ?? this.hintTargetCell),
+      lastHintResult: clearLastHint ? null : (lastHintResult ?? this.lastHintResult),
+      inputMode: inputMode ?? this.inputMode,
+    );
+  }
+
+  /// JSON 직렬화
+  Map<String, dynamic> toJson() {
+    return {
+      'puzzle': puzzle.toJson(),
+      'solution': solution.toJson(),
+      'current': current.toJson(),
+      'mode': mode.name,
+      'difficulty': difficulty.name,
+      'elapsedSeconds': elapsedSeconds,
+      'mistakeCount': mistakeCount,
+      'hintCount': hintCount,
+      'isPaused': isPaused,
+      'isCompleted': isCompleted,
+      'selectedCell': selectedCell != null
+          ? {'row': selectedCell!.$1, 'col': selectedCell!.$2}
+          : null,
+      'currentHintLevel': currentHintLevel,
+      'hintTargetCell': hintTargetCell != null
+          ? {'row': hintTargetCell!.$1, 'col': hintTargetCell!.$2}
+          : null,
+    };
+  }
+
+  /// JSON 역직렬화
+  factory StarBattleState.fromJson(Map<String, dynamic> json) {
+    final selectedCellJson = json['selectedCell'] as Map<String, dynamic>?;
+    final hintTargetJson = json['hintTargetCell'] as Map<String, dynamic>?;
+
+    return StarBattleState(
+      puzzle: StarBattleBoard.fromJson(json['puzzle'] as Map<String, dynamic>),
+      solution: StarBattleBoard.fromJson(json['solution'] as Map<String, dynamic>),
+      current: StarBattleBoard.fromJson(json['current'] as Map<String, dynamic>),
+      mode: StarBattleGameMode.values.byName(json['mode'] as String),
+      difficulty: StarBattleDifficulty.values.byName(json['difficulty'] as String),
+      elapsedSeconds: json['elapsedSeconds'] as int? ?? 0,
+      mistakeCount: json['mistakeCount'] as int? ?? 0,
+      hintCount: json['hintCount'] as int? ?? 0,
+      isPaused: json['isPaused'] as bool? ?? false,
+      isCompleted: json['isCompleted'] as bool? ?? false,
+      selectedCell: selectedCellJson != null
+          ? (selectedCellJson['row'] as int, selectedCellJson['col'] as int)
+          : null,
+      currentHintLevel: json['currentHintLevel'] as int? ?? 0,
+      hintTargetCell: hintTargetJson != null
+          ? (hintTargetJson['row'] as int, hintTargetJson['col'] as int)
+          : null,
+    );
+  }
+}

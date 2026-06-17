@@ -601,6 +601,8 @@ void main() {
 
       notifier.selectCell(emptyRow!, emptyCol!);
       notifier.inputNumber(5);
+      // 셀우선 모드는 입력 후 포커스 해제 → 삭제 전 재선택
+      notifier.selectCell(emptyRow, emptyCol);
       notifier.deleteValue();
 
       final saved = storage.loadCurrentGame();
@@ -639,7 +641,8 @@ void main() {
 
       final saved = storage.loadCurrentGame();
       expect(saved, isNotNull);
-      expect(saved!.hintCount, 1);
+      // 신규 정책: L1 +1, L4 +1 → 총 2
+      expect(saved!.hintCount, 2);
       notifier.dispose();
     });
 

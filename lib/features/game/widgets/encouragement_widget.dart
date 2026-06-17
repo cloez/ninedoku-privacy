@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../shared/constants/app_colors.dart';
 import '../game_notifier.dart';
 import '../game_state.dart';
 
@@ -102,13 +103,18 @@ class _EncouragementWidgetState extends ConsumerState<EncouragementWidget>
   }
 
   (Color, String) _styleForEncouragement(Encouragement e) {
+    // 디자인 리뷰: 추임새 톤 일관성 (다크 모드는 명도 상향 토큰)
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     switch (e) {
       case Encouragement.good:
-        return (const Color(0xFF4CAF50), '👍');
+        // success jade
+        return (isDark ? AppColors.successDark : AppColors.successLight, '👍');
       case Encouragement.excellent:
-        return (const Color(0xFFFF9800), '⭐');
+        // info slate
+        return (isDark ? AppColors.infoDark : AppColors.infoLight, '⭐');
       case Encouragement.perfect:
-        return (const Color(0xFFFFD700), '🔥');
+        // 디톤된 골드 (순금색 회피)
+        return (AppColors.encouragementPerfect, '🔥');
     }
   }
 }

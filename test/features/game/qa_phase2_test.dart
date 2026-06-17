@@ -230,8 +230,9 @@ void main() {
       // 힌트 사용 후 선택된 셀 확인
       expect(afterState.selectedCell, isNotNull,
           reason: '힌트 사용 후 셀이 선택되어야 함');
-      expect(afterState.hintCount, beforeState.hintCount + 1,
-          reason: '힌트 카운트가 증가해야 함');
+      // 새 비용 정책: L1 +1, L4 +1 = 총 +2
+      expect(afterState.hintCount, beforeState.hintCount + 2,
+          reason: '힌트 카운트가 L1+L4 합산으로 +2 증가해야 함');
 
       // 선택된 셀의 값이 정답과 일치하는지 확인
       final (hintRow, hintCol) = afterState.selectedCell!;
@@ -267,7 +268,8 @@ void main() {
 
       // 두 힌트가 서로 다른 셀을 공개했는지 확인
       if (secondHintCell != null && firstHintCell != null) {
-        expect(notifier.testState!.hintCount, 2);
+        // 새 비용 정책: 사이클당 +2, 두 사이클 → 4
+        expect(notifier.testState!.hintCount, 4);
         // 두 번째 힌트 셀도 정답인지 확인
         final (r, c) = secondHintCell;
         expect(

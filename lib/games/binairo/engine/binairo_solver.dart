@@ -17,15 +17,39 @@ class BinairoSolver {
   }
 
   /// 해가 정확히 1개인지 검증
-  static bool hasUniqueSolution(BinairoBoard board) {
-    return countSolutions(board, limit: 2) == 1;
+  static bool hasUniqueSolution(
+    BinairoBoard board, {
+    Stopwatch? timeout,
+    Duration? timeLimit,
+  }) {
+    return countSolutions(
+          board,
+          limit: 2,
+          timeout: timeout,
+          timeLimit: timeLimit,
+        ) ==
+        1;
   }
 
   /// 해답 개수 카운트 (limit에 도달하면 조기 종료)
-  static int countSolutions(BinairoBoard board, {int limit = 2}) {
+  /// [timeout]/[timeLimit] 지정 시, 시간 초과되면 즉시 중단하고 현재까지 카운트 반환 (best-effort)
+  static int countSolutions(
+    BinairoBoard board, {
+    int limit = 2,
+    Stopwatch? timeout,
+    Duration? timeLimit,
+  }) {
     final cells = List<int>.from(board.cells);
     var count = 0;
-    _countRecursive(cells, board.size, limit, (newCount) => count = newCount, count);
+    _countRecursive(
+      cells,
+      board.size,
+      limit,
+      (newCount) => count = newCount,
+      count,
+      timeout,
+      timeLimit,
+    );
     return count;
   }
 
@@ -72,8 +96,14 @@ class BinairoSolver {
     int limit,
     void Function(int) updateCount,
     int currentCount,
+    Stopwatch? timeout,
+    Duration? timeLimit,
   ) {
     if (currentCount >= limit) return;
+    // 시간 초과 시 즉시 중단 (best-effort)
+    if (timeout != null && timeLimit != null && timeout.elapsed > timeLimit) {
+      return;
+    }
 
     final idx = _findEmptyCell(cells, size);
     if (idx == -1) {
@@ -85,12 +115,15 @@ class BinairoSolver {
 
     for (var value = 0; value <= 1; value++) {
       if (currentCount >= limit) return;
+      if (timeout != null && timeLimit != null && timeout.elapsed > timeLimit) {
+        return;
+      }
       cells[idx] = value;
       if (_isValidPlacement(cells, size, idx)) {
         _countRecursive(cells, size, limit, (newCount) {
           currentCount = newCount;
           updateCount(newCount);
-        }, currentCount);
+        }, currentCount, timeout, timeLimit);
       }
       cells[idx] = -1;
     }

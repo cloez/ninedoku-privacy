@@ -9,9 +9,9 @@ import '../../../shared/constants/app_colors.dart';
 import '../../../shared/l10n/app_strings.dart';
 import '../widgets/time_trend_chart.dart';
 
-/// 통계 화면 (S-10) — 전체/스도쿠/비나이로 탭 지원
+/// 통계 화면 (S-10) — 전체/스도쿠/비나이로/지뢰찾기/음양/노노그램 탭 지원
 class StatisticsScreen extends ConsumerStatefulWidget {
-  /// 초기 탭: null → 0(전체), 'sudoku' → 1, 'binairo' → 2
+  /// 초기 탭: null → 0(전체), 'sudoku' → 1, 'binairo' → 2, 'minesweeper' → 3, 'yinyang' → 4, 'nonogram' → 5
   final String? initialTab;
 
   const StatisticsScreen({super.key, this.initialTab});
@@ -28,8 +28,184 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
         return 1;
       case 'binairo':
         return 2;
+      case 'minesweeper':
+        return 3;
+      case 'yinyang':
+        return 4;
+      case 'nonogram':
+        return 5;
+      case 'killerSudoku':
+        return 6;
+      case 'starBattle':
+        return 7;
+      case 'lightUp':
+        return 8;
+      case 'futoshiki':
+        return 9;
+      case 'tents':
+        return 10;
+      case 'jigsawSudoku':
+        return 11;
+      case 'skyscrapers':
+        return 12;
+      case 'kakuro':
+        return 13;
       default:
         return 0;
+    }
+  }
+
+  /// SharedPreferences에서 빌딩 완료 기록 로드
+  List<CompletedGameRecord> _loadSkyscrapersRecords(SharedPreferences prefs) {
+    final json = prefs.getString('skyscrapers_completed_games');
+    if (json == null) return [];
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list
+          .map((e) => CompletedGameRecord.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// SharedPreferences에서 카쿠로 완료 기록 로드
+  List<CompletedGameRecord> _loadKakuroRecords(SharedPreferences prefs) {
+    final json = prefs.getString('kakuro_completed_games');
+    if (json == null) return [];
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list
+          .map((e) => CompletedGameRecord.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// SharedPreferences에서 직소 스도쿠 완료 기록 로드
+  List<CompletedGameRecord> _loadJigsawSudokuRecords(SharedPreferences prefs) {
+    final json = prefs.getString('jigsaw_completed_games');
+    if (json == null) return [];
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list
+          .map((e) => CompletedGameRecord.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// SharedPreferences에서 텐트 완료 기록 로드
+  List<CompletedGameRecord> _loadTentsRecords(SharedPreferences prefs) {
+    final json = prefs.getString('tents_completed_games');
+    if (json == null) return [];
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list
+          .map((e) => CompletedGameRecord.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// SharedPreferences에서 후토시키 완료 기록 로드
+  List<CompletedGameRecord> _loadFutoshikiRecords(SharedPreferences prefs) {
+    final json = prefs.getString('futoshiki_completed_games');
+    if (json == null) return [];
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list
+          .map((e) => CompletedGameRecord.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// SharedPreferences에서 라이트업 완료 기록 로드
+  List<CompletedGameRecord> _loadLightUpRecords(SharedPreferences prefs) {
+    final json = prefs.getString('lightup_completed_games');
+    if (json == null) return [];
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list
+          .map((e) => CompletedGameRecord.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// SharedPreferences에서 스타 배틀 완료 기록 로드
+  List<CompletedGameRecord> _loadStarBattleRecords(SharedPreferences prefs) {
+    final json = prefs.getString('starbattle_completed_games');
+    if (json == null) return [];
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list
+          .map((e) => CompletedGameRecord.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// SharedPreferences에서 킬러 스도쿠 완료 기록 로드
+  List<CompletedGameRecord> _loadKillerSudokuRecords(SharedPreferences prefs) {
+    final json = prefs.getString('killer_sudoku_completed_games');
+    if (json == null) return [];
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list
+          .map((e) => CompletedGameRecord.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// SharedPreferences에서 지뢰찾기 완료 기록 로드
+  List<CompletedGameRecord> _loadMinesweeperRecords(SharedPreferences prefs) {
+    final json = prefs.getString('minesweeper_completed_games');
+    if (json == null) return [];
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list
+          .map((e) => CompletedGameRecord.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// SharedPreferences에서 음양 완료 기록 로드
+  List<CompletedGameRecord> _loadYinYangRecords(SharedPreferences prefs) {
+    final json = prefs.getString('yinyang_completed_games');
+    if (json == null) return [];
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list
+          .map((e) => CompletedGameRecord.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// SharedPreferences에서 노노그램 완료 기록 로드
+  List<CompletedGameRecord> _loadNonogramRecords(SharedPreferences prefs) {
+    final json = prefs.getString('nonogram_completed_games');
+    if (json == null) return [];
+    try {
+      final list = jsonDecode(json) as List<dynamic>;
+      return list
+          .map((e) => CompletedGameRecord.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (_) {
+      return [];
     }
   }
 
@@ -53,20 +229,43 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
     final prefs = ref.watch(sharedPreferencesProvider);
     final sudokuRecords = storage.loadCompletedGames();
     final binairoRecords = _loadBinairoRecords(prefs);
-    final allRecords = [...sudokuRecords, ...binairoRecords];
+    final minesweeperRecords = _loadMinesweeperRecords(prefs);
+    final yinyangRecords = _loadYinYangRecords(prefs);
+    final nonogramRecords = _loadNonogramRecords(prefs);
+    final killerSudokuRecords = _loadKillerSudokuRecords(prefs);
+    final starBattleRecords = _loadStarBattleRecords(prefs);
+    final lightUpRecords = _loadLightUpRecords(prefs);
+    final futoshikiRecords = _loadFutoshikiRecords(prefs);
+    final tentsRecords = _loadTentsRecords(prefs);
+    final jigsawSudokuRecords = _loadJigsawSudokuRecords(prefs);
+    final skyscrapersRecords = _loadSkyscrapersRecords(prefs);
+    final kakuroRecords = _loadKakuroRecords(prefs);
+    final allRecords = [...sudokuRecords, ...binairoRecords, ...minesweeperRecords, ...yinyangRecords, ...nonogramRecords, ...killerSudokuRecords, ...starBattleRecords, ...lightUpRecords, ...futoshikiRecords, ...tentsRecords, ...jigsawSudokuRecords, ...skyscrapersRecords, ...kakuroRecords];
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return DefaultTabController(
-      length: 3,
+      length: 14,
       initialIndex: _initialIndex,
       child: Scaffold(
         appBar: AppBar(
           title: Text(AppStrings.get('stats.title')),
           bottom: TabBar(
+            isScrollable: true,
             tabs: [
               Tab(text: AppStrings.get('stats.tab.all')),
               Tab(text: AppStrings.get('stats.tab.sudoku')),
               Tab(text: AppStrings.get('stats.tab.binairo')),
+              Tab(text: AppStrings.get('stats.tab.minesweeper')),
+              Tab(text: AppStrings.get('stats.tab.yinyang')),
+              Tab(text: AppStrings.get('stats.tab.nonogram')),
+              Tab(text: AppStrings.get('stats.tab.killerSudoku')),
+              Tab(text: AppStrings.get('stats.tab.starBattle')),
+              Tab(text: AppStrings.get('stats.tab.lightUp')),
+              Tab(text: AppStrings.get('stats.tab.futoshiki')),
+              Tab(text: AppStrings.get('stats.tab.tents')),
+              Tab(text: AppStrings.get('stats.tab.jigsawSudoku')),
+              Tab(text: AppStrings.get('stats.tab.skyscrapers')),
+              Tab(text: AppStrings.get('stats.tab.kakuro')),
             ],
           ),
         ),
@@ -78,6 +277,28 @@ class _StatisticsScreenState extends ConsumerState<StatisticsScreen> {
             _StatsContent(records: sudokuRecords, isDark: isDark),
             // 비나이로 탭
             _StatsContent(records: binairoRecords, isDark: isDark),
+            // 지뢰찾기 탭
+            _StatsContent(records: minesweeperRecords, isDark: isDark),
+            // 음양 탭
+            _StatsContent(records: yinyangRecords, isDark: isDark),
+            // 노노그램 탭
+            _StatsContent(records: nonogramRecords, isDark: isDark),
+            // 킬러 스도쿠 탭
+            _StatsContent(records: killerSudokuRecords, isDark: isDark),
+            // 스타 배틀 탭
+            _StatsContent(records: starBattleRecords, isDark: isDark),
+            // 라이트업 탭
+            _StatsContent(records: lightUpRecords, isDark: isDark),
+            // 후토시키 탭
+            _StatsContent(records: futoshikiRecords, isDark: isDark),
+            // 텐트 탭
+            _StatsContent(records: tentsRecords, isDark: isDark),
+            // 직소 스도쿠 탭
+            _StatsContent(records: jigsawSudokuRecords, isDark: isDark),
+            // 빌딩 탭
+            _StatsContent(records: skyscrapersRecords, isDark: isDark),
+            // 카쿠로 탭
+            _StatsContent(records: kakuroRecords, isDark: isDark),
           ],
         ),
       ),

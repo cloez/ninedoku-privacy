@@ -443,7 +443,10 @@ void main() {
       notifier.inputNumber(1); // 오답 (정답: 5)
       expect(notifier.testState!.mistakeCount, equals(1));
 
+      // 셀우선 모드: 입력 후 포커스 해제되므로 재선택 필요
+      notifier.selectCell(0, 0);
       // 오답 삭제 후 정답 입력 → Naked Single 체인으로 자동완성 발동
+      // (deleteValue는 selectedCell을 유지. 같은 셀 재탭 시 토글 해제되므로 추가 selectCell 금지)
       notifier.deleteValue();
       notifier.inputNumber(5); // 정답
 

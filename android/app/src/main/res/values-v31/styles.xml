@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android 12+ (API 31+) Splash Screen API 설정 -->
+<resources>
+    <!-- LaunchTheme: 앱 cold start 시 적용
+         - 배경: 네이비 단색 (Flutter SplashScreen과 연속)
+         - 아이콘: 투명 (K 아이콘 노출 차단)
+         - 애니메이션 시간: 0ms (즉시 Flutter로 전환) -->
+    <style name="LaunchTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowSplashScreenBackground">@color/splash_background</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon_transparent</item>
+        <item name="android:windowSplashScreenAnimationDuration">0</item>
+        <item name="android:windowBackground">@drawable/launch_background</item>
+    </style>
+    <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@color/splash_background</item>
+    </style>
+</resources>

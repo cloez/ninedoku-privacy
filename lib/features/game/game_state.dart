@@ -1,6 +1,8 @@
 import '../../core/sudoku/board.dart';
 import '../../core/sudoku/difficulty.dart';
 import '../../core/sudoku/hint_engine.dart';
+import '../../core/sudoku/technique_analyzer.dart';
+import '../../shared/l10n/app_strings.dart';
 
 /// 추임새 종류
 enum Encouragement {
@@ -20,14 +22,16 @@ enum InputMode {
 
 /// 게임 모드
 enum GameMode {
-  classic('클래식'),
-  dailyPuzzle('오늘의 퍼즐'),
-  relax('릴렉스'),
-  quickPlay('빠른 게임'),
-  challenge('도전');
+  classic('mode.classic'),
+  dailyPuzzle('mode.dailyPuzzle'),
+  relax('mode.relax'),
+  quickPlay('mode.quickPlay'),
+  challenge('mode.challenge');
 
-  const GameMode(this.label);
-  final String label;
+  const GameMode(this.labelKey);
+  final String labelKey;
+  // 현재 언어에 맞는 표시명 (다국어)
+  String get label => AppStrings.get(labelKey);
 }
 
 /// Undo 액션 타입
@@ -55,14 +59,16 @@ class UndoAction {
 
 /// 완료 시 등급
 enum Grade {
-  perfect('S', '퍼펙트'),
-  excellent('A', '훌륭함'),
-  great('B', '좋음'),
-  good('C', '보통');
+  perfect('S', 'grade.perfect'),
+  excellent('A', 'grade.excellent'),
+  great('B', 'grade.great'),
+  good('C', 'grade.good');
 
-  const Grade(this.symbol, this.label);
+  const Grade(this.symbol, this.labelKey);
   final String symbol;
-  final String label;
+  final String labelKey;
+  // 현재 언어에 맞는 표시명 (다국어)
+  String get label => AppStrings.get(labelKey);
 
   /// 실수, 힌트, 시간, 난이도 기반 등급 산정
   static Grade evaluate({
@@ -158,9 +164,37 @@ class GameState {
   final bool isAutoCompleting; // 자동완성 애니메이션 진행 중
   final List<(int, int, int)> autoCompleteCells; // 자동완성 대상 셀 목록 [(row, col, value)]
   final int autoCompleteStep; // 애니메이션 진행 단계 (0~셀 수, step번째까지 표시)
+  /// 방금 완성된 행/열/박스 목록 (UI 펄스 트리거용, 0.7초 뒤 자동 클리어)
+  /// type: 'row' | 'col' | 'box', index: 0~8
+  final List<({String type, int index})> recentlyCompletedLines;
+
+  /// 이번 게임 중 힌트로 학습한 기법 목록 — H4(결과 화면 표시용).
+  /// L2 진입 시점에 lastHintResult.technique을 누적. 세션 휘발(영속화 없음).
+  final Set<SolvingTechnique> usedTechniques;
+
+  /// H3: 방금 L4로 정답이 공개된 셀 좌표. UI 글로우/scale 트리거용.
+  /// 800ms 후 notifier에서 null로 클리어.
+  final (int, int)? recentlyRevealedHintCell;
 
   /// 도전 모드에서 힌트 사용 불가
   bool get isHintDisabled => mode == GameMode.challenge;
+
+  /// 진행률 (0.0~1.0): 결정된 셀 / 결정 필요 셀
+  /// 초기 고정 셀은 제외하고, 사용자가 채워야 하는 셀 중 정답이 입력된 비율.
+  double get progress {
+    var needed = 0;
+    var filled = 0;
+    for (var r = 0; r < 9; r++) {
+      for (var c = 0; c < 9; c++) {
+        if (board.isFixed[r][c]) continue;
+        needed++;
+        final v = board.currentBoard[r][c];
+        if (v != 0 && !board.isWrong(r, c)) filled++;
+      }
+    }
+    if (needed == 0) return 1.0;
+    return filled / needed;
+  }
 
   const GameState({
     required this.board,
@@ -187,6 +221,9 @@ class GameState {
     this.isAutoCompleting = false,
     this.autoCompleteCells = const [],
     this.autoCompleteStep = 0,
+    this.recentlyCompletedLines = const [],
+    this.usedTechniques = const {},
+    this.recentlyRevealedHintCell,
   });
 
   /// 완료 등급 (시간/난이도 포함)
@@ -221,6 +258,8 @@ class GameState {
           : null,
       'maxMistakes': maxMistakes,
       'isGameOver': isGameOver,
+      // H4: 학습한 기법은 세션 휘발이지만 직렬화 호환을 위해 키 자리만 마련
+      'usedTechniques': usedTechniques.map((t) => t.name).toList(),
     };
   }
 
@@ -248,7 +287,23 @@ class GameState {
       selectedCell: selectedCellJson != null
           ? (selectedCellJson['row'] as int, selectedCellJson['col'] as int)
           : null,
+      usedTechniques: _parseUsedTechniques(json['usedTechniques']),
     );
+  }
+
+  /// 학습한 기법 목록 안전 파싱 (누락/잘못된 값은 빈 셋으로 폴백)
+  static Set<SolvingTechnique> _parseUsedTechniques(dynamic raw) {
+    if (raw is! List) return const {};
+    final result = <SolvingTechnique>{};
+    for (final v in raw) {
+      if (v is! String) continue;
+      try {
+        result.add(SolvingTechnique.values.byName(v));
+      } catch (_) {
+        // 알 수 없는 기법 이름은 무시
+      }
+    }
+    return result;
   }
 
   GameState copyWith({
@@ -282,6 +337,10 @@ class GameState {
     bool? isAutoCompleting,
     List<(int, int, int)>? autoCompleteCells,
     int? autoCompleteStep,
+    List<({String type, int index})>? recentlyCompletedLines,
+    Set<SolvingTechnique>? usedTechniques,
+    (int, int)? recentlyRevealedHintCell,
+    bool clearRecentlyRevealedHintCell = false,
   }) {
     return GameState(
       board: board ?? this.board,
@@ -308,6 +367,11 @@ class GameState {
       isAutoCompleting: isAutoCompleting ?? this.isAutoCompleting,
       autoCompleteCells: autoCompleteCells ?? this.autoCompleteCells,
       autoCompleteStep: autoCompleteStep ?? this.autoCompleteStep,
+      recentlyCompletedLines: recentlyCompletedLines ?? this.recentlyCompletedLines,
+      usedTechniques: usedTechniques ?? this.usedTechniques,
+      recentlyRevealedHintCell: clearRecentlyRevealedHintCell
+          ? null
+          : (recentlyRevealedHintCell ?? this.recentlyRevealedHintCell),
     );
   }
 

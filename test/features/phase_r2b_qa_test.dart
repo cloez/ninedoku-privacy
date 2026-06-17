@@ -255,6 +255,8 @@ void main() {
       expect(notifier.testState!.board.currentBoard[0][0], 7,
           reason: '7이 입력되어야 함');
 
+      // 셀우선 모드는 입력 후 포커스가 해제되므로 토글 전 셀 재선택
+      notifier.selectCell(0, 0);
       // 같은 숫자 7을 다시 입력 → 토글로 삭제
       notifier.inputNumber(7);
       expect(notifier.testState!.board.currentBoard[0][0], 0,

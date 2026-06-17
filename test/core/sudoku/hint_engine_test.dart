@@ -81,7 +81,7 @@ void main() {
       expect(hint, isNull);
     });
 
-    test('영역 강조 셀 목록에 대상 셀의 행/열/박스가 포함된다', () {
+    test('영역 강조 셀 목록에 대상 셀의 박스가 포함된다 (Level 1: 단일 영역)', () {
       final hint = HintEngine.getHint(
         board: board,
         level: HintLevel.highlightRegion,
@@ -91,16 +91,19 @@ void main() {
       final row = hint!.row;
       final col = hint.col;
 
-      // 같은 행의 다른 셀이 포함되어야 함
-      for (var c = 0; c < 9; c++) {
-        expect(hint.highlightCells, contains((row, c)));
-      }
-      // 같은 열의 다른 셀이 포함되어야 함
-      for (var r = 0; r < 9; r++) {
-        if (r != row) {
-          expect(hint.highlightCells, contains((r, col)));
+      // 새 정책: Level 1은 박스 단일 영역만 강조 (9칸)
+      expect(hint.regionType, equals('box'));
+      expect(hint.highlightCells.length, equals(9));
+      // 같은 박스의 셀들이 포함되어야 함
+      final boxRow = (row ~/ 3) * 3;
+      final boxCol = (col ~/ 3) * 3;
+      for (var r = boxRow; r < boxRow + 3; r++) {
+        for (var c = boxCol; c < boxCol + 3; c++) {
+          expect(hint.highlightCells, contains((r, c)));
         }
       }
+      // 다국어 메시지 키
+      expect(hint.messageKey, equals('hint.level1.box'));
     });
   });
 }

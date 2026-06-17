@@ -48,3 +48,8 @@ app.*.map.json
 android/app/keystore/
 *.jks
 *.keystore
+
+# 임시 작업 산출물 / 빌드 캐시
+/tmp/
+/release/
+assets/app_icon_backup_*.png

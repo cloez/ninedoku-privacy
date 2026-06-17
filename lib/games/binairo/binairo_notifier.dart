@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -13,6 +14,7 @@ import 'engine/binairo_hint.dart';
 import 'engine/binairo_solver.dart';
 import 'binairo_state.dart';
 
+import '../../shared/services/sound_manager.dart';
 /// SharedPreferences 저장 키
 const _storageKey = 'binairo_current_game';
 
@@ -243,7 +245,11 @@ class BinairoNotifier extends StateNotifier<BinairoState?> with WidgetsBindingOb
     if (state!.current.fixed.contains(idx)) return;
 
     final currentValue = state!.current.getValue(row, col);
-    if (currentValue == value) return; // 같은 값이면 무시
+    if (currentValue == value) {
+      // 같은 값 재입력 = 토글 삭제 (체크포인트 해제, 빈 값으로 복원)
+      _applyValue(row, col, currentValue, -1);
+      return;
+    }
 
     _applyValue(row, col, currentValue, value);
   }
@@ -265,12 +271,19 @@ class BinairoNotifier extends StateNotifier<BinairoState?> with WidgetsBindingOb
   void _applyValue(int row, int col, int previousValue, int newValue) {
     final newBoard = state!.current.setValue(row, col, newValue);
 
+    // 햅틱: 셀 입력 시 가벼운 진동
+    HapticFeedback.selectionClick();
+    SoundManager().play(SoundManager.kClick);
+
     // 실수 판정: 값을 넣었는데 정답과 다르면 실수
     var newMistakeCount = state!.mistakeCount;
     if (newValue != -1) {
       final correctValue = state!.solution.getValue(row, col);
       if (newValue != correctValue) {
         newMistakeCount++;
+        // 햅틱: 실수 발생 시 강한 진동
+        HapticFeedback.heavyImpact();
+        SoundManager().play(SoundManager.kMistake);
       }
     }
 
@@ -406,6 +419,9 @@ class BinairoNotifier extends StateNotifier<BinairoState?> with WidgetsBindingOb
       _timer?.cancel();
       state = state!.copyWith(isCompleted: true);
       _clearSave();
+      // 햅틱: 게임 완료 시 강한 진동
+      HapticFeedback.heavyImpact();
+      SoundManager().play(SoundManager.kGameComplete);
 
       // 완료 기록 저장 및 배지 평가
       _saveCompletionAndEvaluateBadges();
@@ -452,6 +468,30 @@ class BinairoNotifier extends StateNotifier<BinairoState?> with WidgetsBindingOb
 
   /// 진행 중인 게임이 있는지
   bool get hasOngoingGame => state != null && !state!.isCompleted;
+
+  // === 체크포인트 (메모리 저장) ===
+  BinairoState? _checkpoint;
+
+  /// 체크포인트가 저장되어 있는지 여부
+  bool get hasCheckpoint => _checkpoint != null;
+
+  /// 현재 상태를 체크포인트로 저장
+  void saveCheckpoint() {
+    if (state == null || state!.isCompleted) return;
+    _checkpoint = state;
+  }
+
+  /// 체크포인트로 복원
+  void restoreCheckpoint() {
+    if (_checkpoint == null) return;
+    state = _checkpoint;
+    _autoSave();
+  }
+
+  /// 체크포인트 삭제
+  void clearCheckpoint() {
+    _checkpoint = null;
+  }
 }
 
 /// Binairo Provider

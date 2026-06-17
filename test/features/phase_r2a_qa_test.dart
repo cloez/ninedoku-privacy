@@ -192,8 +192,8 @@ void main() {
       expect(state.lastHintResult, isNotNull);
       expect(state.lastHintResult!.level, equals(HintLevel.highlightRegion));
       expect(state.lastHintResult!.highlightCells, isNotEmpty);
-      // 힌트 카운트는 아직 0
-      expect(state.hintCount, equals(0));
+      // 신규 정책: L1 진입 시 +1
+      expect(state.hintCount, equals(1));
     });
 
     test('2단계 힌트: candidates에 정답 포함', () {
@@ -220,8 +220,8 @@ void main() {
       final hintCol = state.lastHintResult!.col;
       final correctAnswer = state.board.solution[hintRow][hintCol];
       expect(state.lastHintResult!.candidates, contains(correctAnswer));
-      // 힌트 카운트 아직 0
-      expect(state.hintCount, equals(0));
+      // 신규 정책: L1에서 +1, L2는 추가 비용 없음
+      expect(state.hintCount, equals(1));
     });
 
     test('3단계 힌트: technique 또는 candidates 정보 포함', () {
@@ -248,8 +248,8 @@ void main() {
       final hasTechnique = state.lastHintResult!.technique != null;
       final hasCandidates = state.lastHintResult!.candidates.isNotEmpty;
       expect(hasTechnique || hasCandidates, isTrue);
-      // 힌트 카운트 아직 0
-      expect(state.hintCount, equals(0));
+      // 신규 정책: L1에서 +1, L3까지는 추가 비용 없음
+      expect(state.hintCount, equals(1));
     });
 
     test('4단계: hintCount 증가 + 셀에 정답 입력', () {
@@ -274,7 +274,8 @@ void main() {
       notifier.useHint();
       final state = notifier.testState!;
 
-      expect(state.hintCount, equals(1));
+      // 신규 정책: L1 +1, L4 +1 → 총 2
+      expect(state.hintCount, equals(2));
       // 해당 셀에 정답이 입력됨
       expect(state.board.currentBoard[hintRow][hintCol], equals(correctAnswer));
       // 힌트 상태 초기화
@@ -516,20 +517,20 @@ void main() {
       );
 
       // 첫 번째 4단계 힌트
-      notifier.useHint(); // 1
+      notifier.useHint(); // 1 → hintCount = 1 (L1 +1)
       notifier.useHint(); // 2
       notifier.useHint(); // 3
-      notifier.useHint(); // 4 → hintCount = 1
-
-      expect(notifier.testState!.hintCount, equals(1));
-
-      // 두 번째 4단계 힌트 (새로운 셀 대상)
-      notifier.useHint(); // 1 (새 셀)
-      notifier.useHint(); // 2
-      notifier.useHint(); // 3
-      notifier.useHint(); // 4 → hintCount = 2
+      notifier.useHint(); // 4 → hintCount = 2 (L4 +1)
 
       expect(notifier.testState!.hintCount, equals(2));
+
+      // 두 번째 4단계 힌트 (새로운 셀 대상)
+      notifier.useHint(); // 1 (새 셀) → hintCount = 3
+      notifier.useHint(); // 2
+      notifier.useHint(); // 3
+      notifier.useHint(); // 4 → hintCount = 4
+
+      expect(notifier.testState!.hintCount, equals(4));
     });
 
     test('게임 없는 상태에서 useHint 호출해도 에러 없음', () {

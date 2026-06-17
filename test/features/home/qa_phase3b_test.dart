@@ -27,7 +27,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -52,7 +52,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -88,7 +88,7 @@ void main() {
               return n;
             }),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -119,7 +119,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             // hub에서 시작 → 온보딩으로 리다이렉트 확인
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -140,7 +140,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             // hub에서 시작 → 온보딩으로 리다이렉트
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -164,7 +164,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             // hub에서 시작 → 온보딩으로 리다이렉트
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -204,7 +204,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -226,7 +226,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -255,7 +255,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -282,7 +282,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -311,7 +311,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -345,7 +345,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -372,7 +372,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -413,7 +413,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -452,7 +452,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -479,7 +479,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -505,7 +505,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
@@ -530,7 +530,7 @@ void main() {
             sharedPreferencesProvider.overrideWithValue(prefs),
             initialLocationProvider.overrideWithValue(AppRoutes.home),
           ],
-          child: const NinedokuApp(),
+          child: const KPuzzlesApp(),
         ),
       );
       await tester.pumpAndSettle();
