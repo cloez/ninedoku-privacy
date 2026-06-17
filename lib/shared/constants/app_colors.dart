@@ -135,13 +135,22 @@ class AppColors {
   static const encouragementPerfect = Color(0xFFC9963A);
 
   // ---------------------------------------------------------------------------
+  // KP 디자인 시스템 컬러 (디자인 레퍼런스 기반)
+  // ---------------------------------------------------------------------------
+  static const kpText = Color(0xFF1D2340);
+  static const kpMuted = Color(0xFF69718A);
+  static const kpBorder = Color(0xFFE8E7F2);
+  static const kpPaleViolet = Color(0xFFF1EDFF);
+  static const kpGreen = Color(0xFF59C878);
+
+  // ---------------------------------------------------------------------------
   // 허브/게임 메인 그라데이션
   // ---------------------------------------------------------------------------
-  /// 허브 배경 그라데이션 (라이트)
+  /// 허브 배경 그라데이션 (라이트) — KP 디자인
   static const hubGradientLight = [
-    Color(0xFFE8E4FF), // 라벤더
-    Color(0xFFF0E8FF), // 소프트 바이올렛
-    Color(0xFFFBFAFF), // 배경색으로 자연스럽게 이어짐
+    Color(0xFFF7F4FF),
+    Color(0xFFFBFAFF),
+    Color(0xFFFFFCF7),
   ];
   /// 허브 배경 그라데이션 (다크)
   static const hubGradientDark = [
@@ -150,13 +159,15 @@ class AppColors {
     Color(0xFF0F0E1A),
   ];
 
-  /// 진행률 카드 그라데이션
+  /// 진행률 카드 그라데이션 — KP 디자인
   static const progressGradientLight = [
-    Color(0xFF3F35B5), // 브랜드 인디고
-    Color(0xFF7A4DFF), // 바이올렛
+    Color(0xFF5D52EF),
+    Color(0xFF4A7AF8),
+    Color(0xFF8C65F5),
   ];
   static const progressGradientDark = [
     Color(0xFF2A2470),
+    Color(0xFF3055A8),
     Color(0xFF5535B5),
   ];
 
@@ -164,36 +175,53 @@ class AppColors {
   // 게임별 테마 컬러 (허브 카드 + 게임 메인 화면)
   // ---------------------------------------------------------------------------
   static const Map<String, Color> gameThemeColors = {
-    'sudoku':       Color(0xFF3978F6), // 블루
-    'binairo':      Color(0xFF55D6BE), // 민트
-    'minesweeper':  Color(0xFF7A4DFF), // 바이올렛
-    'yinyang':      Color(0xFFD478E8), // 핑크·퍼플
-    'nonogram':     Color(0xFFFF9A5C), // 오렌지
-    'killerSudoku': Color(0xFF5EB9FF), // 스카이블루
-    'starBattle':   Color(0xFFFFC542), // 골드
-    'lightUp':      Color(0xFF5ECFCF), // 시안
-    'futoshiki':    Color(0xFF4DB8A4), // 틸
-    'tents':        Color(0xFFFF7A59), // 코랄
-    'jigsawSudoku': Color(0xFF66BB6A), // 그린
-    'skyscrapers':  Color(0xFF3F51B5), // 네이비·블루
-    'kakuro':       Color(0xFFE57373), // 핑크·레드
+    'sudoku':       Color(0xFF3C8AF7),
+    'binairo':      Color(0xFF45CDAE),
+    'minesweeper':  Color(0xFF7557D9),
+    'yinyang':      Color(0xFF8A4DFF),
+    'nonogram':     Color(0xFFF49A3F),
+    'killerSudoku': Color(0xFF4BA9F5),
+    'starBattle':   Color(0xFFFFBE2E),
+    'lightUp':      Color(0xFF17B8D6),
+    'futoshiki':    Color(0xFF20A79A),
+    'tents':        Color(0xFFF27A51),
+    'jigsawSudoku': Color(0xFF60BE50),
+    'skyscrapers':  Color(0xFF315E9A),
+    'kakuro':       Color(0xFFE65072),
   };
 
-  /// 게임별 파스텔 배경색 (카드 배경용)
+  /// 게임별 파스텔 배경색 (카드 배경용) — 레퍼런스 기준 고채도
   static const Map<String, Color> gameCardBgColors = {
-    'sudoku':       Color(0xFFE8F0FF),
-    'binairo':      Color(0xFFE0F8F2),
-    'minesweeper':  Color(0xFFF0E8FF),
-    'yinyang':      Color(0xFFFAE8FC),
-    'nonogram':     Color(0xFFFFF0E5),
-    'killerSudoku': Color(0xFFE5F2FF),
-    'starBattle':   Color(0xFFFFF8E0),
-    'lightUp':      Color(0xFFE0F8F8),
-    'futoshiki':    Color(0xFFE0F5F0),
-    'tents':        Color(0xFFFFEDE5),
-    'jigsawSudoku': Color(0xFFE8F5E9),
-    'skyscrapers':  Color(0xFFE8EAF6),
-    'kakuro':       Color(0xFFFFEBEE),
+    'sudoku':       Color(0xFFC8D9FF),
+    'binairo':      Color(0xFFC2EDE2),
+    'minesweeper':  Color(0xFFDFCFFF),
+    'yinyang':      Color(0xFFF0D5F2),
+    'nonogram':     Color(0xFFFFE4C4),
+    'killerSudoku': Color(0xFFCCE2FF),
+    'starBattle':   Color(0xFFFFF0B8),
+    'lightUp':      Color(0xFFCAE5F5),
+    'futoshiki':    Color(0xFFC5EDE2),
+    'tents':        Color(0xFFFFD5C5),
+    'jigsawSudoku': Color(0xFFCCEEC8),
+    'skyscrapers':  Color(0xFFC5DDF5),
+    'kakuro':       Color(0xFFFFCDDB),
+  };
+
+  /// 게임별 보조색 (그라데이션 히어로 카드용) — KP 디자인 기반
+  static const Map<String, Color> gameSecondaryColors = {
+    'sudoku':       Color(0xFF6B54EE),
+    'binairo':      Color(0xFF53627E),
+    'minesweeper':  Color(0xFFFF7A59),
+    'yinyang':      Color(0xFFE265C4),
+    'nonogram':     Color(0xFF385276),
+    'killerSudoku': Color(0xFF3F35B5),
+    'starBattle':   Color(0xFF7251D6),
+    'lightUp':      Color(0xFFFFCC46),
+    'futoshiki':    Color(0xFFC79A31),
+    'tents':        Color(0xFF3D9B69),
+    'jigsawSudoku': Color(0xFF3978F6),
+    'skyscrapers':  Color(0xFF5EB9FF),
+    'kakuro':       Color(0xFF7350E8),
   };
 }
 

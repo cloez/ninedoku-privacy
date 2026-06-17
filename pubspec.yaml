@@ -41,6 +41,9 @@ dependencies:
 
   # 사운드 (Game Feel v1.0.1+6)
   audioplayers: ^6.0.0
+
+  # SVG 아이콘
+  flutter_svg: ^2.0.17
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -74,3 +77,4 @@ flutter:
   assets:
     - assets/
     - assets/sounds/
+    - assets/icons/

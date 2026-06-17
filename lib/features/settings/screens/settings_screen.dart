@@ -2,16 +2,20 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../core/storage/storage_providers.dart';
 import '../../../core/storage/backup_service.dart';
+import '../../../shared/constants/app_colors.dart';
 import '../../../shared/l10n/app_strings.dart';
 import '../../../shared/services/sound_manager.dart';
 import '../../../shared/utils/motion_helper.dart' as motion_helper;
+import '../../../shared/widgets/casual_widgets.dart';
+import '../../../shared/widgets/kp_widgets.dart';
 import 'theme_select_screen.dart';
 
-/// 설정 화면 (S-13)
+/// 설정 화면 (S-13) — KP 디자인 시스템 적용
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
 
@@ -20,6 +24,13 @@ class SettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
+  // KP 디자인 컬러 상수
+  static const _kpText = AppColors.kpText;
+  static const _kpMuted = AppColors.kpMuted;
+  static const _kpBorder = AppColors.kpBorder;
+  static const _kpPaleViolet = AppColors.kpPaleViolet;
+  static const _kpBlue = AppColors.brandBlue;
+
   @override
   Widget build(BuildContext context) {
     final settings = ref.watch(settingsProvider);
@@ -27,177 +38,369 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final s = AppStrings.get;
 
     return Scaffold(
-      appBar: AppBar(title: Text(s('settings.title'))),
-      body: ListView(
+      // AppBar 제거 — 커스텀 헤더 Row 사용
+      body: KPBackground(
+        child: CustomScrollView(
+          slivers: [
+            // 커스텀 AppBar 영역
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+              sliver: SliverList.list(
+                children: [
+                  _buildAppBar(context, s),
+                ],
+              ),
+            ),
+
+            // 메인 설정 콘텐츠
+            SliverPadding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 32),
+              sliver: SliverList.list(
+                children: [
+                  // ── 화면 설정 섹션 ──
+                  _sectionTitle(s('settings.display'), 'assets/icons/palette.svg'),
+                  _card(isDark, [
+                    _ThemeTile(
+                      currentMode: settings.themeMode,
+                      onChanged: (mode) async {
+                        await settings.setThemeMode(mode);
+                        ref.invalidate(settingsProvider);
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.palette_outlined,
+                          color: isDark ? Colors.white70 : _kpMuted),
+                      title: Text(s('settings.themeSelect'),
+                          style: _tileTitleStyle(isDark)),
+                      trailing: _trailingChevron(isDark),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (_) => const ThemeSelectScreen()),
+                        );
+                      },
+                    ),
+                    _FontScaleTile(
+                      currentScale: settings.fontScale,
+                      onChanged: (scale) async {
+                        await settings.setFontScale(scale);
+                        ref.invalidate(settingsProvider);
+                      },
+                    ),
+                    // 언어 설정
+                    _LanguageTile(
+                      currentLang: AppStrings.currentLanguage,
+                      onChanged: (lang) async {
+                        await settings.setLanguage(lang.locale.languageCode);
+                        AppStrings.setLanguage(lang);
+                        ref.invalidate(settingsProvider);
+                        if (mounted) setState(() {});
+                      },
+                    ),
+                  ]),
+
+                  // ── 게임플레이 설정 섹션 ──
+                  _sectionTitle(s('settings.gameplay'), 'assets/icons/gear.svg'),
+                  _card(isDark, [
+                    SwitchListTile(
+                      title: Text(s('settings.showMistakes'),
+                          style: _tileTitleStyle(isDark)),
+                      subtitle: Text(s('settings.showMistakes.desc'),
+                          style: _tileSubtitleStyle(isDark)),
+                      value: settings.showMistakes,
+                      onChanged: (value) async {
+                        await settings.setShowMistakes(value);
+                        ref.invalidate(settingsProvider);
+                      },
+                    ),
+                    SwitchListTile(
+                      title: Text(s('settings.showTimer'),
+                          style: _tileTitleStyle(isDark)),
+                      subtitle: Text(s('settings.showTimer.desc'),
+                          style: _tileSubtitleStyle(isDark)),
+                      value: settings.showTimer,
+                      onChanged: (value) async {
+                        await settings.setShowTimer(value);
+                        ref.invalidate(settingsProvider);
+                      },
+                    ),
+                    SwitchListTile(
+                      title: Text(s('settings.autoComplete'),
+                          style: _tileTitleStyle(isDark)),
+                      subtitle: Text(s('settings.autoComplete.desc'),
+                          style: _tileSubtitleStyle(isDark)),
+                      value: settings.autoComplete,
+                      onChanged: (value) async {
+                        await settings.setAutoComplete(value);
+                        ref.invalidate(settingsProvider);
+                      },
+                    ),
+                  ]),
+
+                  // ── 피드백 설정 섹션 ──
+                  _sectionTitle(
+                      s('settings.feedback'), 'assets/icons/speaker.svg'),
+                  _card(isDark, [
+                    SwitchListTile(
+                      title: Text(s('settings.sound'),
+                          style: _tileTitleStyle(isDark)),
+                      subtitle: Text(s('settings.sound.desc'),
+                          style: _tileSubtitleStyle(isDark)),
+                      value: settings.soundEnabled,
+                      onChanged: (value) async {
+                        await settings.setSoundEnabled(value);
+                        SoundManager().setEnabled(value);
+                        ref.invalidate(settingsProvider);
+                      },
+                    ),
+                    SwitchListTile(
+                      title: Text(s('settings.vibration'),
+                          style: _tileTitleStyle(isDark)),
+                      subtitle: Text(s('settings.vibration.desc'),
+                          style: _tileSubtitleStyle(isDark)),
+                      value: settings.vibrationEnabled,
+                      onChanged: (value) async {
+                        await settings.setVibrationEnabled(value);
+                        ref.invalidate(settingsProvider);
+                      },
+                    ),
+                    SwitchListTile(
+                      title: Text(s('settings.reduceEffects'),
+                          style: _tileTitleStyle(isDark)),
+                      subtitle: Text(s('settings.reduceEffects.desc'),
+                          style: _tileSubtitleStyle(isDark)),
+                      value: settings.reduceEffects,
+                      onChanged: (value) async {
+                        await settings.setReduceEffects(value);
+                        // 글로벌 효과 줄이기 플래그 즉시 반영
+                        motion_helper.setReduceEffects(value);
+                        ref.invalidate(settingsProvider);
+                      },
+                    ),
+                  ]),
+
+                  // ── 정보 섹션 ──
+                  _sectionTitle(s('settings.info'), 'assets/icons/info.svg'),
+                  _card(isDark, [
+                    ListTile(
+                      leading: Icon(Icons.info_outline_rounded,
+                          color: isDark ? Colors.white70 : _kpMuted),
+                      title: Text(s('settings.version'),
+                          style: _tileTitleStyle(isDark)),
+                      trailing: Text(
+                        '1.0.0',
+                        style: TextStyle(
+                          color: isDark ? Colors.white54 : _kpMuted,
+                        ),
+                      ),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.wifi_off_rounded,
+                          color: isDark ? Colors.white70 : _kpMuted),
+                      title: Text(s('settings.offline'),
+                          style: _tileTitleStyle(isDark)),
+                      subtitle: Text(s('settings.offline.desc'),
+                          style: _tileSubtitleStyle(isDark)),
+                      trailing: Icon(
+                        Icons.check_circle_rounded,
+                        color: Colors.green.shade400,
+                      ),
+                    ),
+                  ]),
+
+                  // ── 백업 섹션 ──
+                  _sectionTitle(
+                      s('settings.backup'), 'assets/icons/upload.svg'),
+                  _card(isDark, [
+                    ListTile(
+                      leading: Icon(Icons.upload_file_rounded,
+                          color: isDark ? Colors.white70 : _kpMuted),
+                      title: Text(s('settings.backup.export'),
+                          style: _tileTitleStyle(isDark)),
+                      subtitle: Text(s('settings.backup.export.desc'),
+                          style: _tileSubtitleStyle(isDark)),
+                      trailing: _trailingChevron(isDark),
+                      onTap: () => _exportBackup(context, ref),
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.download_rounded,
+                          color: isDark ? Colors.white70 : _kpMuted),
+                      title: Text(s('settings.backup.import'),
+                          style: _tileTitleStyle(isDark)),
+                      subtitle: Text(s('settings.backup.import.desc'),
+                          style: _tileSubtitleStyle(isDark)),
+                      trailing: _trailingChevron(isDark),
+                      onTap: () => _importBackup(context, ref),
+                    ),
+                  ]),
+
+                  // ── 기타 항목 ──
+                  const SizedBox(height: 12),
+                  _card(isDark, [
+                    ListTile(
+                      leading: Icon(Icons.description_outlined,
+                          color: isDark ? Colors.white70 : _kpMuted),
+                      title: Text(s('settings.licenses'),
+                          style: _tileTitleStyle(isDark)),
+                      trailing: _trailingChevron(isDark),
+                      onTap: () {
+                        showLicensePage(
+                          context: context,
+                          applicationName: 'K-Puzzles',
+                          applicationVersion: '1.0.0',
+                        );
+                      },
+                    ),
+                    ListTile(
+                      leading: Icon(Icons.favorite_outline_rounded,
+                          color: isDark ? Colors.white70 : _kpMuted),
+                      title: Text(s('settings.donation'),
+                          style: _tileTitleStyle(isDark)),
+                      subtitle: Text(s('settings.donation.desc'),
+                          style: _tileSubtitleStyle(isDark)),
+                      trailing: _trailingChevron(isDark),
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                              builder: (_) => const DonationScreen()),
+                        );
+                      },
+                    ),
+                  ]),
+
+                  const SizedBox(height: 24),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// 커스텀 AppBar — KPIconButton(뒤로가기) + 가운데 제목
+  Widget _buildAppBar(BuildContext context, String Function(String) s) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
         children: [
-          // 화면 설정
-          _SectionHeader(title: s('settings.display')),
-          _ThemeTile(
-            currentMode: settings.themeMode,
-            onChanged: (mode) async {
-              await settings.setThemeMode(mode);
-              ref.invalidate(settingsProvider);
-            },
+          KPIconButton(
+            asset: 'assets/icons/arrow-left.svg',
+            size: 44,
+            onTap: () => Navigator.of(context).pop(),
           ),
-          ListTile(
-            leading: const Icon(Icons.palette_outlined),
-            title: Text(s('settings.themeSelect')),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const ThemeSelectScreen()),
-              );
-            },
+          const Spacer(),
+          Text(
+            s('settings.title'),
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w900,
+              color: isDark ? Colors.white : _kpText,
+            ),
           ),
-          _FontScaleTile(
-            currentScale: settings.fontScale,
-            onChanged: (scale) async {
-              await settings.setFontScale(scale);
-              ref.invalidate(settingsProvider);
-            },
-          ),
-          // 언어 설정
-          _LanguageTile(
-            currentLang: AppStrings.currentLanguage,
-            onChanged: (lang) async {
-              await settings.setLanguage(lang.locale.languageCode);
-              AppStrings.setLanguage(lang);
-              ref.invalidate(settingsProvider);
-              if (mounted) setState(() {});
-            },
-          ),
-          const Divider(),
+          const Spacer(),
+          // 오른쪽 대칭용 빈 공간 (뒤로가기 버튼 크기만큼)
+          const SizedBox(width: 44),
+        ],
+      ),
+    );
+  }
 
-          // 게임플레이 설정
-          _SectionHeader(title: s('settings.gameplay')),
-          SwitchListTile(
-            title: Text(s('settings.showMistakes')),
-            subtitle: Text(s('settings.showMistakes.desc')),
-            value: settings.showMistakes,
-            onChanged: (value) async {
-              await settings.setShowMistakes(value);
-              ref.invalidate(settingsProvider);
-            },
-          ),
-          SwitchListTile(
-            title: Text(s('settings.showTimer')),
-            subtitle: Text(s('settings.showTimer.desc')),
-            value: settings.showTimer,
-            onChanged: (value) async {
-              await settings.setShowTimer(value);
-              ref.invalidate(settingsProvider);
-            },
-          ),
-          SwitchListTile(
-            title: Text(s('settings.autoComplete')),
-            subtitle: Text(s('settings.autoComplete.desc')),
-            value: settings.autoComplete,
-            onChanged: (value) async {
-              await settings.setAutoComplete(value);
-              ref.invalidate(settingsProvider);
-            },
-          ),
-          const Divider(),
-
-          // 피드백 설정
-          _SectionHeader(title: s('settings.feedback')),
-          SwitchListTile(
-            title: Text(s('settings.sound')),
-            subtitle: Text(s('settings.sound.desc')),
-            value: settings.soundEnabled,
-            onChanged: (value) async {
-              await settings.setSoundEnabled(value);
-              SoundManager().setEnabled(value);
-              ref.invalidate(settingsProvider);
-            },
-          ),
-          SwitchListTile(
-            title: Text(s('settings.vibration')),
-            subtitle: Text(s('settings.vibration.desc')),
-            value: settings.vibrationEnabled,
-            onChanged: (value) async {
-              await settings.setVibrationEnabled(value);
-              ref.invalidate(settingsProvider);
-            },
-          ),
-          SwitchListTile(
-            title: Text(s('settings.reduceEffects')),
-            subtitle: Text(s('settings.reduceEffects.desc')),
-            value: settings.reduceEffects,
-            onChanged: (value) async {
-              await settings.setReduceEffects(value);
-              // 글로벌 효과 줄이기 플래그 즉시 반영 (위젯이 prefs 없이도 동작)
-              motion_helper.setReduceEffects(value);
-              ref.invalidate(settingsProvider);
-            },
-          ),
-          const Divider(),
-
-          // 정보
-          _SectionHeader(title: s('settings.info')),
-          ListTile(
-            leading: const Icon(Icons.info_outline_rounded),
-            title: Text(s('settings.version')),
-            trailing: Text(
-              '1.0.0',
-              style: TextStyle(
-                color: isDark ? Colors.white54 : Colors.black45,
+  /// KP 스타일 섹션 타이틀 — SVG 아이콘 + paleViolet 배경 + 파란 볼드 텍스트
+  Widget _sectionTitle(String text, String svgAsset) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 18, 0, 10),
+      child: Row(
+        children: [
+          // SVG 아이콘 컨테이너
+          Container(
+            width: 42,
+            height: 42,
+            decoration: BoxDecoration(
+              color: isDark
+                  ? _kpPaleViolet.withValues(alpha: 0.15)
+                  : _kpPaleViolet,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Center(
+              child: SvgPicture.asset(
+                svgAsset,
+                width: 22,
+                height: 22,
+                colorFilter: ColorFilter.mode(
+                  isDark ? AppColors.brandViolet : AppColors.brandIndigo,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),
-          ListTile(
-            leading: const Icon(Icons.wifi_off_rounded),
-            title: Text(s('settings.offline')),
-            subtitle: Text(s('settings.offline.desc')),
-            trailing: Icon(
-              Icons.check_circle_rounded,
-              color: Colors.green.shade400,
+          const SizedBox(width: 12),
+          Text(
+            text,
+            style: TextStyle(
+              color: isDark ? AppColors.brandSkyBlue : _kpBlue,
+              fontSize: 17,
+              fontWeight: FontWeight.w900,
             ),
-          ),
-          const Divider(),
-          _SectionHeader(title: s('settings.backup')),
-          ListTile(
-            leading: const Icon(Icons.upload_file_rounded),
-            title: Text(s('settings.backup.export')),
-            subtitle: Text(s('settings.backup.export.desc')),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () => _exportBackup(context, ref),
-          ),
-          ListTile(
-            leading: const Icon(Icons.download_rounded),
-            title: Text(s('settings.backup.import')),
-            subtitle: Text(s('settings.backup.import.desc')),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () => _importBackup(context, ref),
-          ),
-          const Divider(),
-          ListTile(
-            leading: const Icon(Icons.description_outlined),
-            title: Text(s('settings.licenses')),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () {
-              showLicensePage(
-                context: context,
-                applicationName: 'K-Puzzles',
-                applicationVersion: '1.0.0',
-              );
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.favorite_outline_rounded),
-            title: Text(s('settings.donation')),
-            subtitle: Text(s('settings.donation.desc')),
-            trailing: const Icon(Icons.chevron_right_rounded),
-            onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const DonationScreen()),
-              );
-            },
           ),
         ],
       ),
     );
   }
+
+  /// KP 스타일 카드 — 흰색 둥근 컨테이너 + 소프트 그림자 + 디바이더
+  Widget _card(bool isDark, List<Widget> rows) {
+    return Container(
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: isDark
+            ? AppColors.surfaceDark.withValues(alpha: 0.96)
+            : Colors.white.withValues(alpha: 0.96),
+        borderRadius: BorderRadius.circular(28),
+        boxShadow: isDark ? null : KPShadow.soft,
+        border: Border.all(
+          color: isDark ? AppColors.outlineDark : _kpBorder,
+        ),
+      ),
+      child: Column(
+        children: [
+          for (int i = 0; i < rows.length; i++) ...[
+            rows[i],
+            if (i < rows.length - 1)
+              Divider(
+                height: 1,
+                indent: 72,
+                color: isDark ? AppColors.outlineDark : _kpBorder,
+              ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  /// 타일 제목 텍스트 스타일
+  TextStyle _tileTitleStyle(bool isDark) => TextStyle(
+        color: isDark ? Colors.white : _kpText,
+      );
+
+  /// 타일 부제목 텍스트 스타일
+  TextStyle _tileSubtitleStyle(bool isDark) => TextStyle(
+        color: isDark ? Colors.white54 : _kpMuted,
+        fontSize: 13,
+      );
+
+  /// 트레일링 쉐브론 아이콘
+  Widget _trailingChevron(bool isDark) => SvgPicture.asset(
+        'assets/icons/chevron-right.svg',
+        width: 20,
+        height: 20,
+        colorFilter: ColorFilter.mode(
+          isDark ? Colors.white38 : _kpMuted,
+          BlendMode.srcIn,
+        ),
+      );
 
   /// 내보내기: 파일 저장 후 공유 시트로 전송
   Future<void> _exportBackup(BuildContext ctx, WidgetRef ref) async {
@@ -230,7 +433,9 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     } catch (e) {
       if (ctx.mounted) {
         ScaffoldMessenger.of(ctx).showSnackBar(
-          SnackBar(content: Text('${AppStrings.get('settings.backup.error')}: $e')),
+          SnackBar(
+              content:
+                  Text('${AppStrings.get('settings.backup.error')}: $e')),
         );
       }
     }
@@ -246,7 +451,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       if (files.isEmpty) {
         if (ctx.mounted) {
           ScaffoldMessenger.of(ctx).showSnackBar(
-            SnackBar(content: Text(AppStrings.get('settings.backup.noFiles'))),
+            SnackBar(
+                content: Text(AppStrings.get('settings.backup.noFiles'))),
           );
         }
         return;
@@ -297,11 +503,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             ),
             TextButton(
               onPressed: () => Navigator.pop(dialogCtx, false),
-              child: Text(AppStrings.get('settings.backup.restore.add')),
+              child:
+                  Text(AppStrings.get('settings.backup.restore.add')),
             ),
             TextButton(
               onPressed: () => Navigator.pop(dialogCtx, true),
-              child: Text(AppStrings.get('settings.backup.restore.overwrite')),
+              child: Text(
+                  AppStrings.get('settings.backup.restore.overwrite')),
             ),
           ],
         ),
@@ -310,10 +518,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       if (overwrite == null || !ctx.mounted) return;
 
       final json = await selected.readAsString();
-      final success = await service.restoreFromJson(json, overwrite: overwrite);
+      final success =
+          await service.restoreFromJson(json, overwrite: overwrite);
       if (ctx.mounted) {
         ScaffoldMessenger.of(ctx).showSnackBar(
-          SnackBar(content: Text(
+          SnackBar(
+              content: Text(
             success
                 ? AppStrings.get('settings.backup.restored')
                 : AppStrings.get('settings.backup.error'),
@@ -324,30 +534,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     } catch (e) {
       if (ctx.mounted) {
         ScaffoldMessenger.of(ctx).showSnackBar(
-          SnackBar(content: Text('${AppStrings.get('settings.backup.error')}: $e')),
+          SnackBar(
+              content:
+                  Text('${AppStrings.get('settings.backup.error')}: $e')),
         );
       }
     }
-  }
-}
-
-/// 섹션 헤더
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  const _SectionHeader({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 4),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-      ),
-    );
   }
 }
 
@@ -360,6 +552,7 @@ class _ThemeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     // 라벨이 긴 언어(스페인어/프랑스어/힌디어/아랍어 등)에서도 글자가 세로로 깨지지 않도록
     // 라벨을 위, 세그먼트를 아래로 분리 배치
     return Padding(
@@ -369,12 +562,16 @@ class _ThemeTile extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(_iconForMode(currentMode)),
+              Icon(_iconForMode(currentMode),
+                  color: isDark ? Colors.white70 : AppColors.kpMuted),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
                   AppStrings.get('settings.theme'),
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : AppColors.kpText,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ],
@@ -430,6 +627,7 @@ class _FontScaleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = AppStrings.get;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     // 라벨이 긴 언어에서도 글자가 세로로 깨지지 않도록 라벨/세그먼트 분리 배치
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -438,12 +636,16 @@ class _FontScaleTile extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.text_fields_rounded),
+              Icon(Icons.text_fields_rounded,
+                  color: isDark ? Colors.white70 : AppColors.kpMuted),
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
                   s('settings.fontSize'),
-                  style: Theme.of(context).textTheme.bodyLarge,
+                  style: TextStyle(
+                    color: isDark ? Colors.white : AppColors.kpText,
+                    fontSize: 16,
+                  ),
                 ),
               ),
             ],
@@ -481,9 +683,12 @@ class _LanguageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     return ListTile(
-      leading: const Icon(Icons.language_rounded),
-      title: Text(AppStrings.get('settings.language')),
+      leading: Icon(Icons.language_rounded,
+          color: isDark ? Colors.white70 : AppColors.kpMuted),
+      title: Text(AppStrings.get('settings.language'),
+          style: TextStyle(color: isDark ? Colors.white : AppColors.kpText)),
       trailing: DropdownButton<AppLanguage>(
         value: currentLang,
         underline: const SizedBox.shrink(),
@@ -530,38 +735,59 @@ class DonationScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: Text(s('donation.title'))),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          children: [
-            const SizedBox(height: 16),
-            Icon(
-              Icons.favorite_rounded,
-              size: 64,
-              color: Colors.red.shade300,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              s('donation.message'),
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyLarge,
-            ),
-            const SizedBox(height: 32),
-            Text(
-              s('donation.crypto'),
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
+      body: DecoratedBox(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: isDark
+                ? [AppColors.brandCoral.withValues(alpha: 0.15), AppColors.backgroundDark]
+                : [AppColors.brandCoral.withValues(alpha: 0.06), AppColors.backgroundLight],
+          ),
+        ),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Column(
+            children: [
+              const SizedBox(height: 16),
+              // 하트 히어로 카드
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 20),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: isDark
+                        ? [AppColors.brandCoral.withValues(alpha: 0.25), AppColors.brandCoral.withValues(alpha: 0.08)]
+                        : [AppColors.brandCoral.withValues(alpha: 0.12), AppColors.brandCoral.withValues(alpha: 0.04)],
                   ),
-            ),
-            const SizedBox(height: 16),
-            ..._cryptoAddresses.map((crypto) => _CryptoCard(
-                  crypto: crypto,
-                  isDark: isDark,
-                )),
-            const SizedBox(height: 24),
-            // 광고 섹션
-            const _AdBanner(),
-          ],
+                  borderRadius: BorderRadius.circular(24),
+                ),
+                child: Column(
+                  children: [
+                    const Text('❤️', style: TextStyle(fontSize: 56)),
+                    const SizedBox(height: 12),
+                    Text(
+                      s('donation.message'),
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
+              CasualSectionHeader(
+                title: s('donation.crypto'),
+                icon: Icons.currency_bitcoin_rounded,
+                color: AppColors.brandGold,
+              ),
+              const SizedBox(height: 8),
+              ..._cryptoAddresses.map((crypto) => _CryptoCard(
+                    crypto: crypto,
+                    isDark: isDark,
+                  )),
+              const SizedBox(height: 24),
+              const _AdBanner(),
+            ],
+          ),
         ),
       ),
     );
@@ -579,7 +805,7 @@ class _CryptoAddress {
   });
 }
 
-/// 암호화폐 주소 카드 — 주소 탭으로 클립보드 복사
+/// 암호화폐 주소 카드 -- 주소 탭으로 클립보드 복사
 class _CryptoCard extends StatelessWidget {
   final _CryptoAddress crypto;
   final bool isDark;
@@ -610,7 +836,7 @@ class _CryptoCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 8),
-            // 주소 영역 — 탭으로 복사
+            // 주소 영역 -- 탭으로 복사
             InkWell(
               onTap: () => _copyAddress(context),
               borderRadius: BorderRadius.circular(8),
@@ -660,7 +886,7 @@ class _CryptoCard extends StatelessWidget {
   }
 }
 
-/// 광고 배너 — 외부 브라우저로 열기
+/// 광고 배너 -- 외부 브라우저로 열기
 class _AdBanner extends StatelessWidget {
   static const _adUrl = 'https://m.site.naver.com/2anPf';
 

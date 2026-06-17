@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/kp_widgets.dart';
 import '../game_notifier.dart';
 import '../game_state.dart';
 import '../../../core/sudoku/difficulty.dart';
@@ -101,134 +102,128 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
         title: Text(AppStrings.get('result.title')),
         automaticallyImplyLeading: false,
       ),
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // 축하 아이콘
-                Icon(
-                  Icons.emoji_events_rounded,
-                  size: 72,
-                  color: _gradeColor(grade, isDark),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  AppStrings.get('result.congrats'),
-                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-                const SizedBox(height: 24),
-                // 등급 배지
-                _GradeBadge(grade: grade, isDark: isDark),
-                const SizedBox(height: 8),
-                // 등급 기준 안내
-                _GradeCriteria(difficulty: gameState.difficulty, isDark: isDark),
-                const SizedBox(height: 32),
-                // 통계 카드
-                _StatCard(
-                  children: [
-                    _StatRow(
-                      icon: Icons.timer_outlined,
-                      label: AppStrings.get('result.time'),
-                      value: _formatTime(gameState.elapsedSeconds),
-                      // 시간 카운트업 (0 → 경과 초)
-                      valueWidget: CountUpText(
-                        value: gameState.elapsedSeconds,
-                        formatter: _formatTime,
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                      ),
+      body: KPBackground(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // 축하 아이콘
+              Icon(
+                Icons.emoji_events_rounded,
+                size: 72,
+                color: _gradeColor(grade, isDark),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                AppStrings.get('result.congrats'),
+                style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
                     ),
-                    const Divider(height: 24),
-                    _StatRow(
-                      icon: Icons.grid_on_rounded,
-                      label: AppStrings.get('result.difficulty'),
-                      value: AppStrings.get('difficulty.${gameState.difficulty.name}'),
-                    ),
-                    const Divider(height: 24),
-                    _StatRow(
-                      icon: Icons.close_rounded,
-                      label: AppStrings.get('result.mistakes'),
-                      value: '${gameState.mistakeCount}${AppStrings.get('result.count.suffix')}',
-                      isWarning: gameState.mistakeCount > 0,
-                      // 실수 카운트업
-                      valueWidget: CountUpText(
-                        value: gameState.mistakeCount,
-                        formatter: (v) => '$v${AppStrings.get('result.count.suffix')}',
-                        style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: gameState.mistakeCount > 0
-                                  ? (isDark
-                                      ? AppColors.wrongNumberDark
-                                      : AppColors.wrongNumberLight)
-                                  : null,
-                            ),
-                      ),
-                    ),
-                    const Divider(height: 24),
-                    _StatRow(
-                      icon: Icons.lightbulb_outline_rounded,
-                      label: AppStrings.get('result.hints'),
-                      value: '${gameState.hintCount}${AppStrings.get('result.count.suffix')}',
-                      // 힌트 카운트업
-                      valueWidget: CountUpText(
-                        value: gameState.hintCount,
-                        formatter: (v) => '$v${AppStrings.get('result.count.suffix')}',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyLarge
-                            ?.copyWith(fontWeight: FontWeight.w600),
-                      ),
-                    ),
-                  ],
-                ),
-                // H4: 이번 게임에서 학습한 기법 (1개 이상일 때만)
-                _UsedTechniquesSection(usedTechniques: gameState.usedTechniques),
-                // 새로 획득한 배지
-                _NewBadgesSection(
-                  badges: ref.read(gameProvider.notifier).lastNewBadges,
-                ),
-                const SizedBox(height: 32),
-                // 버튼들
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      ref.read(gameProvider.notifier).startNewGame(
-                            mode: gameState.mode,
-                            difficulty: gameState.difficulty,
-                          );
-                    },
-                    icon: const Icon(Icons.refresh_rounded),
-                    label: Text(AppStrings.get('result.newGame')),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+              ),
+              const SizedBox(height: 24),
+              // 등급 배지
+              _GradeBadge(grade: grade, isDark: isDark),
+              const SizedBox(height: 8),
+              // 등급 기준 안내
+              _GradeCriteria(difficulty: gameState.difficulty, isDark: isDark),
+              const SizedBox(height: 32),
+              // 통계 카드 (KP 스타일 컨테이너)
+              _StatCard(
+                children: [
+                  _StatRow(
+                    icon: Icons.timer_outlined,
+                    label: AppStrings.get('result.time'),
+                    value: _formatTime(gameState.elapsedSeconds),
+                    // 시간 카운트업 (0 → 경과 초)
+                    valueWidget: CountUpText(
+                      value: gameState.elapsedSeconds,
+                      formatter: _formatTime,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.w600),
                     ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton.icon(
-                    onPressed: () {
-                      ref.read(gameProvider.notifier).giveUp();
-                      context.go(AppRoutes.home);
-                    },
-                    icon: const Icon(Icons.home_rounded),
-                    label: Text(AppStrings.get('result.home')),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
+                  const Divider(height: 24),
+                  _StatRow(
+                    icon: Icons.grid_on_rounded,
+                    label: AppStrings.get('result.difficulty'),
+                    value: AppStrings.get('difficulty.${gameState.difficulty.name}'),
+                  ),
+                  const Divider(height: 24),
+                  _StatRow(
+                    icon: Icons.close_rounded,
+                    label: AppStrings.get('result.mistakes'),
+                    value: '${gameState.mistakeCount}${AppStrings.get('result.count.suffix')}',
+                    isWarning: gameState.mistakeCount > 0,
+                    // 실수 카운트업
+                    valueWidget: CountUpText(
+                      value: gameState.mistakeCount,
+                      formatter: (v) => '$v${AppStrings.get('result.count.suffix')}',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: gameState.mistakeCount > 0
+                                ? (isDark
+                                    ? AppColors.wrongNumberDark
+                                    : AppColors.wrongNumberLight)
+                                : null,
+                          ),
                     ),
                   ),
+                  const Divider(height: 24),
+                  _StatRow(
+                    icon: Icons.lightbulb_outline_rounded,
+                    label: AppStrings.get('result.hints'),
+                    value: '${gameState.hintCount}${AppStrings.get('result.count.suffix')}',
+                    // 힌트 카운트업
+                    valueWidget: CountUpText(
+                      value: gameState.hintCount,
+                      formatter: (v) => '$v${AppStrings.get('result.count.suffix')}',
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodyLarge
+                          ?.copyWith(fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                ],
+              ),
+              // H4: 이번 게임에서 학습한 기법 (1개 이상일 때만)
+              _UsedTechniquesSection(usedTechniques: gameState.usedTechniques),
+              // 새로 획득한 배지
+              _NewBadgesSection(
+                badges: ref.read(gameProvider.notifier).lastNewBadges,
+              ),
+              const SizedBox(height: 32),
+              // 새 게임 버튼 (KP 그라데이션 CTA)
+              KPGradientButton(
+                onTap: () {
+                  ref.read(gameProvider.notifier).startNewGame(
+                        mode: gameState.mode,
+                        difficulty: gameState.difficulty,
+                      );
+                },
+                iconAsset: 'assets/icons/play.svg',
+                label: AppStrings.get('result.newGame'),
+                colors: [_gradeColor(grade, isDark), _gradeColor(grade, isDark).withValues(alpha: 0.7)],
+              ),
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    ref.read(gameProvider.notifier).giveUp();
+                    context.go(AppRoutes.home);
+                  },
+                  icon: const Icon(Icons.home_rounded),
+                  label: Text(AppStrings.get('result.home')),
+                  style: OutlinedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  ),
                 ),
-              ],
-            ),
+              ),
+            ],
           ),
         ),
       ),
@@ -313,7 +308,7 @@ class _GradeBadge extends StatelessWidget {
   }
 }
 
-/// 통계 카드
+/// 통계 카드 (KP 스타일)
 class _StatCard extends StatelessWidget {
   final List<Widget> children;
 
@@ -321,11 +316,19 @@ class _StatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(children: children),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: isDark
+            ? AppColors.surfaceDark
+            : Colors.white.withValues(alpha: 0.96),
+        borderRadius: BorderRadius.circular(28),
+        border: Border.all(color: isDark ? AppColors.outlineDark : AppColors.kpBorder),
+        boxShadow: isDark ? null : KPShadow.soft,
       ),
+      child: Column(children: children),
     );
   }
 }
