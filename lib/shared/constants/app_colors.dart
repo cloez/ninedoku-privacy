@@ -2,67 +2,85 @@ import 'package:flutter/material.dart';
 
 /// 앱 컬러 상수
 ///
-/// 색상 시스템 v2 — 디자인 리뷰 `docs/sudoku_color_design_review.md` 반영
-/// - 톤 일관성: 같은 채도/명도 대역에서 변주
-/// - 의미 1색 1역할: success=jade, info=slate, warning=amber, error=rust
-/// - WCAG AA 충족: 오답 색상 대비비 5.4 / 6.0
+/// 색상 시스템 v3 — Premium Casual 디자인 반영
+/// - 브랜드 인디고/바이올렛 중심 캐주얼 팔레트
+/// - 부드러운 파스텔 그라데이션
+/// - WCAG AA 충족 유지
 /// - 라이트/다크 동시 적용
 class AppColors {
   AppColors._();
 
   // ---------------------------------------------------------------------------
+  // 브랜드 컬러 (디자인 샘플 기반)
+  // ---------------------------------------------------------------------------
+  /// 브랜드 인디고 — 앱의 핵심 아이덴티티
+  static const brandIndigo = Color(0xFF3F35B5);
+  /// 프라이머리 블루
+  static const brandBlue = Color(0xFF3978F6);
+  /// 바이올렛
+  static const brandViolet = Color(0xFF7A4DFF);
+  /// 스카이 블루
+  static const brandSkyBlue = Color(0xFF5EB9FF);
+  /// 민트
+  static const brandMint = Color(0xFF55D6BE);
+  /// 골드
+  static const brandGold = Color(0xFFFFC542);
+  /// 코랄
+  static const brandCoral = Color(0xFFFF7A59);
+
+  // ---------------------------------------------------------------------------
   // Core Palette — 라이트 테마
   // ---------------------------------------------------------------------------
-  /// 주조색: 슬레이트 블루 (info와 통일)
-  static const primaryLight = Color(0xFF3B6EA8);
-  /// 배경: 웜 페이퍼
-  static const backgroundLight = Color(0xFFF7F5F0);
+  /// 주조색: 브랜드 인디고
+  static const primaryLight = Color(0xFF3F35B5);
+  /// 배경: 소프트 라벤더
+  static const backgroundLight = Color(0xFFFBFAFF);
   /// 표면: 화이트
   static const surfaceLight = Color(0xFFFFFFFF);
   /// 표면 변형 (보드 셀 베이스)
-  static const surfaceVariantLight = Color(0xFFFBF9F4);
+  static const surfaceVariantLight = Color(0xFFF8F7FC);
   /// 얇은 경계선
-  static const outlineLight = Color(0xFFD6D2CA);
+  static const outlineLight = Color(0xFFE6E7F0);
   /// 강한 경계선 (3x3 박스)
-  static const outlineStrongLight = Color(0xFF5B6068);
-  /// 보드 라인 (기존 이름 유지 — 강한 경계선 매핑)
+  static const outlineStrongLight = Color(0xFF4A4870);
+  /// 보드 라인
   static const boardLineLight = outlineStrongLight;
 
-  // 셀 강조 — 단일 색군 명도 변주 (피어 → 같은 숫자 → 선택 순서로 진해짐)
+  // 셀 강조 — 인디고/바이올렛 색군 명도 변주
   /// 같은 행/열/3x3 박스 강조 (가장 옅음)
-  static const cellHighlightLight = Color(0xFFEEF0F5);
-  /// 같은 숫자 강조 (피어와 동일 색군, 한 단계 진함)
-  static const cellSameNumberLight = Color(0xFFE7EEF8);
+  static const cellHighlightLight = Color(0xFFEEEDF8);
+  /// 같은 숫자 강조
+  static const cellSameNumberLight = Color(0xFFE2DEFF);
   /// 선택된 셀 (가장 진함)
-  static const cellSelectedLight = Color(0xFFD8E5F4);
+  static const cellSelectedLight = Color(0xFFD2CCFF);
 
   // 숫자 색상
-  static const fixedNumberLight = Color(0xFF1B1F26);
-  static const userNumberLight = Color(0xFF2E5DA0);
-  /// 오답 — Rust red (WCAG AA 5.4:1 충족)
+  static const fixedNumberLight = Color(0xFF1D2340);
+  static const userNumberLight = Color(0xFF3F35B5);
+  /// 오답 — 코랄 레드 (WCAG AA 5.4:1 충족)
   static const wrongNumberLight = Color(0xFFC8453C);
-  static const noteNumberLight = Color(0xFF6E7280);
+  static const noteNumberLight = Color(0xFF68708A);
 
   // ---------------------------------------------------------------------------
   // Core Palette — 다크 테마
   // ---------------------------------------------------------------------------
-  static const primaryDark = Color(0xFF7FB3E8);
-  static const backgroundDark = Color(0xFF0F1115);
-  static const surfaceDark = Color(0xFF171A20);
-  static const surfaceVariantDark = Color(0xFF1C2028);
-  static const outlineDark = Color(0xFF2C313B);
-  static const outlineStrongDark = Color(0xFF8A92A0);
+  static const primaryDark = Color(0xFFA99AFF);
+  static const backgroundDark = Color(0xFF0F0E1A);
+  static const surfaceDark = Color(0xFF17162A);
+  static const surfaceVariantDark = Color(0xFF1E1D32);
+  static const outlineDark = Color(0xFF2E2D48);
+  static const outlineStrongDark = Color(0xFF8A88B0);
   static const boardLineDark = outlineStrongDark;
 
   /// 같은 행/열/3x3 박스 강조
-  static const cellHighlightDark = Color(0xFF1F242E);
+  static const cellHighlightDark = Color(0xFF1F1E38);
   /// 같은 숫자 강조
-  static const cellSameNumberDark = Color(0xFF2A3242);
+  static const cellSameNumberDark = Color(0xFF2A2850);
   /// 선택된 셀
-  static const cellSelectedDark = Color(0xFF2A3A55);
+  static const cellSelectedDark = Color(0xFF353268);
 
   static const fixedNumberDark = Color(0xFFE8EAF0);
-  static const userNumberDark = Color(0xFF9CC3F2);
+  static const userNumberDark = Color(0xFFBDB2FF);
   /// 오답 — 다크 모드 (WCAG AA 6.0:1 충족)
   static const wrongNumberDark = Color(0xFFFF7A6E);
   static const noteNumberDark = Color(0xFFA8AEBA);
@@ -71,19 +89,19 @@ class AppColors {
   // Semantic 토큰
   // ---------------------------------------------------------------------------
   /// 성공 (라이트) — Jade
-  static const successLight = Color(0xFF16A37A);
+  static const successLight = Color(0xFF57C77A);
   /// 성공 (다크)
-  static const successDark = Color(0xFF3FD3A3);
+  static const successDark = Color(0xFF6EDB90);
 
-  /// 정보 (라이트) — Slate blue (primary와 동일)
+  /// 정보 (라이트) — 브랜드 인디고
   static const infoLight = primaryLight;
   /// 정보 (다크)
   static const infoDark = primaryDark;
 
-  /// 경고 (라이트) — Amber ink
-  static const warningLight = Color(0xFFC28A2C);
+  /// 경고 (라이트) — 골드
+  static const warningLight = Color(0xFFF2A83B);
   /// 경고 (다크)
-  static const warningDark = Color(0xFFE5B968);
+  static const warningDark = Color(0xFFFFC542);
 
   /// 오류 (라이트) — Rust red
   static const errorLight = wrongNumberLight;
@@ -115,6 +133,68 @@ class AppColors {
   static const encouragementExcellent = infoLight;
   /// Perfect — 디톤된 골드 (순금색 #FFD700 회피)
   static const encouragementPerfect = Color(0xFFC9963A);
+
+  // ---------------------------------------------------------------------------
+  // 허브/게임 메인 그라데이션
+  // ---------------------------------------------------------------------------
+  /// 허브 배경 그라데이션 (라이트)
+  static const hubGradientLight = [
+    Color(0xFFE8E4FF), // 라벤더
+    Color(0xFFF0E8FF), // 소프트 바이올렛
+    Color(0xFFFBFAFF), // 배경색으로 자연스럽게 이어짐
+  ];
+  /// 허브 배경 그라데이션 (다크)
+  static const hubGradientDark = [
+    Color(0xFF1A1840),
+    Color(0xFF151330),
+    Color(0xFF0F0E1A),
+  ];
+
+  /// 진행률 카드 그라데이션
+  static const progressGradientLight = [
+    Color(0xFF3F35B5), // 브랜드 인디고
+    Color(0xFF7A4DFF), // 바이올렛
+  ];
+  static const progressGradientDark = [
+    Color(0xFF2A2470),
+    Color(0xFF5535B5),
+  ];
+
+  // ---------------------------------------------------------------------------
+  // 게임별 테마 컬러 (허브 카드 + 게임 메인 화면)
+  // ---------------------------------------------------------------------------
+  static const Map<String, Color> gameThemeColors = {
+    'sudoku':       Color(0xFF3978F6), // 블루
+    'binairo':      Color(0xFF55D6BE), // 민트
+    'minesweeper':  Color(0xFF7A4DFF), // 바이올렛
+    'yinyang':      Color(0xFFD478E8), // 핑크·퍼플
+    'nonogram':     Color(0xFFFF9A5C), // 오렌지
+    'killerSudoku': Color(0xFF5EB9FF), // 스카이블루
+    'starBattle':   Color(0xFFFFC542), // 골드
+    'lightUp':      Color(0xFF5ECFCF), // 시안
+    'futoshiki':    Color(0xFF4DB8A4), // 틸
+    'tents':        Color(0xFFFF7A59), // 코랄
+    'jigsawSudoku': Color(0xFF66BB6A), // 그린
+    'skyscrapers':  Color(0xFF3F51B5), // 네이비·블루
+    'kakuro':       Color(0xFFE57373), // 핑크·레드
+  };
+
+  /// 게임별 파스텔 배경색 (카드 배경용)
+  static const Map<String, Color> gameCardBgColors = {
+    'sudoku':       Color(0xFFE8F0FF),
+    'binairo':      Color(0xFFE0F8F2),
+    'minesweeper':  Color(0xFFF0E8FF),
+    'yinyang':      Color(0xFFFAE8FC),
+    'nonogram':     Color(0xFFFFF0E5),
+    'killerSudoku': Color(0xFFE5F2FF),
+    'starBattle':   Color(0xFFFFF8E0),
+    'lightUp':      Color(0xFFE0F8F8),
+    'futoshiki':    Color(0xFFE0F5F0),
+    'tents':        Color(0xFFFFEDE5),
+    'jigsawSudoku': Color(0xFFE8F5E9),
+    'skyscrapers':  Color(0xFFE8EAF6),
+    'kakuro':       Color(0xFFFFEBEE),
+  };
 }
 
 /// 난이도별 색상 토큰 — 채도 -15% 정돈

@@ -81,22 +81,38 @@ class CustomThemeData {
     }
   }
 
+  /// 캐주얼 스타일 공통 카드 테마
+  static CardThemeData _casualCard({double elevation = 2, BorderSide? side}) =>
+      CardThemeData(
+        elevation: elevation,
+        shadowColor: Colors.black.withValues(alpha: 0.08),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(18),
+          side: side ?? BorderSide.none,
+        ),
+      );
+
+  /// 캐주얼 스타일 공통 버튼 테마
+  static ElevatedButtonThemeData get _casualButton =>
+      ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          elevation: 2,
+          shadowColor: Colors.black.withValues(alpha: 0.1),
+        ),
+      );
+
   static ThemeData get _lightTheme => ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
     colorSchemeSeed: AppColors.primaryLight,
     scaffoldBackgroundColor: AppColors.backgroundLight,
-    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
-    cardTheme: CardThemeData(
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    ),
+    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0, scrolledUnderElevation: 0),
+    cardTheme: _casualCard(),
+    elevatedButtonTheme: _casualButton,
   );
 
   static ThemeData get _darkTheme => ThemeData(
@@ -104,17 +120,9 @@ class CustomThemeData {
     brightness: Brightness.dark,
     colorSchemeSeed: AppColors.primaryDark,
     scaffoldBackgroundColor: AppColors.backgroundDark,
-    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
-    cardTheme: CardThemeData(
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    ),
+    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0, scrolledUnderElevation: 0),
+    cardTheme: _casualCard(),
+    elevatedButtonTheme: _casualButton,
   );
 
   static ThemeData get _cafeTheme => ThemeData(
@@ -122,17 +130,9 @@ class CustomThemeData {
     brightness: Brightness.light,
     colorSchemeSeed: const Color(0xFF6D4C41),
     scaffoldBackgroundColor: const Color(0xFFFFF8E1),
-    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
-    cardTheme: CardThemeData(
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    ),
+    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0, scrolledUnderElevation: 0),
+    cardTheme: _casualCard(),
+    elevatedButtonTheme: _casualButton,
   );
 
   static ThemeData get _paperTheme => ThemeData(
@@ -140,17 +140,9 @@ class CustomThemeData {
     brightness: Brightness.light,
     colorSchemeSeed: const Color(0xFF5D4037),
     scaffoldBackgroundColor: const Color(0xFFF5F0E8),
-    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
-    cardTheme: CardThemeData(
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    ),
+    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0, scrolledUnderElevation: 0),
+    cardTheme: _casualCard(),
+    elevatedButtonTheme: _casualButton,
   );
 
   static ThemeData get _focusTheme => ThemeData(
@@ -158,17 +150,9 @@ class CustomThemeData {
     brightness: Brightness.dark,
     colorSchemeSeed: const Color(0xFF1A237E),
     scaffoldBackgroundColor: const Color(0xFF0D1B2A),
-    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
-    cardTheme: CardThemeData(
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-    ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    ),
+    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0, scrolledUnderElevation: 0),
+    cardTheme: _casualCard(),
+    elevatedButtonTheme: _casualButton,
   );
 
   static ThemeData get _highContrastTheme => ThemeData(
@@ -176,20 +160,12 @@ class CustomThemeData {
     brightness: Brightness.light,
     colorSchemeSeed: Colors.black,
     scaffoldBackgroundColor: Colors.white,
-    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
-    cardTheme: CardThemeData(
+    appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0, scrolledUnderElevation: 0),
+    cardTheme: _casualCard(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: const BorderSide(color: Colors.black, width: 1),
-      ),
+      side: const BorderSide(color: Colors.black, width: 1),
     ),
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      ),
-    ),
+    elevatedButtonTheme: _casualButton,
   );
 }
 
@@ -272,14 +248,14 @@ class AppColorSet {
   );
 
   static const focus = AppColorSet(
-    primary: Color(0xFF5C6BC0),
+    primary: Color(0xFF7A4DFF),
     background: Color(0xFF0D1B2A),
     boardLine: Color(0xFF7986CB),
     cellSelected: Color(0xFF1A237E),
     cellHighlight: Color(0xFF283593),
     cellSameNumber: Color(0xFF1B5E20),
     fixedNumber: Color(0xFFE8EAF6),
-    userNumber: Color(0xFF9FA8DA),
+    userNumber: Color(0xFFBDB2FF),
     wrongNumber: Color(0xFFEF5350),
     noteNumber: Color(0xFF7986CB),
   );

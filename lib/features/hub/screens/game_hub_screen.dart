@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/engine/game_registry.dart';
 import '../../../core/settings/settings_service.dart';
 import '../../../core/storage/storage_providers.dart';
+import '../../../shared/constants/app_colors.dart';
 import '../../../shared/l10n/app_strings.dart';
 import '../../../app/router.dart';
 import '../hub_progress_service.dart';
@@ -75,32 +76,43 @@ class GameHubScreen extends ConsumerWidget {
             ),
           ],
         ),
-        body: SafeArea(
-          child: Column(
-            children: [
-              // 상단: 오늘의 퍼즐 진행 + 연속 스트릭 (실데이터 기반)
-              _buildProgressSection(
-                context, s, colorScheme,
-                todayCompleted: todayCompleted,
-                totalGames: totalGames,
-                streakDays: streakDays,
-                isDark: isDark,
-              ),
-              const SizedBox(height: 16),
-              // 중앙: 게임 카드 그리드
-              Expanded(
-                child: _buildGameGrid(context, s, colorScheme, ref, isDark),
-              ),
-              // 하단: 내비게이션 버튼
-              _buildBottomNav(context, s, colorScheme),
-            ],
+        body: DecoratedBox(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: isDark
+                  ? AppColors.hubGradientDark
+                  : AppColors.hubGradientLight,
+            ),
+          ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                // 상단: 오늘의 퍼즐 진행 + 연속 스트릭
+                _buildProgressSection(
+                  context, s, colorScheme,
+                  todayCompleted: todayCompleted,
+                  totalGames: totalGames,
+                  streakDays: streakDays,
+                  isDark: isDark,
+                ),
+                const SizedBox(height: 16),
+                // 중앙: 게임 카드 그리드
+                Expanded(
+                  child: _buildGameGrid(context, s, colorScheme, ref, isDark),
+                ),
+                // 하단: 내비게이션 버튼
+                _buildBottomNav(context, s, colorScheme),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  /// 상단 진행 상황 섹션 — 모든 게임 통합 실데이터 기반
+  /// 상단 진행 상황 섹션 — 그라데이션 카드 스타일
   Widget _buildProgressSection(
     BuildContext context,
     String Function(String) s,
@@ -110,57 +122,103 @@ class GameHubScreen extends ConsumerWidget {
     required int streakDays,
     required bool isDark,
   }) {
+    final gradientColors = isDark
+        ? AppColors.progressGradientDark
+        : AppColors.progressGradientLight;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Card(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: gradientColors,
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: gradientColors.first.withValues(alpha: 0.3),
+              blurRadius: 12,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
           child: Row(
             children: [
-              // 오늘의 퍼즐 진행 (오늘 완료한 게임 수 / 전체 게임 수)
+              // 오늘의 퍼즐 진행
               Expanded(
-                child: Row(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.today_rounded,
-                      color: colorScheme.primary,
-                      size: 24,
+                      color: Colors.white70,
+                      size: 22,
                     ),
-                    const SizedBox(width: 8),
-                    // P1-12: 다국어 텍스트 길이 대비 ellipsis 보호
-                    Expanded(
-                      child: Text(
-                        s('hub.dailyProgress')
-                            .replaceFirst('{completed}', '$todayCompleted')
-                            .replaceFirst('{total}', '$totalGames'),
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                    const SizedBox(height: 6),
+                    Text(
+                      '$todayCompleted / $totalGames',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
                       ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      s('hub.dailyLabel'),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
                     ),
                   ],
                 ),
               ),
-              // 연속 플레이 스트릭 (최근 연속 플레이 일수)
-              Row(
-                children: [
-                  Icon(
-                    Icons.local_fire_department_rounded,
-                    // P1-7: 스트릭 0일 때 onSurfaceVariant로 다크모드 시인성 확보
-                    color: streakDays > 0
-                        ? Colors.orange
-                        : colorScheme.onSurfaceVariant,
-                    size: 24,
-                  ),
-                  const SizedBox(width: 4),
-                  // P1-12: 다국어 텍스트 길이 대비 ellipsis 보호
-                  Text(
-                    s('hub.streak').replaceFirst('{days}', '$streakDays'),
-                    style: Theme.of(context).textTheme.bodyMedium,
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1,
-                  ),
-                ],
+              // 구분선
+              Container(
+                width: 1,
+                height: 48,
+                color: Colors.white24,
+              ),
+              // 연속 스트릭
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Icon(
+                      Icons.local_fire_department_rounded,
+                      color: streakDays > 0
+                          ? AppColors.brandGold
+                          : Colors.white54,
+                      size: 22,
+                    ),
+                    const SizedBox(height: 6),
+                    Text(
+                      '$streakDays',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 2),
+                    Text(
+                      s('hub.streakLabel'),
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 12,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
@@ -221,7 +279,7 @@ class GameHubScreen extends ConsumerWidget {
     }
   }
 
-  /// 개별 게임 카드
+  /// 개별 게임 카드 — 게임별 파스텔 테마 적용
   Widget _buildGameCard(
     BuildContext context,
     GameInfo game,
@@ -231,34 +289,73 @@ class GameHubScreen extends ConsumerWidget {
     bool isDark,
     WidgetRef ref,
   ) {
+    final gameColor = AppColors.gameThemeColors[game.id] ?? colorScheme.primary;
+    final cardBg = isDark
+        ? gameColor.withValues(alpha: 0.12)
+        : (AppColors.gameCardBgColors[game.id] ?? Colors.white);
+
     return GestureDetector(
       onTap: () => _onGameTap(context, ref, game),
-      child: Card(
+      child: Container(
+        decoration: BoxDecoration(
+          color: cardBg,
+          borderRadius: BorderRadius.circular(18),
+          boxShadow: [
+            BoxShadow(
+              color: isDark
+                  ? Colors.black26
+                  : gameColor.withValues(alpha: 0.12),
+              blurRadius: 10,
+              offset: const Offset(0, 3),
+            ),
+          ],
+        ),
         clipBehavior: Clip.antiAlias,
         child: Stack(
           children: [
-            // 카드 본문 — 상단: 이모지+이름, 하단: 설명
+            // 카드 본문
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  // 상단: 이모지 + 게임 이름 (중앙 정렬)
+                  // 상단: 번호 + 이모지 + 이름
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisSize: MainAxisSize.min,
                     children: [
+                      // 게임 번호 배지
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: gameColor.withValues(alpha: isDark ? 0.3 : 0.15),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${game.order + 1}',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? gameColor.withValues(alpha: 0.9) : gameColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 6),
                       Text(
                         game.emoji,
-                        style: const TextStyle(fontSize: 44),
+                        style: const TextStyle(fontSize: 40),
                         textAlign: TextAlign.center,
                       ),
-                      const SizedBox(height: 10),
+                      const SizedBox(height: 8),
                       Text(
                         s(game.nameKey),
                         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.bold,
+                              color: isDark ? Colors.white : const Color(0xFF1D2340),
                             ),
                         textAlign: TextAlign.center,
                         maxLines: 1,
@@ -266,14 +363,14 @@ class GameHubScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  // 하단: 게임 설명 (항상 카드 하단 고정)
+                  // 하단: 설명
                   Container(
                     width: double.infinity,
                     alignment: Alignment.center,
                     child: Text(
                       s(game.descriptionKey),
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
+                            color: isDark ? Colors.white54 : const Color(0xFF68708A),
                             height: 1.3,
                           ),
                       textAlign: TextAlign.center,
@@ -284,24 +381,21 @@ class GameHubScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            // 우상단 배지 — 진행중 > NEW 우선순위
-            // 진행중 게임은 이어하기 강조 (노란색), 그렇지 않으면 NEW 배지 (빨강)
+            // 우상단 배지
             if (inProgress)
               Positioned(
                 top: 8,
                 right: 8,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    // P1-6: 다크모드에서 amber 톤 상향 (가독성 + 부조화 해소)
-                    color: isDark ? Colors.amber.shade400 : Colors.amber.shade700,
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.brandGold,
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     s('hub.inProgress'),
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: Colors.white,
+                          color: const Color(0xFF1D2340),
                           fontWeight: FontWeight.bold,
                         ),
                   ),
@@ -312,16 +406,15 @@ class GameHubScreen extends ConsumerWidget {
                 top: 8,
                 right: 8,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: colorScheme.error,
-                    borderRadius: BorderRadius.circular(8),
+                    color: AppColors.brandCoral,
+                    borderRadius: BorderRadius.circular(10),
                   ),
                   child: Text(
                     s('hub.new'),
                     style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                          color: colorScheme.onError,
+                          color: Colors.white,
                           fontWeight: FontWeight.bold,
                         ),
                   ),
