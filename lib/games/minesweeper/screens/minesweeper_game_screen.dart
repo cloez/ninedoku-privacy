@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../minesweeper_notifier.dart';
 import '../minesweeper_state.dart';
@@ -439,51 +440,31 @@ class _MinesweeperGameScreenState extends ConsumerState<MinesweeperGameScreen> {
   }
 
   void _showExitDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('exit.title')),
-        content: Text(AppStrings.get('exit.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(minesweeperNotifierProvider.notifier).pause();
-              context.go(AppRoutes.minesweeper);
-            },
-            child: Text(AppStrings.get('exit.confirm')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('exit.title'),
+      content: AppStrings.get('exit.message'),
+      confirmLabel: AppStrings.get('exit.confirm'),
+      cancelLabel: AppStrings.get('cancel'),
+      onConfirm: () {
+        ref.read(minesweeperNotifierProvider.notifier).pause();
+        context.go(AppRoutes.minesweeper);
+      },
     );
   }
 
   void _showGiveUpDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('giveUp.title')),
-        content: Text(AppStrings.get('giveUp.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(minesweeperNotifierProvider.notifier).giveUp();
-              context.go(AppRoutes.minesweeper);
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(AppStrings.get('giveUp.confirm')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('giveUp.title'),
+      content: AppStrings.get('giveUp.message'),
+      confirmLabel: AppStrings.get('giveUp.confirm'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () {
+        ref.read(minesweeperNotifierProvider.notifier).giveUp();
+        context.go(AppRoutes.minesweeper);
+      },
     );
   }
 
@@ -696,15 +677,12 @@ class _ControlBar extends StatelessWidget {
             onTap: () {
               if (notifier.hasCheckpoint) {
                 notifier.restoreCheckpoint();
-                showCheckpointToast(context, 'checkpoint.restored');
+                    notifier.clearCheckpoint();
+                    showCheckpointToast(context, 'checkpoint.restored');
               } else {
                 notifier.saveCheckpoint();
                 showCheckpointToast(context, 'checkpoint.saved');
               }
-            },
-            onLongPress: () {
-              notifier.clearCheckpoint();
-              showCheckpointToast(context, 'checkpoint.cleared');
             },
           ),
         ],

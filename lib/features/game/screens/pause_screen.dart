@@ -4,6 +4,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../../../shared/widgets/kp_widgets.dart';
 import '../game_notifier.dart';
 import '../../../shared/constants/app_colors.dart';
@@ -128,29 +129,17 @@ class PauseScreen extends ConsumerWidget {
   }
 
   void _showGiveUpDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('pause.giveUp.title')),
-        content: Text(AppStrings.get('pause.giveUp.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(gameProvider.notifier).giveUp();
-              context.go(AppRoutes.home);
-            },
-            child: Text(
-              AppStrings.get('pause.giveUp.action'),
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
+      title: AppStrings.get('pause.giveUp.title'),
+      content: AppStrings.get('pause.giveUp.message'),
+      confirmLabel: AppStrings.get('pause.giveUp.action'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () {
+        ref.read(gameProvider.notifier).giveUp();
+        context.go(AppRoutes.home);
+      },
     );
   }
 }

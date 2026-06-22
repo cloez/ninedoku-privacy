@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../light_up_notifier.dart';
 import '../light_up_state.dart';
@@ -187,26 +188,16 @@ class _LightUpGameScreenState extends ConsumerState<LightUpGameScreen> {
 
   /// 나가기 확인 다이얼로그
   void _showExitDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('lightUp.exit.title')),
-        content: Text(AppStrings.get('lightUp.exit.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(lightUpNotifierProvider.notifier).pause();
-              context.go(AppRoutes.lightUp);
-            },
-            child: Text(AppStrings.get('lightUp.exit.leave')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('lightUp.exit.title'),
+      content: AppStrings.get('lightUp.exit.message'),
+      confirmLabel: AppStrings.get('lightUp.exit.leave'),
+      cancelLabel: AppStrings.get('cancel'),
+      onConfirm: () {
+        ref.read(lightUpNotifierProvider.notifier).pause();
+        context.go(AppRoutes.lightUp);
+      },
     );
   }
 }
@@ -349,15 +340,12 @@ class _ControlBar extends ConsumerWidget {
                 onTap: () {
                   if (notifier.hasCheckpoint) {
                     notifier.restoreCheckpoint();
+                    notifier.clearCheckpoint();
                     showCheckpointToast(context, 'checkpoint.restored');
                   } else {
                     notifier.saveCheckpoint();
                     showCheckpointToast(context, 'checkpoint.saved');
                   }
-                },
-                onLongPress: () {
-                  notifier.clearCheckpoint();
-                  showCheckpointToast(context, 'checkpoint.cleared');
                 },
               ),
             ],
@@ -625,29 +613,17 @@ class _LightUpPauseView extends ConsumerWidget {
   }
 
   void _showGiveUpDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('lightUp.giveUp.title')),
-        content: Text(AppStrings.get('lightUp.giveUp.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(lightUpNotifierProvider.notifier).giveUp();
-              context.go(AppRoutes.lightUp);
-            },
-            child: Text(
-              AppStrings.get('lightUp.giveUp.action'),
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
+      title: AppStrings.get('lightUp.giveUp.title'),
+      content: AppStrings.get('lightUp.giveUp.message'),
+      confirmLabel: AppStrings.get('lightUp.giveUp.action'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () {
+        ref.read(lightUpNotifierProvider.notifier).giveUp();
+        context.go(AppRoutes.lightUp);
+      },
     );
   }
 }

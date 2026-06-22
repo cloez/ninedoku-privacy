@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../../shared/widgets/checkpoint_button.dart';
 import '../binairo_notifier.dart';
@@ -193,26 +194,16 @@ class _BinairoGameScreenState extends ConsumerState<BinairoGameScreen> {
 
   /// 나가기 확인 다이얼로그
   void _showExitDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('binairo.exit.title')),
-        content: Text(AppStrings.get('binairo.exit.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(binairoNotifierProvider.notifier).pause();
-              context.go(AppRoutes.binairo);
-            },
-            child: Text(AppStrings.get('binairo.exit.leave')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('binairo.exit.title'),
+      content: AppStrings.get('binairo.exit.message'),
+      confirmLabel: AppStrings.get('binairo.exit.leave'),
+      cancelLabel: AppStrings.get('cancel'),
+      onConfirm: () {
+        ref.read(binairoNotifierProvider.notifier).pause();
+        context.go(AppRoutes.binairo);
+      },
     );
   }
 }
@@ -360,15 +351,12 @@ class _ControlBar extends ConsumerWidget {
                 onTap: () {
                   if (notifier.hasCheckpoint) {
                     notifier.restoreCheckpoint();
+                    notifier.clearCheckpoint();
                     showCheckpointToast(context, 'checkpoint.restored');
                   } else {
                     notifier.saveCheckpoint();
                     showCheckpointToast(context, 'checkpoint.saved');
                   }
-                },
-                onLongPress: () {
-                  notifier.clearCheckpoint();
-                  showCheckpointToast(context, 'checkpoint.cleared');
                 },
               ),
             ],
@@ -652,29 +640,17 @@ class _BinairoPauseView extends ConsumerWidget {
   }
 
   void _showGiveUpDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('binairo.giveUp.title')),
-        content: Text(AppStrings.get('binairo.giveUp.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(binairoNotifierProvider.notifier).giveUp();
-              context.go(AppRoutes.binairo);
-            },
-            child: Text(
-              AppStrings.get('binairo.giveUp.action'),
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
+      title: AppStrings.get('binairo.giveUp.title'),
+      content: AppStrings.get('binairo.giveUp.message'),
+      confirmLabel: AppStrings.get('binairo.giveUp.action'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () {
+        ref.read(binairoNotifierProvider.notifier).giveUp();
+        context.go(AppRoutes.binairo);
+      },
     );
   }
 }

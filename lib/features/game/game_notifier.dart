@@ -342,7 +342,7 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
       _feedback?.onGameComplete();
       SoundManager().play(SoundManager.kGameComplete);
       if (mistakes == 0) {
-        state = state!.copyWith(lastEncouragement: Encouragement.perfect);
+        state = state!.copyWith(lastEncouragement: Encouragement.excellent);
       }
       _onGameCompleted();
       // 애니메이션 완료 후 isAutoCompleting 해제 (UI에서 순차 표시)
@@ -384,7 +384,7 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
         _feedback?.onGameComplete();
         SoundManager().play(SoundManager.kGameComplete);
         if (mistakes == 0) {
-          state = state!.copyWith(lastEncouragement: Encouragement.perfect);
+          state = state!.copyWith(lastEncouragement: Encouragement.excellent);
         }
         _onGameCompleted();
       } else {
@@ -452,8 +452,9 @@ class GameNotifier extends StateNotifier<GameState?> with WidgetsBindingObserver
       case SolvingTechnique.boxLineReduction:
         return Encouragement.good;
       case SolvingTechnique.nakedTriple:
+        return Encouragement.wow;
       case SolvingTechnique.xWing:
-        return Encouragement.excellent;
+        return Encouragement.great;
       default:
         return null; // Naked Single, Hidden Single은 기본 → 반응 없음
     }

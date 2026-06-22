@@ -159,12 +159,15 @@ class KPGradientButton extends StatelessWidget {
     required this.colors,
     this.onTap,
     this.foreground = Colors.white,
+    this.colorfulIcon = false,
   });
   final String label;
   final String iconAsset;
   final List<Color> colors;
   final Color foreground;
   final VoidCallback? onTap;
+  /// true면 SVG 원래 색상 유지 (colorFilter 미적용)
+  final bool colorfulIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -199,7 +202,10 @@ class KPGradientButton extends StatelessWidget {
                       width: 42, height: 42,
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.24), shape: BoxShape.circle),
-                      child: SvgPicture.asset(iconAsset, colorFilter: ColorFilter.mode(foreground, BlendMode.srcIn)),
+                      child: SvgPicture.asset(
+                        iconAsset,
+                        colorFilter: colorfulIcon ? null : ColorFilter.mode(foreground, BlendMode.srcIn),
+                      ),
                     ),
                     const SizedBox(width: 14),
                     Text(label, style: TextStyle(color: foreground, fontSize: 22, fontWeight: FontWeight.w900)),

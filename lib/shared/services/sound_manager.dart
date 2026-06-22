@@ -19,6 +19,12 @@ class SoundManager {
   static const String kHint = 'hint';
   static const String kPause = 'pause';
 
+  // 격려 음성 효과음
+  static const String kEncGood = 'enc_good';
+  static const String kEncWow = 'enc_wow';
+  static const String kEncGreat = 'enc_great';
+  static const String kEncExcellent = 'enc_excellent';
+
   final Map<String, AudioPlayer> _players = {};
   final Map<String, DateTime> _lastPlayed = {};
   bool _enabled = true;
@@ -33,6 +39,10 @@ class SoundManager {
     kBadge: 'sounds/badge.wav',
     kHint: 'sounds/hint.wav',
     kPause: 'sounds/pause.wav',
+    kEncGood: 'sounds/enc_good.wav',
+    kEncWow: 'sounds/enc_wow.wav',
+    kEncGreat: 'sounds/enc_great.wav',
+    kEncExcellent: 'sounds/enc_excellent.wav',
   };
 
   bool get enabled => _enabled;

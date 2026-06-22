@@ -95,25 +95,14 @@ class _MinesweeperHomeScreenState extends ConsumerState<MinesweeperHomeScreen> {
 
   /// 새 게임 경고 (진행 중 게임 있을 때)
   void _showNewGameWarning(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('minesweeper.newGame.warning.title')),
-        content: Text(AppStrings.get('minesweeper.newGame.warning.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              _showDifficultyPicker(context);
-            },
-            child: Text(AppStrings.get('minesweeper.newGame.warning.confirm')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('minesweeper.newGame.warning.title'),
+      content: AppStrings.get('minesweeper.newGame.warning.message'),
+      confirmLabel: AppStrings.get('minesweeper.newGame.warning.confirm'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () => _showDifficultyPicker(context),
     );
   }
 

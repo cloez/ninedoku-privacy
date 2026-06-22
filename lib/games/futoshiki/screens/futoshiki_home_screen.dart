@@ -101,25 +101,14 @@ class _FutoshikiHomeScreenState extends ConsumerState<FutoshikiHomeScreen> {
 
   /// 새 게임 경고
   void _showNewGameWarning(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('futoshiki.newGame.warning.title')),
-        content: Text(AppStrings.get('futoshiki.newGame.warning.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              _showDifficultyPicker(context);
-            },
-            child: Text(AppStrings.get('futoshiki.newGame.warning.confirm')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('futoshiki.newGame.warning.title'),
+      content: AppStrings.get('futoshiki.newGame.warning.message'),
+      confirmLabel: AppStrings.get('futoshiki.newGame.warning.confirm'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () => _showDifficultyPicker(context),
     );
   }
 

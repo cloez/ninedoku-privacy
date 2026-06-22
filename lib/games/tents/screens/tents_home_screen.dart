@@ -97,25 +97,14 @@ class _TentsHomeScreenState extends ConsumerState<TentsHomeScreen> {
 
   /// 새 게임 경고 (진행 중 게임 있을 때)
   void _showNewGameWarning(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('tents.newGame.warning.title')),
-        content: Text(AppStrings.get('tents.newGame.warning.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              _showDifficultyPicker(context);
-            },
-            child: Text(AppStrings.get('tents.newGame.warning.confirm')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('tents.newGame.warning.title'),
+      content: AppStrings.get('tents.newGame.warning.message'),
+      confirmLabel: AppStrings.get('tents.newGame.warning.confirm'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () => _showDifficultyPicker(context),
     );
   }
 

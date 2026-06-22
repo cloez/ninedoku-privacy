@@ -1,0 +1,12 @@
+﻿file,duration_sec,sample_rate_hz,format,channels,usage
+voice/good.wav,0.639,44100,PCM_16,mono,Bright youthful casual female-style game voice
+voice/great.wav,0.747,44100,PCM_16,mono,Bright youthful casual female-style game voice
+voice/excellent.wav,0.919,44100,PCM_16,mono,Bright youthful casual female-style game voice
+voice/wow.wav,0.841,44100,PCM_16,mono,Bright youthful casual female-style game voice
+sfx/click.wav,0.115,44100,PCM_16,mono,Sudoku cell/tile tap
+sfx/mistake.wav,0.460,44100,PCM_16,mono,Incorrect input; soft downward cue
+sfx/line_complete.wav,0.830,44100,PCM_16,mono,Row/column/box completed
+sfx/game_complete.wav,1.850,44100,PCM_16,mono,Puzzle completed celebration
+sfx/badge.wav,1.050,44100,PCM_16,mono,Badge or achievement unlocked
+sfx/hint.wav,0.820,44100,PCM_16,mono,Hint requested or revealed
+sfx/pause.wav,0.390,44100,PCM_16,mono,Game paused or pause menu opened

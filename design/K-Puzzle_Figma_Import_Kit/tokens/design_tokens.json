@@ -1,0 +1,66 @@
+{
+  "card": {
+    "width": 700,
+    "height": 300,
+    "radius": 30
+  },
+  "badge": {
+    "width": 96,
+    "height": 76,
+    "fontSize": 38
+  },
+  "spacing": {
+    "cardGap": 60,
+    "contentPadding": 38
+  },
+  "themes": [
+    {
+      "name": "blue",
+      "primary": "#2F6FFF",
+      "surface": "#DCE9FF",
+      "border": "#BFD5FF"
+    },
+    {
+      "name": "mint",
+      "primary": "#12B7A8",
+      "surface": "#DFF8F4",
+      "border": "#BDEFE8"
+    },
+    {
+      "name": "purple",
+      "primary": "#8A46F6",
+      "surface": "#EFE2FF",
+      "border": "#DCC6FF"
+    },
+    {
+      "name": "pink",
+      "primary": "#E9429A",
+      "surface": "#FFE3F1",
+      "border": "#F8C2DF"
+    },
+    {
+      "name": "orange",
+      "primary": "#FF8A1D",
+      "surface": "#FFF0D6",
+      "border": "#FFD9A3"
+    },
+    {
+      "name": "sky",
+      "primary": "#2C7CF3",
+      "surface": "#E1F0FF",
+      "border": "#C6DFFF"
+    },
+    {
+      "name": "green",
+      "primary": "#55B92D",
+      "surface": "#EAF9D9",
+      "border": "#D0EDB4"
+    },
+    {
+      "name": "coral",
+      "primary": "#F0505E",
+      "surface": "#FFE4E5",
+      "border": "#FFC7CC"
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../killer_sudoku_notifier.dart';
 import '../killer_sudoku_state.dart';
@@ -206,26 +207,16 @@ class _KillerSudokuGameScreenState
 
   /// 나가기 확인 다이얼로그
   void _showExitDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('game.exit.title')),
-        content: Text(AppStrings.get('game.exit.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(killerSudokuNotifierProvider.notifier).pause();
-              context.go(AppRoutes.killerSudoku);
-            },
-            child: Text(AppStrings.get('game.exit.leave')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('game.exit.title'),
+      content: AppStrings.get('game.exit.message'),
+      confirmLabel: AppStrings.get('game.exit.leave'),
+      cancelLabel: AppStrings.get('cancel'),
+      onConfirm: () {
+        ref.read(killerSudokuNotifierProvider.notifier).pause();
+        context.go(AppRoutes.killerSudoku);
+      },
     );
   }
 }
@@ -401,15 +392,12 @@ class _ControlBar extends ConsumerWidget {
             onTap: () {
               if (notifier.hasCheckpoint) {
                 notifier.restoreCheckpoint();
-                showCheckpointToast(context, 'checkpoint.restored');
+                    notifier.clearCheckpoint();
+                    showCheckpointToast(context, 'checkpoint.restored');
               } else {
                 notifier.saveCheckpoint();
                 showCheckpointToast(context, 'checkpoint.saved');
               }
-            },
-            onLongPress: () {
-              notifier.clearCheckpoint();
-              showCheckpointToast(context, 'checkpoint.cleared');
             },
           ),
         ],
@@ -637,29 +625,17 @@ class _KillerPauseView extends ConsumerWidget {
   }
 
   void _showGiveUpDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('pause.giveUp.title')),
-        content: Text(AppStrings.get('pause.giveUp.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(killerSudokuNotifierProvider.notifier).giveUp();
-              context.go(AppRoutes.killerSudoku);
-            },
-            child: Text(
-              AppStrings.get('pause.giveUp.action'),
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
+      title: AppStrings.get('pause.giveUp.title'),
+      content: AppStrings.get('pause.giveUp.message'),
+      confirmLabel: AppStrings.get('pause.giveUp.action'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () {
+        ref.read(killerSudokuNotifierProvider.notifier).giveUp();
+        context.go(AppRoutes.killerSudoku);
+      },
     );
   }
 }

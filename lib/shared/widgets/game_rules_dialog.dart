@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../l10n/app_strings.dart';
+import 'casual_widgets.dart';
 
 /// 게임 규칙 안내 다이얼로그
 ///
@@ -10,39 +11,48 @@ class GameRulesDialog {
   /// 다이얼로그 표시
   /// [gameKey] 예: 'binairo', 'minesweeper', 'yinyang', 'killerSudoku' 등
   static void show(BuildContext context, String gameKey) {
-    showDialog<void>(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white70 : const Color(0xFF4A4A5A);
+
+    showKPDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('$gameKey.about.title')),
-        content: SingleChildScrollView(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // 게임 소개
-              Text(AppStrings.get('$gameKey.about.desc')),
-              const SizedBox(height: 16),
-              // 규칙 제목
-              Text(
-                AppStrings.get('$gameKey.rules.title'),
-                style: const TextStyle(fontWeight: FontWeight.bold),
+      title: AppStrings.get('$gameKey.about.title'),
+      confirmLabel: AppStrings.get('close'),
+      contentWidget: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              AppStrings.get('$gameKey.about.desc'),
+              style: TextStyle(fontSize: 14, color: textColor, height: 1.5),
+            ),
+            const SizedBox(height: 16),
+            Text(
+              AppStrings.get('$gameKey.rules.title'),
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: isDark ? Colors.white : const Color(0xFF2D2D3A),
               ),
-              const SizedBox(height: 8),
-              // 규칙 항목 1~3
-              Text('1. ${AppStrings.get('$gameKey.rules.r1')}'),
-              const SizedBox(height: 4),
-              Text('2. ${AppStrings.get('$gameKey.rules.r2')}'),
-              const SizedBox(height: 4),
-              Text('3. ${AppStrings.get('$gameKey.rules.r3')}'),
-            ],
-          ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '1. ${AppStrings.get('$gameKey.rules.r1')}',
+              style: TextStyle(fontSize: 14, color: textColor, height: 1.4),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '2. ${AppStrings.get('$gameKey.rules.r2')}',
+              style: TextStyle(fontSize: 14, color: textColor, height: 1.4),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              '3. ${AppStrings.get('$gameKey.rules.r3')}',
+              style: TextStyle(fontSize: 14, color: textColor, height: 1.4),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('close')),
-          ),
-        ],
       ),
     );
   }

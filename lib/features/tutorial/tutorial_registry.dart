@@ -118,35 +118,60 @@ class TutorialRegistry {
     'binairo': const GameTutorial(
       gameId: 'binairo',
       steps: [
+        // S1: 비나이로란? — 완성 보드
         TutorialStep(
           titleKey: 'tutorial.binairo.step1.title',
           descriptionKey: 'tutorial.binairo.step1.description',
           illustration: MiniBoardIllustration(
             gameId: 'binairo',
             board: [
-              [0, 1, 0, 1],
-              [1, 0, 1, 0],
-              [0, 1, 1, 0],
-              [1, 0, 0, 1],
+              [0, 1, 0, 1, 0, 1],
+              [1, 0, 1, 0, 1, 0],
+              [0, 1, 1, 0, 0, 1],
+              [1, 0, 0, 1, 1, 0],
+              [1, 1, 0, 0, 1, 0],
+              [0, 0, 1, 1, 0, 1],
             ],
             overlay: OverlayKind.okMark,
           ),
         ),
+        // S2: 균형 규칙 — 행 강조
         TutorialStep(
           titleKey: 'tutorial.binairo.step2.title',
           descriptionKey: 'tutorial.binairo.step2.description',
-          illustration: IconIllustration(Icons.balance_rounded),
+          illustration: MiniBoardIllustration(
+            gameId: 'binairo',
+            board: [
+              [0, 1, 0, 1, 0, 1],
+              [1, 0, 1, 0, 1, 0],
+              [0, 1, 1, 0, 0, 1],
+              [1, 0, 0, 1, 1, 0],
+              [1, 1, 0, 0, 1, 0],
+              [0, 0, 1, 1, 0, 1],
+            ],
+            highlights: [
+              CellHighlight(0, 0, HighlightStyle.info),
+              CellHighlight(0, 1, HighlightStyle.info),
+              CellHighlight(0, 2, HighlightStyle.info),
+              CellHighlight(0, 3, HighlightStyle.info),
+              CellHighlight(0, 4, HighlightStyle.info),
+              CellHighlight(0, 5, HighlightStyle.info),
+            ],
+          ),
         ),
+        // S3: 연속 제한 — 3연속 에러 강조
         TutorialStep(
           titleKey: 'tutorial.binairo.step3.title',
           descriptionKey: 'tutorial.binairo.step3.description',
           illustration: MiniBoardIllustration(
             gameId: 'binairo',
             board: [
-              [1, 1, 1, 0],
-              [0, 0, 1, 1],
-              [1, 0, 0, 1],
-              [0, 1, 0, 0],
+              [1, 1, 1, 0, 0, 1],
+              [0, 0, 1, 1, 0, 1],
+              [1, 0, 0, 1, 1, 0],
+              [0, 1, 0, 0, 1, 0],
+              [1, 1, 0, 1, 0, 1],
+              [0, 0, 1, 0, 1, 0],
             ],
             highlights: [
               CellHighlight(0, 0, HighlightStyle.error),
@@ -156,6 +181,7 @@ class TutorialRegistry {
             overlay: OverlayKind.errorMark,
           ),
         ),
+        // S4: 조작 방법
         TutorialStep(
           titleKey: 'tutorial.binairo.step4.title',
           descriptionKey: 'tutorial.binairo.step4.description',
@@ -168,26 +194,31 @@ class TutorialRegistry {
     'minesweeper': const GameTutorial(
       gameId: 'minesweeper',
       steps: [
+        // S1: 지뢰찾기란?
         TutorialStep(
           titleKey: 'tutorial.minesweeper.step1.title',
           descriptionKey: 'tutorial.minesweeper.step1.description',
           illustration: IconIllustration(Icons.dangerous_rounded),
         ),
+        // S2: 숫자의 의미
         TutorialStep(
           titleKey: 'tutorial.minesweeper.step2.title',
           descriptionKey: 'tutorial.minesweeper.step2.description',
-          illustration: IconIllustration(Icons.format_list_numbered_rounded),
+          illustration: IconIllustration(Icons.pin_rounded),
         ),
+        // S3: 깃발 표시
         TutorialStep(
           titleKey: 'tutorial.minesweeper.step3.title',
           descriptionKey: 'tutorial.minesweeper.step3.description',
           illustration: IconIllustration(Icons.flag_rounded),
         ),
+        // S4: 조작 방법
         TutorialStep(
           titleKey: 'tutorial.minesweeper.step4.title',
           descriptionKey: 'tutorial.minesweeper.step4.description',
           illustration: IconIllustration(Icons.touch_app_rounded),
         ),
+        // S5: 승리 조건
         TutorialStep(
           titleKey: 'tutorial.minesweeper.step5.title',
           descriptionKey: 'tutorial.minesweeper.step5.description',
@@ -200,21 +231,25 @@ class TutorialRegistry {
     'yinyang': const GameTutorial(
       gameId: 'yinyang',
       steps: [
+        // S1: 음양이란?
         TutorialStep(
           titleKey: 'tutorial.yinyang.step1.title',
           descriptionKey: 'tutorial.yinyang.step1.description',
           illustration: IconIllustration(Icons.contrast_rounded),
         ),
+        // S2: 연결 규칙
         TutorialStep(
           titleKey: 'tutorial.yinyang.step2.title',
           descriptionKey: 'tutorial.yinyang.step2.description',
           illustration: IconIllustration(Icons.account_tree_rounded),
         ),
+        // S3: 2×2 금지
         TutorialStep(
           titleKey: 'tutorial.yinyang.step3.title',
           descriptionKey: 'tutorial.yinyang.step3.description',
           illustration: IconIllustration(Icons.grid_view_rounded),
         ),
+        // S4: 조작 방법
         TutorialStep(
           titleKey: 'tutorial.yinyang.step4.title',
           descriptionKey: 'tutorial.yinyang.step4.description',
@@ -227,26 +262,31 @@ class TutorialRegistry {
     'nonogram': const GameTutorial(
       gameId: 'nonogram',
       steps: [
+        // S1: 노노그램이란?
         TutorialStep(
           titleKey: 'tutorial.nonogram.step1.title',
           descriptionKey: 'tutorial.nonogram.step1.description',
           illustration: IconIllustration(Icons.image_rounded),
         ),
+        // S2: 단서 읽기
         TutorialStep(
           titleKey: 'tutorial.nonogram.step2.title',
           descriptionKey: 'tutorial.nonogram.step2.description',
           illustration: IconIllustration(Icons.format_list_numbered_rounded),
         ),
+        // S3: 빈칸 표시
         TutorialStep(
           titleKey: 'tutorial.nonogram.step3.title',
           descriptionKey: 'tutorial.nonogram.step3.description',
           illustration: IconIllustration(Icons.space_bar_rounded),
         ),
+        // S4: X 마킹 전략
         TutorialStep(
           titleKey: 'tutorial.nonogram.step4.title',
           descriptionKey: 'tutorial.nonogram.step4.description',
           illustration: IconIllustration(Icons.close_rounded),
         ),
+        // S5: 조작 방법
         TutorialStep(
           titleKey: 'tutorial.nonogram.step5.title',
           descriptionKey: 'tutorial.nonogram.step5.description',

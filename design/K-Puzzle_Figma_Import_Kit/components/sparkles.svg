@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="180" viewBox="0 0 500 180">
+
+<defs>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+    <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#3F35B5" flood-opacity="0.16"/>
+  </filter>
+  <filter id="badgeShadow" x="-30%" y="-30%" width="160%" height="170%">
+    <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#2A205E" flood-opacity="0.22"/>
+  </filter>
+  <linearGradient id="cardGloss" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/>
+    <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0.15"/>
+    <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+  </linearGradient>
+</defs>
+
+<rect width="500" height="180" fill="none"/>
+<polygon points="70.0,46.0 78.2,71.8 104.0,80.0 78.2,88.2 70.0,114.0 61.8,88.2 36.0,80.0 61.8,71.8" fill="#88B7FF" opacity="1"/>
+<polygon points="105.0,108.0 107.9,117.1 117.0,120.0 107.9,122.9 105.0,132.0 102.1,122.9 93.0,120.0 102.1,117.1" fill="#88B7FF" opacity="0.8"/>
+<polygon points="180.0,46.0 188.2,71.8 214.0,80.0 188.2,88.2 180.0,114.0 171.8,88.2 146.0,80.0 171.8,71.8" fill="#FFD55A" opacity="1"/>
+<polygon points="215.0,108.0 217.9,117.1 227.0,120.0 217.9,122.9 215.0,132.0 212.1,122.9 203.0,120.0 212.1,117.1" fill="#FFD55A" opacity="0.8"/>
+<polygon points="290.0,46.0 298.2,71.8 324.0,80.0 298.2,88.2 290.0,114.0 281.8,88.2 256.0,80.0 281.8,71.8" fill="#C6A7FF" opacity="1"/>
+<polygon points="325.0,108.0 327.9,117.1 337.0,120.0 327.9,122.9 325.0,132.0 322.1,122.9 313.0,120.0 322.1,117.1" fill="#C6A7FF" opacity="0.8"/>
+<polygon points="400.0,46.0 408.2,71.8 434.0,80.0 408.2,88.2 400.0,114.0 391.8,88.2 366.0,80.0 391.8,71.8" fill="#FFFFFF" opacity="1"/>
+<polygon points="435.0,108.0 437.9,117.1 447.0,120.0 437.9,122.9 435.0,132.0 432.1,122.9 423.0,120.0 432.1,117.1" fill="#FFFFFF" opacity="0.8"/>
+</svg>

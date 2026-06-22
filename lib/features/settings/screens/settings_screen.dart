@@ -10,8 +10,8 @@ import '../../../core/storage/backup_service.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../../shared/l10n/app_strings.dart';
 import '../../../shared/services/sound_manager.dart';
-import '../../../shared/utils/motion_helper.dart' as motion_helper;
 import '../../../shared/widgets/casual_widgets.dart';
+import '../../../shared/utils/motion_helper.dart' as motion_helper;
 import '../../../shared/widgets/kp_widgets.dart';
 import 'theme_select_screen.dart';
 
@@ -411,9 +411,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       // 내보낼 데이터 확인
       if (!service.hasExportableData()) {
         if (ctx.mounted) {
-          ScaffoldMessenger.of(ctx).showSnackBar(
-            SnackBar(content: Text(AppStrings.get('settings.backup.noData'))),
-          );
+          showKPToast(ctx, AppStrings.get('settings.backup.noData'), type: KPToastType.warning);
         }
         return;
       }
@@ -432,11 +430,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       );
     } catch (e) {
       if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          SnackBar(
-              content:
-                  Text('${AppStrings.get('settings.backup.error')}: $e')),
-        );
+        showKPToast(ctx, '${AppStrings.get('settings.backup.error')}: $e', type: KPToastType.error);
       }
     }
   }
@@ -450,70 +444,20 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
 
       if (files.isEmpty) {
         if (ctx.mounted) {
-          ScaffoldMessenger.of(ctx).showSnackBar(
-            SnackBar(
-                content: Text(AppStrings.get('settings.backup.noFiles'))),
-          );
+          showKPToast(ctx, AppStrings.get('settings.backup.noFiles'), type: KPToastType.warning);
         }
         return;
       }
 
       if (!ctx.mounted) return;
 
-      // 백업 파일 선택 다이얼로그
-      final selected = await showDialog<File>(
-        context: ctx,
-        builder: (dialogCtx) => AlertDialog(
-          title: Text(AppStrings.get('settings.backup.selectFile')),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView.builder(
-              shrinkWrap: true,
-              itemCount: files.length,
-              itemBuilder: (_, i) {
-                final name = files[i].path.split('/').last.split('\\').last;
-                return ListTile(
-                  title: Text(name, style: const TextStyle(fontSize: 13)),
-                  onTap: () => Navigator.pop(dialogCtx, files[i]),
-                );
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogCtx),
-              child: Text(AppStrings.get('cancel')),
-            ),
-          ],
-        ),
-      );
+      // 백업 파일 선택 다이얼로그 (KP 스타일)
+      final selected = await _showKPFileSelectDialog(ctx, files);
 
       if (selected == null || !ctx.mounted) return;
 
-      // 복원 방식 선택: 추가 vs 덮어쓰기
-      final overwrite = await showDialog<bool>(
-        context: ctx,
-        builder: (dialogCtx) => AlertDialog(
-          title: Text(AppStrings.get('settings.backup.restore.title')),
-          content: Text(AppStrings.get('settings.backup.restore.message')),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogCtx),
-              child: Text(AppStrings.get('cancel')),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(dialogCtx, false),
-              child:
-                  Text(AppStrings.get('settings.backup.restore.add')),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(dialogCtx, true),
-              child: Text(
-                  AppStrings.get('settings.backup.restore.overwrite')),
-            ),
-          ],
-        ),
-      );
+      // 복원 방식 선택: 추가 vs 덮어쓰기 (KP 스타일)
+      final overwrite = await _showKPRestoreModeDialog(ctx);
 
       if (overwrite == null || !ctx.mounted) return;
 
@@ -521,25 +465,292 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       final success =
           await service.restoreFromJson(json, overwrite: overwrite);
       if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          SnackBar(
-              content: Text(
-            success
-                ? AppStrings.get('settings.backup.restored')
-                : AppStrings.get('settings.backup.error'),
-          )),
+        showKPToast(
+          ctx,
+          success
+              ? AppStrings.get('settings.backup.restored')
+              : AppStrings.get('settings.backup.error'),
+          type: success ? KPToastType.success : KPToastType.error,
         );
         if (success) ref.invalidate(settingsProvider);
       }
     } catch (e) {
       if (ctx.mounted) {
-        ScaffoldMessenger.of(ctx).showSnackBar(
-          SnackBar(
-              content:
-                  Text('${AppStrings.get('settings.backup.error')}: $e')),
-        );
+        showKPToast(ctx, '${AppStrings.get('settings.backup.error')}: $e', type: KPToastType.error);
       }
     }
+  }
+
+  /// KP 스타일 백업 파일 선택 다이얼로그
+  Future<File?> _showKPFileSelectDialog(BuildContext ctx, List<File> files) {
+    return showGeneralDialog<File>(
+      context: ctx,
+      barrierDismissible: true,
+      barrierLabel: 'Dismiss',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 250),
+      transitionBuilder: (c, anim, _, child) {
+        final curve = CurvedAnimation(parent: anim, curve: Curves.easeOutBack);
+        return ScaleTransition(
+          scale: Tween<double>(begin: 0.85, end: 1.0).animate(curve),
+          child: FadeTransition(opacity: anim, child: child),
+        );
+      },
+      pageBuilder: (dialogCtx, _, __) {
+        final isDark = Theme.of(dialogCtx).brightness == Brightness.dark;
+        return Center(
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              width: 320,
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E1D32) : Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.brandIndigo.withValues(alpha: 0.15),
+                    blurRadius: 24, offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              clipBehavior: Clip.hardEdge,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 그라데이션 헤더
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: isDark
+                            ? [AppColors.brandIndigo.withValues(alpha: 0.3), AppColors.brandIndigo.withValues(alpha: 0.1)]
+                            : [AppColors.brandIndigo.withValues(alpha: 0.08), AppColors.brandIndigo.withValues(alpha: 0.02)],
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Text(
+                          AppStrings.get('settings.backup.selectFile'),
+                          style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.w900,
+                            color: isDark ? Colors.white : AppColors.brandIndigo,
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(Icons.auto_awesome, size: 18, color: AppColors.brandGold),
+                      ],
+                    ),
+                  ),
+                  // 파일 목록
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 300),
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: files.length,
+                      itemBuilder: (_, i) {
+                        final name = files[i].path.split('/').last.split('\\').last;
+                        return ListTile(
+                          title: Text(name, style: TextStyle(
+                            fontSize: 13,
+                            color: isDark ? Colors.white : const Color(0xFF2D2D3A),
+                          )),
+                          onTap: () => Navigator.pop(dialogCtx, files[i]),
+                        );
+                      },
+                    ),
+                  ),
+                  // 취소 버튼
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: TextButton(
+                        onPressed: () => Navigator.pop(dialogCtx),
+                        child: Text(
+                          AppStrings.get('cancel'),
+                          style: TextStyle(
+                            color: isDark ? Colors.white60 : AppColors.brandIndigo,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// KP 스타일 복원 방식 선택 다이얼로그
+  Future<bool?> _showKPRestoreModeDialog(BuildContext ctx) {
+    return showGeneralDialog<bool>(
+      context: ctx,
+      barrierDismissible: true,
+      barrierLabel: 'Dismiss',
+      barrierColor: Colors.black54,
+      transitionDuration: const Duration(milliseconds: 250),
+      transitionBuilder: (c, anim, _, child) {
+        final curve = CurvedAnimation(parent: anim, curve: Curves.easeOutBack);
+        return ScaleTransition(
+          scale: Tween<double>(begin: 0.85, end: 1.0).animate(curve),
+          child: FadeTransition(opacity: anim, child: child),
+        );
+      },
+      pageBuilder: (dialogCtx, _, __) {
+        final isDark = Theme.of(dialogCtx).brightness == Brightness.dark;
+        return Center(
+          child: Material(
+            color: Colors.transparent,
+            child: Container(
+              width: 320,
+              decoration: BoxDecoration(
+                color: isDark ? const Color(0xFF1E1D32) : Colors.white,
+                borderRadius: BorderRadius.circular(24),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.brandIndigo.withValues(alpha: 0.15),
+                    blurRadius: 24, offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              clipBehavior: Clip.hardEdge,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  // 그라데이션 헤더
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: isDark
+                            ? [AppColors.brandIndigo.withValues(alpha: 0.3), AppColors.brandIndigo.withValues(alpha: 0.1)]
+                            : [AppColors.brandIndigo.withValues(alpha: 0.08), AppColors.brandIndigo.withValues(alpha: 0.02)],
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            AppStrings.get('settings.backup.restore.title'),
+                            style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.w900,
+                              color: isDark ? Colors.white : AppColors.brandIndigo,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        Icon(Icons.auto_awesome, size: 18, color: AppColors.brandGold),
+                      ],
+                    ),
+                  ),
+                  // 본문
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          AppStrings.get('settings.backup.restore.message'),
+                          style: TextStyle(
+                            fontSize: 15, fontWeight: FontWeight.w500,
+                            color: isDark ? Colors.white70 : const Color(0xFF4A4A5A),
+                            height: 1.5,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+                        // 3개 버튼: 취소 / 추가 / 덮어쓰기
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () => Navigator.pop(dialogCtx),
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                                ),
+                                child: Text(
+                                  AppStrings.get('cancel'),
+                                  style: TextStyle(
+                                    color: isDark ? Colors.white60 : AppColors.brandIndigo,
+                                    fontWeight: FontWeight.w700, fontSize: 14,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () => Navigator.pop(dialogCtx, false),
+                                  borderRadius: BorderRadius.circular(14),
+                                  child: Ink(
+                                    padding: const EdgeInsets.symmetric(vertical: 14),
+                                    decoration: BoxDecoration(
+                                      gradient: LinearGradient(colors: [
+                                        AppColors.brandIndigo,
+                                        AppColors.brandIndigo.withValues(alpha: 0.8),
+                                      ]),
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        AppStrings.get('settings.backup.restore.add'),
+                                        style: const TextStyle(
+                                          color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () => Navigator.pop(dialogCtx, true),
+                                  borderRadius: BorderRadius.circular(14),
+                                  child: Ink(
+                                    padding: const EdgeInsets.symmetric(vertical: 14),
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(colors: [
+                                        Color(0xFFEF5350),
+                                        Color(0xFFE53935),
+                                      ]),
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: Center(
+                                      child: Text(
+                                        AppStrings.get('settings.backup.restore.overwrite'),
+                                        style: const TextStyle(
+                                          color: Colors.white, fontWeight: FontWeight.w800, fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -763,7 +974,7 @@ class DonationScreen extends StatelessWidget {
                 ),
                 child: Column(
                   children: [
-                    const Text('❤️', style: TextStyle(fontSize: 56)),
+                    const Text('☕', style: TextStyle(fontSize: 56)),
                     const SizedBox(height: 12),
                     Text(
                       s('donation.message'),
@@ -877,12 +1088,7 @@ class _CryptoCard extends StatelessWidget {
 
   void _copyAddress(BuildContext context) {
     Clipboard.setData(ClipboardData(text: crypto.address));
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppStrings.get('donation.addressCopied')),
-        duration: const Duration(seconds: 2),
-      ),
-    );
+    showKPToast(context, AppStrings.get('donation.addressCopied'), type: KPToastType.success);
   }
 }
 
@@ -908,12 +1114,12 @@ class _AdBanner extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: isDark ? Colors.blue.shade900 : Colors.blue.shade50,
+                  color: isDark ? Colors.deepOrange.shade900 : Colors.amber.shade50,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
-                  Icons.shopping_bag_rounded,
-                  color: isDark ? Colors.blue.shade200 : Colors.blue.shade700,
+                  Icons.volunteer_activism_rounded,
+                  color: isDark ? Colors.amber.shade200 : Colors.deepOrange.shade700,
                   size: 28,
                 ),
               ),

@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
 import '../../../shared/constants/app_colors.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../nonogram_notifier.dart';
 import '../nonogram_state.dart';
 import '../widgets/nonogram_board_widget.dart';
@@ -457,51 +458,31 @@ class _NonogramGameScreenState extends ConsumerState<NonogramGameScreen> {
   }
 
   void _showExitDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('exit.title')),
-        content: Text(AppStrings.get('exit.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(nonogramNotifierProvider.notifier).pause();
-              context.go(AppRoutes.nonograms);
-            },
-            child: Text(AppStrings.get('exit.confirm')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('exit.title'),
+      content: AppStrings.get('exit.message'),
+      confirmLabel: AppStrings.get('exit.confirm'),
+      cancelLabel: AppStrings.get('cancel'),
+      onConfirm: () {
+        ref.read(nonogramNotifierProvider.notifier).pause();
+        context.go(AppRoutes.nonograms);
+      },
     );
   }
 
   void _showGiveUpDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('giveUp.title')),
-        content: Text(AppStrings.get('giveUp.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(nonogramNotifierProvider.notifier).giveUp();
-              context.go(AppRoutes.nonograms);
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(AppStrings.get('giveUp.confirm')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('giveUp.title'),
+      content: AppStrings.get('giveUp.message'),
+      confirmLabel: AppStrings.get('giveUp.confirm'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () {
+        ref.read(nonogramNotifierProvider.notifier).giveUp();
+        context.go(AppRoutes.nonograms);
+      },
     );
   }
 
@@ -514,14 +495,10 @@ class _NonogramGameScreenState extends ConsumerState<NonogramGameScreen> {
     if (!ok) {
       // 실패: 약한 햅틱 + 토스트 (틀린 위치 비공개)
       HapticFeedback.selectionClick();
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppStrings.get('nonogram.verify.fail')),
-          duration: const Duration(seconds: 2),
-          behavior: SnackBarBehavior.floating,
-          margin: const EdgeInsets.only(bottom: 16, left: 24, right: 24),
-        ),
+      showKPToast(
+        context,
+        AppStrings.get('nonogram.verify.fail'),
+        type: KPToastType.error,
       );
     }
     // 성공이면 _checkCompletion이 자동으로 결과 화면으로 전환
@@ -752,15 +729,12 @@ class _ControlBar extends StatelessWidget {
             onTap: () {
               if (notifier.hasCheckpoint) {
                 notifier.restoreCheckpoint();
-                showCheckpointToast(context, 'checkpoint.restored');
+                    notifier.clearCheckpoint();
+                    showCheckpointToast(context, 'checkpoint.restored');
               } else {
                 notifier.saveCheckpoint();
                 showCheckpointToast(context, 'checkpoint.saved');
               }
-            },
-            onLongPress: () {
-              notifier.clearCheckpoint();
-              showCheckpointToast(context, 'checkpoint.cleared');
             },
           ),
           const SizedBox(width: 8),

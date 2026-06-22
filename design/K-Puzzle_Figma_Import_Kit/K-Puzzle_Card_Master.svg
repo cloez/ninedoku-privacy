@@ -1,0 +1,219 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2200" viewBox="0 0 1600 2200">
+
+<defs>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+    <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#3F35B5" flood-opacity="0.16"/>
+  </filter>
+  <filter id="badgeShadow" x="-30%" y="-30%" width="160%" height="170%">
+    <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#2A205E" flood-opacity="0.22"/>
+  </filter>
+  <linearGradient id="cardGloss" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/>
+    <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0.15"/>
+    <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+  </linearGradient>
+</defs>
+
+<rect width="1600" height="2200" fill="#FAFAFF"/>
+<text x="800" y="90" text-anchor="middle" font-family="Arial, sans-serif" font-size="58" font-weight="800" fill="#19165C">K-퍼즐 카드 배경 템플릿</text>
+<text x="800" y="142" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" font-weight="500" fill="#5A5D82">Figma import용 벡터 원본 · 색상·숫자·텍스트 변경 가능</text>
+
+<g id="card_01_blue" transform="translate(70,200)">
+  <rect x="0" y="0" width="700" height="300" rx="30" fill="#DCE9FF" stroke="#BFD5FF" stroke-width="4" filter="url(#shadow)"/>
+  <rect x="5" y="5" width="690" height="290" rx="25" fill="url(#cardGloss)" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="3"/>
+  <path d="M 568 300 C 580 220, 630 215, 700 180 L 700 300 Z" fill="#2F6FFF" opacity="0.15"/>
+  <path d="M 582 300 C 595 242, 638 234, 700 204" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="3"/>
+  <polygon points="652.0,28.0 656.8,43.2 672.0,48.0 656.8,52.8 652.0,68.0 647.2,52.8 632.0,48.0 647.2,43.2" fill="#FFFFFF" opacity="0.95"/>
+  <polygon points="610.0,82.0 612.4,89.6 620.0,92.0 612.4,94.4 610.0,102.0 607.6,94.4 600.0,92.0 607.6,89.6" fill="#FFFFFF" opacity="0.9"/>
+  <polygon points="640.0,233.0 642.9,242.1 652.0,245.0 642.9,247.9 640.0,257.0 637.1,247.9 628.0,245.0 637.1,242.1" fill="#FFFFFF" opacity="0.75"/>
+  <g id="badge_01" filter="url(#badgeShadow)">
+    <path d="M 0 0 H 78 Q 96 0 96 18 V 60 Q 96 76 80 76 H 0 Z" fill="#2F6FFF"/>
+    <rect x="2" y="2" width="90" height="70" rx="20" fill="#FFFFFF" opacity="0.08"/>
+    <text x="44.0" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">01</text>
+  </g>
+  <g id="content_guides" opacity="0.22">
+    <rect x="38" y="64" width="150" height="204" rx="22" fill="none" stroke="#2F6FFF" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="74" width="440" height="44" rx="10" fill="none" stroke="#2F6FFF" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="132" width="415" height="62" rx="10" fill="none" stroke="#2F6FFF" stroke-dasharray="10 10" stroke-width="2"/>
+  </g>
+</g>
+
+
+<g id="card_02_mint" transform="translate(830,200)">
+  <rect x="0" y="0" width="700" height="300" rx="30" fill="#DFF8F4" stroke="#BDEFE8" stroke-width="4" filter="url(#shadow)"/>
+  <rect x="5" y="5" width="690" height="290" rx="25" fill="url(#cardGloss)" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="3"/>
+  <path d="M 568 300 C 580 220, 630 215, 700 180 L 700 300 Z" fill="#12B7A8" opacity="0.15"/>
+  <path d="M 582 300 C 595 242, 638 234, 700 204" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="3"/>
+  <polygon points="652.0,28.0 656.8,43.2 672.0,48.0 656.8,52.8 652.0,68.0 647.2,52.8 632.0,48.0 647.2,43.2" fill="#FFFFFF" opacity="0.95"/>
+  <polygon points="610.0,82.0 612.4,89.6 620.0,92.0 612.4,94.4 610.0,102.0 607.6,94.4 600.0,92.0 607.6,89.6" fill="#FFFFFF" opacity="0.9"/>
+  <polygon points="640.0,233.0 642.9,242.1 652.0,245.0 642.9,247.9 640.0,257.0 637.1,247.9 628.0,245.0 637.1,242.1" fill="#FFFFFF" opacity="0.75"/>
+  <g id="badge_02" filter="url(#badgeShadow)">
+    <path d="M 0 0 H 78 Q 96 0 96 18 V 60 Q 96 76 80 76 H 0 Z" fill="#12B7A8"/>
+    <rect x="2" y="2" width="90" height="70" rx="20" fill="#FFFFFF" opacity="0.08"/>
+    <text x="44.0" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">02</text>
+  </g>
+  <g id="content_guides" opacity="0.22">
+    <rect x="38" y="64" width="150" height="204" rx="22" fill="none" stroke="#12B7A8" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="74" width="440" height="44" rx="10" fill="none" stroke="#12B7A8" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="132" width="415" height="62" rx="10" fill="none" stroke="#12B7A8" stroke-dasharray="10 10" stroke-width="2"/>
+  </g>
+</g>
+
+
+<g id="card_03_purple" transform="translate(70,560)">
+  <rect x="0" y="0" width="700" height="300" rx="30" fill="#EFE2FF" stroke="#DCC6FF" stroke-width="4" filter="url(#shadow)"/>
+  <rect x="5" y="5" width="690" height="290" rx="25" fill="url(#cardGloss)" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="3"/>
+  <path d="M 568 300 C 580 220, 630 215, 700 180 L 700 300 Z" fill="#8A46F6" opacity="0.15"/>
+  <path d="M 582 300 C 595 242, 638 234, 700 204" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="3"/>
+  <polygon points="652.0,28.0 656.8,43.2 672.0,48.0 656.8,52.8 652.0,68.0 647.2,52.8 632.0,48.0 647.2,43.2" fill="#FFFFFF" opacity="0.95"/>
+  <polygon points="610.0,82.0 612.4,89.6 620.0,92.0 612.4,94.4 610.0,102.0 607.6,94.4 600.0,92.0 607.6,89.6" fill="#FFFFFF" opacity="0.9"/>
+  <polygon points="640.0,233.0 642.9,242.1 652.0,245.0 642.9,247.9 640.0,257.0 637.1,247.9 628.0,245.0 637.1,242.1" fill="#FFFFFF" opacity="0.75"/>
+  <g id="badge_03" filter="url(#badgeShadow)">
+    <path d="M 0 0 H 78 Q 96 0 96 18 V 60 Q 96 76 80 76 H 0 Z" fill="#8A46F6"/>
+    <rect x="2" y="2" width="90" height="70" rx="20" fill="#FFFFFF" opacity="0.08"/>
+    <text x="44.0" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">03</text>
+  </g>
+  <g id="content_guides" opacity="0.22">
+    <rect x="38" y="64" width="150" height="204" rx="22" fill="none" stroke="#8A46F6" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="74" width="440" height="44" rx="10" fill="none" stroke="#8A46F6" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="132" width="415" height="62" rx="10" fill="none" stroke="#8A46F6" stroke-dasharray="10 10" stroke-width="2"/>
+  </g>
+</g>
+
+
+<g id="card_04_pink" transform="translate(830,560)">
+  <rect x="0" y="0" width="700" height="300" rx="30" fill="#FFE3F1" stroke="#F8C2DF" stroke-width="4" filter="url(#shadow)"/>
+  <rect x="5" y="5" width="690" height="290" rx="25" fill="url(#cardGloss)" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="3"/>
+  <path d="M 568 300 C 580 220, 630 215, 700 180 L 700 300 Z" fill="#E9429A" opacity="0.15"/>
+  <path d="M 582 300 C 595 242, 638 234, 700 204" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="3"/>
+  <polygon points="652.0,28.0 656.8,43.2 672.0,48.0 656.8,52.8 652.0,68.0 647.2,52.8 632.0,48.0 647.2,43.2" fill="#FFFFFF" opacity="0.95"/>
+  <polygon points="610.0,82.0 612.4,89.6 620.0,92.0 612.4,94.4 610.0,102.0 607.6,94.4 600.0,92.0 607.6,89.6" fill="#FFFFFF" opacity="0.9"/>
+  <polygon points="640.0,233.0 642.9,242.1 652.0,245.0 642.9,247.9 640.0,257.0 637.1,247.9 628.0,245.0 637.1,242.1" fill="#FFFFFF" opacity="0.75"/>
+  <g id="badge_04" filter="url(#badgeShadow)">
+    <path d="M 0 0 H 78 Q 96 0 96 18 V 60 Q 96 76 80 76 H 0 Z" fill="#E9429A"/>
+    <rect x="2" y="2" width="90" height="70" rx="20" fill="#FFFFFF" opacity="0.08"/>
+    <text x="44.0" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">04</text>
+  </g>
+  <g id="content_guides" opacity="0.22">
+    <rect x="38" y="64" width="150" height="204" rx="22" fill="none" stroke="#E9429A" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="74" width="440" height="44" rx="10" fill="none" stroke="#E9429A" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="132" width="415" height="62" rx="10" fill="none" stroke="#E9429A" stroke-dasharray="10 10" stroke-width="2"/>
+  </g>
+</g>
+
+
+<g id="card_05_orange" transform="translate(70,920)">
+  <rect x="0" y="0" width="700" height="300" rx="30" fill="#FFF0D6" stroke="#FFD9A3" stroke-width="4" filter="url(#shadow)"/>
+  <rect x="5" y="5" width="690" height="290" rx="25" fill="url(#cardGloss)" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="3"/>
+  <path d="M 568 300 C 580 220, 630 215, 700 180 L 700 300 Z" fill="#FF8A1D" opacity="0.15"/>
+  <path d="M 582 300 C 595 242, 638 234, 700 204" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="3"/>
+  <polygon points="652.0,28.0 656.8,43.2 672.0,48.0 656.8,52.8 652.0,68.0 647.2,52.8 632.0,48.0 647.2,43.2" fill="#FFFFFF" opacity="0.95"/>
+  <polygon points="610.0,82.0 612.4,89.6 620.0,92.0 612.4,94.4 610.0,102.0 607.6,94.4 600.0,92.0 607.6,89.6" fill="#FFFFFF" opacity="0.9"/>
+  <polygon points="640.0,233.0 642.9,242.1 652.0,245.0 642.9,247.9 640.0,257.0 637.1,247.9 628.0,245.0 637.1,242.1" fill="#FFFFFF" opacity="0.75"/>
+  <g id="badge_05" filter="url(#badgeShadow)">
+    <path d="M 0 0 H 78 Q 96 0 96 18 V 60 Q 96 76 80 76 H 0 Z" fill="#FF8A1D"/>
+    <rect x="2" y="2" width="90" height="70" rx="20" fill="#FFFFFF" opacity="0.08"/>
+    <text x="44.0" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">05</text>
+  </g>
+  <g id="content_guides" opacity="0.22">
+    <rect x="38" y="64" width="150" height="204" rx="22" fill="none" stroke="#FF8A1D" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="74" width="440" height="44" rx="10" fill="none" stroke="#FF8A1D" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="132" width="415" height="62" rx="10" fill="none" stroke="#FF8A1D" stroke-dasharray="10 10" stroke-width="2"/>
+  </g>
+</g>
+
+
+<g id="card_06_sky" transform="translate(830,920)">
+  <rect x="0" y="0" width="700" height="300" rx="30" fill="#E1F0FF" stroke="#C6DFFF" stroke-width="4" filter="url(#shadow)"/>
+  <rect x="5" y="5" width="690" height="290" rx="25" fill="url(#cardGloss)" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="3"/>
+  <path d="M 568 300 C 580 220, 630 215, 700 180 L 700 300 Z" fill="#2C7CF3" opacity="0.15"/>
+  <path d="M 582 300 C 595 242, 638 234, 700 204" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="3"/>
+  <polygon points="652.0,28.0 656.8,43.2 672.0,48.0 656.8,52.8 652.0,68.0 647.2,52.8 632.0,48.0 647.2,43.2" fill="#FFFFFF" opacity="0.95"/>
+  <polygon points="610.0,82.0 612.4,89.6 620.0,92.0 612.4,94.4 610.0,102.0 607.6,94.4 600.0,92.0 607.6,89.6" fill="#FFFFFF" opacity="0.9"/>
+  <polygon points="640.0,233.0 642.9,242.1 652.0,245.0 642.9,247.9 640.0,257.0 637.1,247.9 628.0,245.0 637.1,242.1" fill="#FFFFFF" opacity="0.75"/>
+  <g id="badge_06" filter="url(#badgeShadow)">
+    <path d="M 0 0 H 78 Q 96 0 96 18 V 60 Q 96 76 80 76 H 0 Z" fill="#2C7CF3"/>
+    <rect x="2" y="2" width="90" height="70" rx="20" fill="#FFFFFF" opacity="0.08"/>
+    <text x="44.0" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">06</text>
+  </g>
+  <g id="content_guides" opacity="0.22">
+    <rect x="38" y="64" width="150" height="204" rx="22" fill="none" stroke="#2C7CF3" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="74" width="440" height="44" rx="10" fill="none" stroke="#2C7CF3" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="132" width="415" height="62" rx="10" fill="none" stroke="#2C7CF3" stroke-dasharray="10 10" stroke-width="2"/>
+  </g>
+</g>
+
+
+<g id="card_07_green" transform="translate(70,1280)">
+  <rect x="0" y="0" width="700" height="300" rx="30" fill="#EAF9D9" stroke="#D0EDB4" stroke-width="4" filter="url(#shadow)"/>
+  <rect x="5" y="5" width="690" height="290" rx="25" fill="url(#cardGloss)" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="3"/>
+  <path d="M 568 300 C 580 220, 630 215, 700 180 L 700 300 Z" fill="#55B92D" opacity="0.15"/>
+  <path d="M 582 300 C 595 242, 638 234, 700 204" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="3"/>
+  <polygon points="652.0,28.0 656.8,43.2 672.0,48.0 656.8,52.8 652.0,68.0 647.2,52.8 632.0,48.0 647.2,43.2" fill="#FFFFFF" opacity="0.95"/>
+  <polygon points="610.0,82.0 612.4,89.6 620.0,92.0 612.4,94.4 610.0,102.0 607.6,94.4 600.0,92.0 607.6,89.6" fill="#FFFFFF" opacity="0.9"/>
+  <polygon points="640.0,233.0 642.9,242.1 652.0,245.0 642.9,247.9 640.0,257.0 637.1,247.9 628.0,245.0 637.1,242.1" fill="#FFFFFF" opacity="0.75"/>
+  <g id="badge_07" filter="url(#badgeShadow)">
+    <path d="M 0 0 H 78 Q 96 0 96 18 V 60 Q 96 76 80 76 H 0 Z" fill="#55B92D"/>
+    <rect x="2" y="2" width="90" height="70" rx="20" fill="#FFFFFF" opacity="0.08"/>
+    <text x="44.0" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">07</text>
+  </g>
+  <g id="content_guides" opacity="0.22">
+    <rect x="38" y="64" width="150" height="204" rx="22" fill="none" stroke="#55B92D" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="74" width="440" height="44" rx="10" fill="none" stroke="#55B92D" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="132" width="415" height="62" rx="10" fill="none" stroke="#55B92D" stroke-dasharray="10 10" stroke-width="2"/>
+  </g>
+</g>
+
+
+<g id="card_08_coral" transform="translate(830,1280)">
+  <rect x="0" y="0" width="700" height="300" rx="30" fill="#FFE4E5" stroke="#FFC7CC" stroke-width="4" filter="url(#shadow)"/>
+  <rect x="5" y="5" width="690" height="290" rx="25" fill="url(#cardGloss)" stroke="#FFFFFF" stroke-opacity="0.85" stroke-width="3"/>
+  <path d="M 568 300 C 580 220, 630 215, 700 180 L 700 300 Z" fill="#F0505E" opacity="0.15"/>
+  <path d="M 582 300 C 595 242, 638 234, 700 204" fill="none" stroke="#FFFFFF" stroke-opacity="0.55" stroke-width="3"/>
+  <polygon points="652.0,28.0 656.8,43.2 672.0,48.0 656.8,52.8 652.0,68.0 647.2,52.8 632.0,48.0 647.2,43.2" fill="#FFFFFF" opacity="0.95"/>
+  <polygon points="610.0,82.0 612.4,89.6 620.0,92.0 612.4,94.4 610.0,102.0 607.6,94.4 600.0,92.0 607.6,89.6" fill="#FFFFFF" opacity="0.9"/>
+  <polygon points="640.0,233.0 642.9,242.1 652.0,245.0 642.9,247.9 640.0,257.0 637.1,247.9 628.0,245.0 637.1,242.1" fill="#FFFFFF" opacity="0.75"/>
+  <g id="badge_08" filter="url(#badgeShadow)">
+    <path d="M 0 0 H 78 Q 96 0 96 18 V 60 Q 96 76 80 76 H 0 Z" fill="#F0505E"/>
+    <rect x="2" y="2" width="90" height="70" rx="20" fill="#FFFFFF" opacity="0.08"/>
+    <text x="44.0" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFFFFF">08</text>
+  </g>
+  <g id="content_guides" opacity="0.22">
+    <rect x="38" y="64" width="150" height="204" rx="22" fill="none" stroke="#F0505E" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="74" width="440" height="44" rx="10" fill="none" stroke="#F0505E" stroke-dasharray="10 10" stroke-width="2"/>
+    <rect x="220" y="132" width="415" height="62" rx="10" fill="none" stroke="#F0505E" stroke-dasharray="10 10" stroke-width="2"/>
+  </g>
+</g>
+
+<g transform="translate(70,1650)">
+<rect x="0" y="0" width="1460" height="420" rx="32" fill="#FFFFFF" stroke="#D9DCF1" stroke-width="3"/>
+<text x="40" y="58" font-family="Arial, sans-serif" font-size="26" font-weight="700" fill="#2B2F65">분리형 컴포넌트</text>
+<text x="40" y="110" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#4C4F78">숫자 배지</text>
+<g transform="translate(40,135)" filter="url(#badgeShadow)"><path d="M0 0 H82 Q96 0 96 16 V60 Q96 76 80 76 H0 Z" fill="#2F6FFF"/><text x="46" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFF">01</text></g>
+<g transform="translate(170,135)" filter="url(#badgeShadow)"><path d="M0 0 H82 Q96 0 96 16 V60 Q96 76 80 76 H0 Z" fill="#12B7A8"/><text x="46" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFF">02</text></g>
+<g transform="translate(300,135)" filter="url(#badgeShadow)"><path d="M0 0 H82 Q96 0 96 16 V60 Q96 76 80 76 H0 Z" fill="#8A46F6"/><text x="46" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFF">03</text></g>
+<g transform="translate(430,135)" filter="url(#badgeShadow)"><path d="M0 0 H82 Q96 0 96 16 V60 Q96 76 80 76 H0 Z" fill="#E9429A"/><text x="46" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFF">04</text></g>
+<text x="590" y="110" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#4C4F78">스파클</text>
+<polygon points="620.0,147.0 626.7,168.3 648.0,175.0 626.7,181.7 620.0,203.0 613.3,181.7 592.0,175.0 613.3,168.3" fill="#88B7FF" opacity="1"/>
+<polygon points="655.0,195.0 657.4,202.6 665.0,205.0 657.4,207.4 655.0,215.0 652.6,207.4 645.0,205.0 652.6,202.6" fill="#88B7FF" opacity="0.8"/>
+<polygon points="720.0,147.0 726.7,168.3 748.0,175.0 726.7,181.7 720.0,203.0 713.3,181.7 692.0,175.0 713.3,168.3" fill="#FFD55A" opacity="1"/>
+<polygon points="755.0,195.0 757.4,202.6 765.0,205.0 757.4,207.4 755.0,215.0 752.6,207.4 745.0,205.0 752.6,202.6" fill="#FFD55A" opacity="0.8"/>
+<polygon points="820.0,147.0 826.7,168.3 848.0,175.0 826.7,181.7 820.0,203.0 813.3,181.7 792.0,175.0 813.3,168.3" fill="#C6A7FF" opacity="1"/>
+<polygon points="855.0,195.0 857.4,202.6 865.0,205.0 857.4,207.4 855.0,215.0 852.6,207.4 845.0,205.0 852.6,202.6" fill="#C6A7FF" opacity="0.8"/>
+<polygon points="920.0,147.0 926.7,168.3 948.0,175.0 926.7,181.7 920.0,203.0 913.3,181.7 892.0,175.0 913.3,168.3" fill="#FFFFFF" opacity="1"/>
+<polygon points="955.0,195.0 957.4,202.6 965.0,205.0 957.4,207.4 955.0,215.0 952.6,207.4 945.0,205.0 952.6,202.6" fill="#FFFFFF" opacity="0.8"/>
+<text x="1080" y="110" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#4C4F78">우하단 하이라이트</text>
+<g transform="translate(1080,135)"><path d="M0 100 C10 30 55 32 110 0 V100 Z" fill="#2F6FFF" opacity="0.24"/><polygon points="72.0,41.0 75.4,51.6 86.0,55.0 75.4,58.4 72.0,69.0 68.6,58.4 58.0,55.0 68.6,51.6" fill="#FFFFFF" opacity="0.9"/></g>
+<g transform="translate(1210,135)"><path d="M0 100 C10 30 55 32 110 0 V100 Z" fill="#8A46F6" opacity="0.24"/><polygon points="72.0,41.0 75.4,51.6 86.0,55.0 75.4,58.4 72.0,69.0 68.6,58.4 58.0,55.0 68.6,51.6" fill="#FFFFFF" opacity="0.9"/></g>
+<g transform="translate(1340,135)"><path d="M0 100 C10 30 55 32 110 0 V100 Z" fill="#F0505E" opacity="0.24"/><polygon points="72.0,41.0 75.4,51.6 86.0,55.0 75.4,58.4 72.0,69.0 68.6,58.4 58.0,55.0 68.6,51.6" fill="#FFFFFF" opacity="0.9"/></g>
+<text x="40" y="285" font-family="Arial, sans-serif" font-size="20" font-weight="700" fill="#4C4F78">컬러 토큰</text>
+<rect x="40" y="315" width="140" height="50" rx="16" fill="#2F6FFF"/><text x="110" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#FFF">blue</text>
+<rect x="210" y="315" width="140" height="50" rx="16" fill="#12B7A8"/><text x="280" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#FFF">mint</text>
+<rect x="380" y="315" width="140" height="50" rx="16" fill="#8A46F6"/><text x="450" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#FFF">purple</text>
+<rect x="550" y="315" width="140" height="50" rx="16" fill="#E9429A"/><text x="620" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#FFF">pink</text>
+<rect x="720" y="315" width="140" height="50" rx="16" fill="#FF8A1D"/><text x="790" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#FFF">orange</text>
+<rect x="890" y="315" width="140" height="50" rx="16" fill="#2C7CF3"/><text x="960" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#FFF">sky</text>
+<rect x="1060" y="315" width="140" height="50" rx="16" fill="#55B92D"/><text x="1130" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#FFF">green</text>
+<rect x="1230" y="315" width="140" height="50" rx="16" fill="#F0505E"/><text x="1300" y="348" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" font-weight="700" fill="#FFF">coral</text>
+</g>
+</svg>

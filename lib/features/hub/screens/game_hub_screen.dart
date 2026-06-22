@@ -8,6 +8,7 @@ import '../../../core/settings/settings_service.dart';
 import '../../../core/storage/storage_providers.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../../../shared/widgets/kp_widgets.dart';
 import '../../../app/router.dart';
 import '../hub_progress_service.dart';
@@ -18,24 +19,15 @@ class GameHubScreen extends ConsumerWidget {
 
   Future<bool> _showExitConfirm(BuildContext context) async {
     final s = AppStrings.get;
-    final result = await showDialog<bool>(
+    await showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(s('hub.exitTitle')),
-        content: Text(s('hub.exitMessage')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: Text(s('cancel')),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: Text(s('exit.quit')),
-          ),
-        ],
-      ),
+      title: s('hub.exitTitle'),
+      content: s('hub.exitMessage'),
+      confirmLabel: s('exit.quit'),
+      cancelLabel: s('cancel'),
+      isDanger: true,
+      onConfirm: () => SystemNavigator.pop(),
     );
-    if (result == true) SystemNavigator.pop();
     return false;
   }
 
@@ -93,7 +85,8 @@ class GameHubScreen extends ConsumerWidget {
                     crossAxisCount: 2,
                     crossAxisSpacing: 14,
                     mainAxisSpacing: 14,
-                    childAspectRatio: 1.1,
+                    // 1.05로 줄여 텍스트 ellipsis 여유 확보
+                    childAspectRatio: 1.05,
                   ),
                   itemCount: GameRegistry.games.length.isOdd
                       ? GameRegistry.games.length - 1
@@ -274,7 +267,7 @@ class _GameCard extends StatelessWidget {
         : (AppColors.gameCardBgColors[game.id] ?? Colors.white);
     final s = AppStrings.get;
     // Figma 디자인 토큰: 통일된 보라 그림자
-    const shadowColor = Color(0xFF3F35B5);
+    const shadowColor = AppColors.brandIndigo;
 
     return Material(
       color: Colors.transparent,
@@ -347,22 +340,23 @@ class _GameCard extends StatelessWidget {
                 child: _Sparkle(size: isFullWidth ? 14 : 11, opacity: 0.65),
               ),
             ],
-            // 번호 탭 배지 — 확대 (레퍼런스 매칭)
+            // 번호 탭 배지 — 카드 안전 영역 안쪽으로 배치 + 크기/그림자 축소
+            // (이전: top:0/left:0 직각 모서리 → 카드 borderRadius(10)와 시각 충돌 + 그림자 누출)
             Positioned(
-              top: 0, left: 0,
+              top: 6, left: 6,
               child: PhysicalShape(
                 clipper: _TabBadgeClipper(),
                 color: primary,
-                elevation: 4,
+                elevation: 2,
                 shadowColor: const Color(0xFF2A205E),
                 child: SizedBox(
-                  width: isFullWidth ? 56 : 50, height: isFullWidth ? 34 : 32,
+                  width: isFullWidth ? 48 : 44, height: isFullWidth ? 28 : 26,
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.only(right: 3),
+                      padding: const EdgeInsets.only(right: 2),
                       child: Text(
                         (game.order + 1).toString().padLeft(2, '0'),
-                        style: TextStyle(color: Colors.white, fontSize: isFullWidth ? 15 : 13, fontWeight: FontWeight.w900),
+                        style: TextStyle(color: Colors.white, fontSize: isFullWidth ? 13 : 11, fontWeight: FontWeight.w900),
                       ),
                     ),
                   ),
@@ -413,25 +407,24 @@ class _GameCard extends StatelessWidget {
               ),
             ),
             // 메인 콘텐츠 — 대형 아이콘 + 큰 텍스트
+            // borderRadius=10 안전 영역 = R+4 = 14dp padding 적용
+            // 배지 영역(top:6, 26dp) 회피를 위해 top은 더 크게 확보
             Padding(
               padding: EdgeInsets.fromLTRB(
-                isFullWidth ? 12 : 4,
-                isFullWidth ? 14 : 30,
-                isFullWidth ? 10 : 6,
-                isFullWidth ? 14 : 4,
+                isFullWidth ? 16 : 14,
+                isFullWidth ? 18 : 36,
+                isFullWidth ? 16 : 14,
+                isFullWidth ? 16 : 12,
               ),
               child: Row(children: [
-                // 3D 아이콘 — 카드의 주인공
+                // 3D 아이콘 — 카드의 주인공 (Transform.rotate 제거: 좌측 보더 침범 위험)
                 SizedBox(
-                  width: isFullWidth ? 110 : 68,
-                  child: Transform.rotate(
-                    angle: -0.05,
-                    child: Image.asset(
-                      _hubIcon[game.id] ?? 'assets/icons/hub-sudoku.png',
-                      width: isFullWidth ? 100 : 62,
-                      height: isFullWidth ? 100 : 62,
-                      filterQuality: FilterQuality.medium,
-                    ),
+                  width: isFullWidth ? 100 : 56,
+                  child: Image.asset(
+                    _hubIcon[game.id] ?? 'assets/icons/hub-sudoku.png',
+                    width: isFullWidth ? 92 : 54,
+                    height: isFullWidth ? 92 : 54,
+                    filterQuality: FilterQuality.medium,
                   ),
                 ),
                 SizedBox(width: isFullWidth ? 10 : 2),

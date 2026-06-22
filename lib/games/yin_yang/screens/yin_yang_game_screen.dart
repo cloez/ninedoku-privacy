@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../yin_yang_notifier.dart';
 import '../yin_yang_state.dart';
@@ -438,51 +439,31 @@ class _YinYangGameScreenState extends ConsumerState<YinYangGameScreen> {
   }
 
   void _showExitDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('exit.title')),
-        content: Text(AppStrings.get('exit.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(yinYangNotifierProvider.notifier).pause();
-              context.go(AppRoutes.yinYang);
-            },
-            child: Text(AppStrings.get('exit.confirm')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('exit.title'),
+      content: AppStrings.get('exit.message'),
+      confirmLabel: AppStrings.get('exit.confirm'),
+      cancelLabel: AppStrings.get('cancel'),
+      onConfirm: () {
+        ref.read(yinYangNotifierProvider.notifier).pause();
+        context.go(AppRoutes.yinYang);
+      },
     );
   }
 
   void _showGiveUpDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('pause.giveUp.title')),
-        content: Text(AppStrings.get('pause.giveUp.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(yinYangNotifierProvider.notifier).giveUp();
-              context.go(AppRoutes.yinYang);
-            },
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
-            child: Text(AppStrings.get('pause.giveUp.action')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('pause.giveUp.title'),
+      content: AppStrings.get('pause.giveUp.message'),
+      confirmLabel: AppStrings.get('pause.giveUp.action'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () {
+        ref.read(yinYangNotifierProvider.notifier).giveUp();
+        context.go(AppRoutes.yinYang);
+      },
     );
   }
 
@@ -738,15 +719,12 @@ class _ControlBar extends ConsumerWidget {
                 onTap: () {
                   if (notifier.hasCheckpoint) {
                     notifier.restoreCheckpoint();
+                    notifier.clearCheckpoint();
                     showCheckpointToast(context, 'checkpoint.restored');
                   } else {
                     notifier.saveCheckpoint();
                     showCheckpointToast(context, 'checkpoint.saved');
                   }
-                },
-                onLongPress: () {
-                  notifier.clearCheckpoint();
-                  showCheckpointToast(context, 'checkpoint.cleared');
                 },
               ),
             ],

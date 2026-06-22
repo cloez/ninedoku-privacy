@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../core/storage/storage_providers.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../badge_definitions.dart';
 import '../badge_service.dart';
 
@@ -936,47 +937,36 @@ class _BadgesContent extends StatelessWidget {
 
   /// 배지 상세 다이얼로그
   void _showBadgeDetail(BuildContext context, _BadgeItem badge, bool isDark) {
-    showDialog(
+    showKPDialog<void>(
       context: context,
-      builder: (context) => AlertDialog(
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              badge.acquired ? badge.icon : '🔒',
-              style: const TextStyle(fontSize: 48),
+      title: badge.name,
+      confirmLabel: AppStrings.get('confirm'),
+      contentWidget: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            badge.acquired ? badge.icon : '🔒',
+            style: const TextStyle(fontSize: 48),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            badge.description,
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              color: isDark ? Colors.white60 : Colors.black54,
+              fontSize: 14,
+              height: 1.4,
             ),
-            const SizedBox(height: 12),
-            Text(
-              badge.name,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            badge.acquired
+                ? AppStrings.get('badges.acquiredDone')
+                : AppStrings.get('badges.notAcquired'),
+            style: TextStyle(
+              fontWeight: FontWeight.w600,
+              color: badge.acquired ? Colors.green : Colors.grey,
             ),
-            const SizedBox(height: 8),
-            Text(
-              badge.description,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: isDark ? Colors.white60 : Colors.black54,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              badge.acquired
-                  ? AppStrings.get('badges.acquiredDone')
-                  : AppStrings.get('badges.notAcquired'),
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: badge.acquired ? Colors.green : Colors.grey,
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(AppStrings.get('confirm')),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/constants/app_colors.dart';
+import '../../../shared/services/sound_manager.dart';
 import '../game_notifier.dart';
 import '../game_state.dart';
 
@@ -60,6 +61,7 @@ class _EncouragementWidgetState extends ConsumerState<EncouragementWidget>
           next!.lastEncouragement != _currentEncouragement) {
         _currentEncouragement = next.lastEncouragement;
         _controller.forward(from: 0.0);
+        _playEncouragementSound(next.lastEncouragement!);
         setState(() {});
       }
     });
@@ -102,18 +104,27 @@ class _EncouragementWidgetState extends ConsumerState<EncouragementWidget>
     );
   }
 
+  /// 격려 단계별 음성 효과음 재생
+  void _playEncouragementSound(Encouragement e) {
+    final key = switch (e) {
+      Encouragement.good => SoundManager.kEncGood,
+      Encouragement.wow => SoundManager.kEncWow,
+      Encouragement.great => SoundManager.kEncGreat,
+      Encouragement.excellent => SoundManager.kEncExcellent,
+    };
+    SoundManager().play(key);
+  }
+
   (Color, String) _styleForEncouragement(Encouragement e) {
-    // 디자인 리뷰: 추임새 톤 일관성 (다크 모드는 명도 상향 토큰)
     final isDark = Theme.of(context).brightness == Brightness.dark;
     switch (e) {
       case Encouragement.good:
-        // success jade
         return (isDark ? AppColors.successDark : AppColors.successLight, '👍');
-      case Encouragement.excellent:
-        // info slate
+      case Encouragement.wow:
+        return (isDark ? const Color(0xFFFF9F43) : const Color(0xFFE17055), '🎉');
+      case Encouragement.great:
         return (isDark ? AppColors.infoDark : AppColors.infoLight, '⭐');
-      case Encouragement.perfect:
-        // 디톤된 골드 (순금색 회피)
+      case Encouragement.excellent:
         return (AppColors.encouragementPerfect, '🔥');
     }
   }

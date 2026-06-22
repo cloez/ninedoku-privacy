@@ -1,4 +1,4 @@
-// 자동완성 기능 및 추임새(Good/Excellent/Perfect) 검증 테스트
+// 자동완성 기능 및 추임새(Good/Wow/Great/Excellent) 검증 테스트
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ninedoku/core/sudoku/board.dart';
@@ -262,7 +262,7 @@ void main() {
       }
     });
 
-    test('실수 0일 때 Perfect 추임새 표시', () {
+    test('실수 0일 때 Excellent 추임새 표시', () {
       final solution = [
         [5, 3, 4, 6, 7, 8, 9, 1, 2],
         [6, 7, 2, 1, 9, 5, 3, 4, 8],
@@ -293,7 +293,7 @@ void main() {
       final state = notifier.testState!;
       expect(state.isCompleted, isTrue);
       expect(state.mistakeCount, equals(0));
-      expect(state.lastEncouragement, equals(Encouragement.perfect));
+      expect(state.lastEncouragement, equals(Encouragement.excellent));
     });
   });
 
@@ -331,8 +331,9 @@ void main() {
 
     test('Encouragement 메시지 값 확인', () {
       expect(Encouragement.good.message, equals('Good!'));
+      expect(Encouragement.wow.message, equals('Wow!'));
+      expect(Encouragement.great.message, equals('Great!'));
       expect(Encouragement.excellent.message, equals('Excellent!'));
-      expect(Encouragement.perfect.message, equals('Perfect!'));
     });
 
     test('고급 기법 분석 — analyze()로 기법 탐지', () {
@@ -398,7 +399,7 @@ void main() {
       expect(state.isCompleted, isTrue, reason: '퍼펙트 자동완성으로 즉시 완성');
       expect(state.isAutoCompleting, isTrue, reason: '자동완성 애니메이션 진행 중');
       expect(state.autoCompleteCells.length, equals(8), reason: '8개 셀 자동완성');
-      expect(state.lastEncouragement, equals(Encouragement.perfect),
+      expect(state.lastEncouragement, equals(Encouragement.excellent),
           reason: '퍼펙트 추임새 표시');
       expect(state.mistakeCount, equals(0));
 
@@ -409,7 +410,7 @@ void main() {
       }
     });
 
-    test('퍼펙트 자동완성 — 실수 1회 이상이면 Perfect 추임새 미표시', () {
+    test('퍼펙트 자동완성 — 실수 1회 이상이면 Excellent 추임새 미표시', () {
       final solution = [
         [5, 3, 4, 6, 7, 8, 9, 1, 2],
         [6, 7, 2, 1, 9, 5, 3, 4, 8],
@@ -451,11 +452,11 @@ void main() {
       notifier.inputNumber(5); // 정답
 
       final state = notifier.testState!;
-      // 자동완성 자체는 발동 (Naked Single 체인), 하지만 Perfect 아님
+      // 자동완성 자체는 발동 (Naked Single 체인), 하지만 Excellent 아님
       expect(state.isCompleted, isTrue, reason: '자동완성으로 완성됨');
       expect(state.isAutoCompleting, isTrue, reason: '자동완성 애니메이션 진행 중');
-      expect(state.lastEncouragement, isNot(equals(Encouragement.perfect)),
-          reason: '실수 1회 → Perfect 추임새 미표시');
+      expect(state.lastEncouragement, isNot(equals(Encouragement.excellent)),
+          reason: '실수 1회 → Excellent 추임새 미표시');
       expect(state.mistakeCount, equals(1));
     });
 

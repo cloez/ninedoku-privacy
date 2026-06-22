@@ -363,3 +363,272 @@ class CasualCard extends StatelessWidget {
     );
   }
 }
+
+// ---------------------------------------------------------------------------
+// 캐주얼 토스트 — KP 디자인 시스템
+// ---------------------------------------------------------------------------
+
+/// 토스트 유형 (상태별 색상/아이콘 분류)
+enum KPToastType { success, error, info, warning }
+
+/// KP 디자인 캐주얼 토스트 표시
+void showKPToast(
+  BuildContext context,
+  String message, {
+  KPToastType type = KPToastType.info,
+  Duration duration = const Duration(seconds: 2),
+}) {
+  ScaffoldMessenger.of(context).clearSnackBars();
+
+  final isDark = Theme.of(context).brightness == Brightness.dark;
+  final (Color accent, Color bg, IconData icon) = switch (type) {
+    KPToastType.success => (
+      const Color(0xFF4CAF50),
+      isDark ? const Color(0xFF1B3A1B) : const Color(0xFFE8F5E9),
+      Icons.check_circle_rounded,
+    ),
+    KPToastType.error => (
+      const Color(0xFFEF5350),
+      isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFFEBEE),
+      Icons.error_rounded,
+    ),
+    KPToastType.info => (
+      AppColors.brandIndigo,
+      isDark ? const Color(0xFF1B1B3A) : const Color(0xFFEDE7F6),
+      Icons.info_rounded,
+    ),
+    KPToastType.warning => (
+      AppColors.brandGold,
+      isDark ? const Color(0xFF3A351B) : const Color(0xFFFFF8E1),
+      Icons.warning_rounded,
+    ),
+  };
+
+  ScaffoldMessenger.of(context).showSnackBar(
+    SnackBar(
+      content: Row(
+        children: [
+          // 아이콘 원형 배경
+          Container(
+            width: 32, height: 32,
+            decoration: BoxDecoration(
+              color: accent.withValues(alpha: 0.15),
+              shape: BoxShape.circle,
+            ),
+            child: Center(child: Icon(icon, size: 18, color: accent)),
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              message,
+              style: TextStyle(
+                color: isDark ? Colors.white : const Color(0xFF2D2D3A),
+                fontWeight: FontWeight.w700,
+                fontSize: 14,
+              ),
+            ),
+          ),
+        ],
+      ),
+      backgroundColor: bg,
+      duration: duration,
+      behavior: SnackBarBehavior.floating,
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: accent.withValues(alpha: 0.3), width: 1),
+      ),
+      margin: const EdgeInsets.only(bottom: 80, left: 24, right: 24),
+    ),
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 캐주얼 다이얼로그 — KP 디자인 시스템
+// ---------------------------------------------------------------------------
+
+/// KP 디자인 캐주얼 다이얼로그 표시
+///
+/// [content] 또는 [contentWidget] 중 하나를 전달한다.
+/// [contentWidget]가 있으면 content 무시.
+Future<T?> showKPDialog<T>({
+  required BuildContext context,
+  required String title,
+  String? content,
+  Widget? contentWidget,
+  required String confirmLabel,
+  String? cancelLabel,
+  VoidCallback? onConfirm,
+  VoidCallback? onCancel,
+  bool isDanger = false,
+}) {
+  return showGeneralDialog<T>(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: 'Dismiss',
+    barrierColor: Colors.black54,
+    transitionDuration: const Duration(milliseconds: 250),
+    transitionBuilder: (ctx, anim, _, child) {
+      final curve = CurvedAnimation(parent: anim, curve: Curves.easeOutBack);
+      return ScaleTransition(
+        scale: Tween<double>(begin: 0.85, end: 1.0).animate(curve),
+        child: FadeTransition(opacity: anim, child: child),
+      );
+    },
+    pageBuilder: (ctx, _, __) {
+      final isDark = Theme.of(ctx).brightness == Brightness.dark;
+      final accentColor = isDanger
+          ? const Color(0xFFEF5350)
+          : AppColors.brandIndigo;
+
+      return Center(
+        child: Material(
+          color: Colors.transparent,
+          child: Container(
+            width: 320,
+            decoration: BoxDecoration(
+              color: isDark ? const Color(0xFF1E1D32) : Colors.white,
+              borderRadius: BorderRadius.circular(24),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.brandIndigo.withValues(alpha: 0.15),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            clipBehavior: Clip.hardEdge,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // 그라데이션 헤더
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 20, horizontal: 24),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: isDark
+                          ? [
+                              accentColor.withValues(alpha: 0.3),
+                              accentColor.withValues(alpha: 0.1)
+                            ]
+                          : [
+                              accentColor.withValues(alpha: 0.08),
+                              accentColor.withValues(alpha: 0.02)
+                            ],
+                    ),
+                  ),
+                  child: Row(
+                    children: [
+                      Text(
+                        title,
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.w900,
+                          color: isDark ? Colors.white : accentColor,
+                        ),
+                      ),
+                      const SizedBox(width: 6),
+                      Icon(Icons.auto_awesome,
+                          size: 18, color: AppColors.brandGold),
+                    ],
+                  ),
+                ),
+                // 본문
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 16, 24, 24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (contentWidget != null)
+                        contentWidget
+                      else if (content != null)
+                        Text(
+                          content,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w500,
+                            color: isDark
+                                ? Colors.white70
+                                : const Color(0xFF4A4A5A),
+                            height: 1.5,
+                          ),
+                        ),
+                      const SizedBox(height: 24),
+                      // 버튼 행
+                      Row(
+                        children: [
+                          if (cancelLabel != null) ...[
+                            Expanded(
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.of(ctx).pop();
+                                  onCancel?.call();
+                                },
+                                style: TextButton.styleFrom(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                ),
+                                child: Text(
+                                  cancelLabel,
+                                  style: TextStyle(
+                                    color: isDark
+                                        ? Colors.white60
+                                        : accentColor,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 12),
+                          ],
+                          Expanded(
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () {
+                                  Navigator.of(ctx).pop();
+                                  onConfirm?.call();
+                                },
+                                borderRadius: BorderRadius.circular(14),
+                                child: Ink(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 14),
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [accentColor, accentColor.withValues(alpha: 0.8)],
+                                    ),
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Center(
+                                    child: Text(
+                                      confirmLabel,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.w800,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../tents_notifier.dart';
 import '../tents_state.dart';
@@ -187,26 +188,16 @@ class _TentsGameScreenState extends ConsumerState<TentsGameScreen> {
   }
 
   void _showExitDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('tents.exit.title')),
-        content: Text(AppStrings.get('tents.exit.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(tentsNotifierProvider.notifier).pause();
-              context.go(AppRoutes.tents);
-            },
-            child: Text(AppStrings.get('tents.exit.leave')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('tents.exit.title'),
+      content: AppStrings.get('tents.exit.message'),
+      confirmLabel: AppStrings.get('tents.exit.leave'),
+      cancelLabel: AppStrings.get('cancel'),
+      onConfirm: () {
+        ref.read(tentsNotifierProvider.notifier).pause();
+        context.go(AppRoutes.tents);
+      },
     );
   }
 }
@@ -350,15 +341,12 @@ class _ControlBar extends ConsumerWidget {
                 onTap: () {
                   if (notifier.hasCheckpoint) {
                     notifier.restoreCheckpoint();
+                    notifier.clearCheckpoint();
                     showCheckpointToast(context, 'checkpoint.restored');
                   } else {
                     notifier.saveCheckpoint();
                     showCheckpointToast(context, 'checkpoint.saved');
                   }
-                },
-                onLongPress: () {
-                  notifier.clearCheckpoint();
-                  showCheckpointToast(context, 'checkpoint.cleared');
                 },
               ),
             ],
@@ -628,29 +616,17 @@ class _TentsPauseView extends ConsumerWidget {
   }
 
   void _showGiveUpDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('tents.giveUp.title')),
-        content: Text(AppStrings.get('tents.giveUp.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(tentsNotifierProvider.notifier).giveUp();
-              context.go(AppRoutes.tents);
-            },
-            child: Text(
-              AppStrings.get('tents.giveUp.action'),
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
+      title: AppStrings.get('tents.giveUp.title'),
+      content: AppStrings.get('tents.giveUp.message'),
+      confirmLabel: AppStrings.get('tents.giveUp.action'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () {
+        ref.read(tentsNotifierProvider.notifier).giveUp();
+        context.go(AppRoutes.tents);
+      },
     );
   }
 }

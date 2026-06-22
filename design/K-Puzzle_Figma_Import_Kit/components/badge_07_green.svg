@@ -1,0 +1,22 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="140" height="110" viewBox="0 0 140 110">
+
+<defs>
+  <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+    <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#3F35B5" flood-opacity="0.16"/>
+  </filter>
+  <filter id="badgeShadow" x="-30%" y="-30%" width="160%" height="170%">
+    <feDropShadow dx="0" dy="6" stdDeviation="6" flood-color="#2A205E" flood-opacity="0.22"/>
+  </filter>
+  <linearGradient id="cardGloss" x1="0" y1="0" x2="1" y2="1">
+    <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.55"/>
+    <stop offset="0.55" stop-color="#FFFFFF" stop-opacity="0.15"/>
+    <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+  </linearGradient>
+</defs>
+
+<g transform="translate(15,15)" filter="url(#badgeShadow)">
+  <path d="M0 0 H82 Q96 0 96 16 V60 Q96 76 80 76 H0 Z" fill="#55B92D"/>
+  <text x="46" y="52" text-anchor="middle" font-family="Arial, sans-serif" font-size="38" font-weight="700" fill="#FFF">07</text>
+</g>
+</svg>

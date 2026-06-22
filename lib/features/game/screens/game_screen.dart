@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../core/sudoku/hint_engine.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../game_notifier.dart';
 import '../game_state.dart';
 import '../widgets/sudoku_board_widget.dart';
@@ -308,26 +309,16 @@ class _GameScreenState extends ConsumerState<GameScreen> {
   }
 
   void _showExitDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('game.exit.title')),
-        content: Text(AppStrings.get('game.exit.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(gameProvider.notifier).pause();
-              context.go(AppRoutes.home);
-            },
-            child: Text(AppStrings.get('game.exit.leave')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('game.exit.title'),
+      content: AppStrings.get('game.exit.message'),
+      confirmLabel: AppStrings.get('game.exit.leave'),
+      cancelLabel: AppStrings.get('cancel'),
+      onConfirm: () {
+        ref.read(gameProvider.notifier).pause();
+        context.go(AppRoutes.home);
+      },
     );
   }
 }

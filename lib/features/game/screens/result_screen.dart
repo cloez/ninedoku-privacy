@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../../../shared/widgets/kp_widgets.dart';
 import '../game_notifier.dart';
 import '../game_state.dart';
@@ -39,43 +40,36 @@ class _ResultScreenState extends ConsumerState<ResultScreen> {
     if (newBadges.isEmpty) return;
     _badgePopupShown = true;
 
-    showDialog(
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final textColor = isDark ? Colors.white70 : const Color(0xFF4A4A5A);
+
+    showKPDialog<void>(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text('🎉 ', style: TextStyle(fontSize: 24)),
-            Text(AppStrings.get('result.newBadges')),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: newBadges.map((badge) => Padding(
-            padding: const EdgeInsets.symmetric(vertical: 6),
-            child: Row(
-              children: [
-                Text(badge.icon, style: const TextStyle(fontSize: 32)),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(badge.name, style: const TextStyle(fontWeight: FontWeight.bold)),
-                      Text(badge.description, style: const TextStyle(fontSize: 12)),
-                    ],
-                  ),
+      title: '🎉 ${AppStrings.get('result.newBadges')}',
+      confirmLabel: AppStrings.get('confirm'),
+      contentWidget: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: newBadges.map((badge) => Padding(
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Row(
+            children: [
+              Text(badge.icon, style: const TextStyle(fontSize: 32)),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(badge.name, style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: isDark ? Colors.white : const Color(0xFF2D2D3A),
+                    )),
+                    Text(badge.description, style: TextStyle(fontSize: 12, color: textColor)),
+                  ],
                 ),
-              ],
-            ),
-          )).toList(),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(AppStrings.get('confirm')),
+              ),
+            ],
           ),
-        ],
+        )).toList(),
       ),
     );
   }

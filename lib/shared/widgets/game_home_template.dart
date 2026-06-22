@@ -73,16 +73,18 @@ class GameHomeTemplate extends StatelessWidget {
                 // 새 게임 (그라데이션 CTA)
                 KPGradientButton(
                   onTap: onNewGame,
-                  iconAsset: 'assets/icons/play.svg',
+                  iconAsset: 'assets/icons/new-game.svg',
                   label: newGameLabel,
                   colors: [themeColor, secondary],
+                  colorfulIcon: true,
                 ),
                 const SizedBox(height: 12),
 
                 // 오늘의 퍼즐
                 KPGradientButton(
                   onTap: onDailyPuzzle,
-                  iconAsset: 'assets/icons/play.svg',
+                  iconAsset: 'assets/icons/daily-puzzle.svg',
+                  colorfulIcon: true,
                   label: dailyPuzzleLabel,
                   colors: [
                     AppColors.kpPaleViolet,

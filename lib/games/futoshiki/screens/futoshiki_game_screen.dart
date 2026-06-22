@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../futoshiki_notifier.dart';
 import '../futoshiki_state.dart';
@@ -204,26 +205,16 @@ class _FutoshikiGameScreenState extends ConsumerState<FutoshikiGameScreen> {
 
   /// 나가기 확인
   void _showExitDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('futoshiki.exit.title')),
-        content: Text(AppStrings.get('futoshiki.exit.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(futoshikiNotifierProvider.notifier).pause();
-              context.go(AppRoutes.futoshiki);
-            },
-            child: Text(AppStrings.get('futoshiki.exit.leave')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('futoshiki.exit.title'),
+      content: AppStrings.get('futoshiki.exit.message'),
+      confirmLabel: AppStrings.get('futoshiki.exit.leave'),
+      cancelLabel: AppStrings.get('cancel'),
+      onConfirm: () {
+        ref.read(futoshikiNotifierProvider.notifier).pause();
+        context.go(AppRoutes.futoshiki);
+      },
     );
   }
 }
@@ -398,15 +389,12 @@ class _ControlBar extends ConsumerWidget {
             onTap: () {
               if (notifier.hasCheckpoint) {
                 notifier.restoreCheckpoint();
-                showCheckpointToast(context, 'checkpoint.restored');
+                    notifier.clearCheckpoint();
+                    showCheckpointToast(context, 'checkpoint.restored');
               } else {
                 notifier.saveCheckpoint();
                 showCheckpointToast(context, 'checkpoint.saved');
               }
-            },
-            onLongPress: () {
-              notifier.clearCheckpoint();
-              showCheckpointToast(context, 'checkpoint.cleared');
             },
           ),
         ],
@@ -633,29 +621,17 @@ class _FutoshikiPauseView extends ConsumerWidget {
   }
 
   void _showGiveUpDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('futoshiki.giveUp.title')),
-        content: Text(AppStrings.get('futoshiki.giveUp.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(futoshikiNotifierProvider.notifier).giveUp();
-              context.go(AppRoutes.futoshiki);
-            },
-            child: Text(
-              AppStrings.get('futoshiki.giveUp.action'),
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
+      title: AppStrings.get('futoshiki.giveUp.title'),
+      content: AppStrings.get('futoshiki.giveUp.message'),
+      confirmLabel: AppStrings.get('futoshiki.giveUp.action'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () {
+        ref.read(futoshikiNotifierProvider.notifier).giveUp();
+        context.go(AppRoutes.futoshiki);
+      },
     );
   }
 }

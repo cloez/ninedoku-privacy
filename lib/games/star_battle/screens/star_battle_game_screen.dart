@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../app/router.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../star_battle_notifier.dart';
 import '../star_battle_state.dart';
@@ -187,26 +188,16 @@ class _StarBattleGameScreenState extends ConsumerState<StarBattleGameScreen> {
 
   /// 나가기 확인 다이얼로그
   void _showExitDialog(BuildContext context) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('starBattle.exit.title')),
-        content: Text(AppStrings.get('starBattle.exit.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(starBattleNotifierProvider.notifier).pause();
-              context.go(AppRoutes.starBattle);
-            },
-            child: Text(AppStrings.get('starBattle.exit.leave')),
-          ),
-        ],
-      ),
+      title: AppStrings.get('starBattle.exit.title'),
+      content: AppStrings.get('starBattle.exit.message'),
+      confirmLabel: AppStrings.get('starBattle.exit.leave'),
+      cancelLabel: AppStrings.get('cancel'),
+      onConfirm: () {
+        ref.read(starBattleNotifierProvider.notifier).pause();
+        context.go(AppRoutes.starBattle);
+      },
     );
   }
 }
@@ -347,15 +338,12 @@ class _ControlBar extends ConsumerWidget {
                 onTap: () {
                   if (notifier.hasCheckpoint) {
                     notifier.restoreCheckpoint();
+                    notifier.clearCheckpoint();
                     showCheckpointToast(context, 'checkpoint.restored');
                   } else {
                     notifier.saveCheckpoint();
                     showCheckpointToast(context, 'checkpoint.saved');
                   }
-                },
-                onLongPress: () {
-                  notifier.clearCheckpoint();
-                  showCheckpointToast(context, 'checkpoint.cleared');
                 },
               ),
             ],
@@ -621,29 +609,17 @@ class _StarBattlePauseView extends ConsumerWidget {
   }
 
   void _showGiveUpDialog(BuildContext context, WidgetRef ref) {
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(AppStrings.get('starBattle.giveUp.title')),
-        content: Text(AppStrings.get('starBattle.giveUp.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(AppStrings.get('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              ref.read(starBattleNotifierProvider.notifier).giveUp();
-              context.go(AppRoutes.starBattle);
-            },
-            child: Text(
-              AppStrings.get('starBattle.giveUp.action'),
-              style: const TextStyle(color: Colors.red),
-            ),
-          ),
-        ],
-      ),
+      title: AppStrings.get('starBattle.giveUp.title'),
+      content: AppStrings.get('starBattle.giveUp.message'),
+      confirmLabel: AppStrings.get('starBattle.giveUp.action'),
+      cancelLabel: AppStrings.get('cancel'),
+      isDanger: true,
+      onConfirm: () {
+        ref.read(starBattleNotifierProvider.notifier).giveUp();
+        context.go(AppRoutes.starBattle);
+      },
     );
   }
 }

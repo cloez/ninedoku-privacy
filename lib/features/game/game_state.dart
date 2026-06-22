@@ -4,11 +4,12 @@ import '../../core/sudoku/hint_engine.dart';
 import '../../core/sudoku/technique_analyzer.dart';
 import '../../shared/l10n/app_strings.dart';
 
-/// 추임새 종류
+/// 추임새 종류 (흥분도 오름차순)
 enum Encouragement {
-  good('Good!'),     // Naked Pair, Hidden Pair, Box-Line Reduction
-  excellent('Excellent!'), // X-Wing 이상
-  perfect('Perfect!');     // 실수 0으로 게임 완료
+  good('Good!'),       // 기본 고급 기법 (Naked Pair 등)
+  wow('Wow!'),         // 중급 기법 (Naked Triple)
+  great('Great!'),     // 고급 기법 (X-Wing)
+  excellent('Excellent!'); // 실수 0으로 게임 완료
 
   const Encouragement(this.message);
   final String message;

@@ -10,6 +10,7 @@ import '../../../core/sudoku/board.dart';
 import '../../../core/sudoku/difficulty.dart';
 import '../../../shared/constants/app_colors.dart';
 import '../../../shared/l10n/app_strings.dart';
+import '../../../shared/widgets/casual_widgets.dart';
 import '../../../core/settings/settings_service.dart';
 import '../../../core/storage/storage_providers.dart';
 import '../../tutorial/screens/tutorial_screen_v2.dart';
@@ -245,25 +246,14 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   /// 진행 중 게임이 있을 때 새 게임 시작 경고
   void _showNewGameWarning(BuildContext context) {
     final s = AppStrings.get;
-    showDialog(
+    showKPDialog(
       context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(s('home.newGame.warning.title')),
-        content: Text(s('home.newGame.warning.message')),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(s('cancel')),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              _showModeBottomSheet(context);
-            },
-            child: Text(s('home.newGame.warning.confirm')),
-          ),
-        ],
-      ),
+      title: s('home.newGame.warning.title'),
+      content: s('home.newGame.warning.message'),
+      confirmLabel: s('home.newGame.warning.confirm'),
+      cancelLabel: s('cancel'),
+      isDanger: true,
+      onConfirm: () => _showModeBottomSheet(context),
     );
   }
 
@@ -328,22 +318,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         _showModeBottomSheet(context);
                       }
                     },
-                    iconAsset: 'assets/icons/play.svg',
+                    iconAsset: 'assets/icons/new-game.svg',
                     label: s('home.newGame'),
                     colors: [themeColor, secondary],
+                    colorfulIcon: true,
                   ),
                   const SizedBox(height: 12),
 
                   // 오늘의 퍼즐 — 밝은 배경
                   KPGradientButton(
                     onTap: () => context.push(AppRoutes.dailyPuzzle),
-                    iconAsset: 'assets/icons/play.svg',
+                    iconAsset: 'assets/icons/daily-puzzle.svg',
                     label: s('home.todayPuzzle'),
                     colors: [
                       AppColors.kpPaleViolet,
                       const Color(0xFFF8F5FF),
                     ],
                     foreground: AppColors.kpText,
+                    colorfulIcon: true,
                   ),
                   const SizedBox(height: 20),
 
