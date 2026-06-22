@@ -394,7 +394,7 @@ class AppStrings {
     // 게임 이름 + 설명
     'game.sudoku.name': '스도쿠',
     'game.sudoku.desc': '숫자 논리 퍼즐의 정석',
-    'game.binairo.name': '비나이로',
+    'game.binairo.name': '타쿠즈',
     'game.binairo.desc': '●과 ○로 채우는 이진 퍼즐',
     'game.minesweeper.name': '지뢰찾기',
     'game.minesweeper.desc': '숫자 단서로 지뢰 찾기',
@@ -419,8 +419,8 @@ class AppStrings {
     'game.kakuro.name': '카쿠로',
     'game.kakuro.desc': '합으로 채우는 십자말 풀이',
 
-    // 비나이로 게임
-    'binairo.title': '비나이로',
+    // 타쿠즈 게임
+    'binairo.title': '타쿠즈',
     'binairo.subtitle': '●과 ○로 채우는 논리 퍼즐',
     'binairo.back': '뒤로',
     'binairo.backToHub': '게임 허브로',
@@ -430,8 +430,8 @@ class AppStrings {
     'binairo.selectDifficulty': '난이도 선택',
     'binairo.pause': '일시정지',
     'binairo.rules.hint': '규칙: 검은 원과 흰 원으로 격자를 채우세요.',
-    'binairo.about.title': '비나이로란?',
-    'binairo.about.desc': '비나이로(Binairo)는 간단한 규칙과 도전적인 해법을 가진 논리 퍼즐입니다. 빈 칸에 검은 원(●)과 흰 원(○)을 채워 보드를 완성하세요.',
+    'binairo.about.title': '타쿠즈란?',
+    'binairo.about.desc': '타쿠즈(Takuzu)는 간단한 규칙과 도전적인 해법을 가진 논리 퍼즐입니다. 빈 칸에 검은 원(●)과 흰 원(○)을 채워 보드를 완성하세요.',
     'binairo.rules.title': '규칙',
     'binairo.rules.r1': '각 가로줄과 세로줄은 반드시 같은 수의 검은 원과 흰 원을 가져야 합니다.',
     'binairo.rules.r2': '3개 이상의 같은 원이 일렬로 나열될 수 없습니다.',
@@ -463,35 +463,35 @@ class AppStrings {
     // 탭 필터 (통계/배지)
     'stats.tab.all': '전체',
     'stats.tab.sudoku': '스도쿠',
-    'stats.tab.binairo': '비나이로',
+    'stats.tab.binairo': '타쿠즈',
     'badge.tab.all': '전체',
     'badge.tab.sudoku': '스도쿠',
-    'badge.tab.binairo': '비나이로',
+    'badge.tab.binairo': '타쿠즈',
 
-    // 비나이로 홈 통계/배지 버튼
+    // 타쿠즈 홈 통계/배지 버튼
     'binairo.statistics': '통계',
     'binairo.badges': '배지',
 
-    // 비나이로 배지 이름/설명
-    'badge.binairo_first_clear.name': '비나이로 입문',
-    'badge.binairo_first_clear.desc': '비나이로 첫 완료',
-    'badge.binairo_games_10.name': '비나이로 열정',
+    // 타쿠즈 배지 이름/설명
+    'badge.binairo_first_clear.name': '타쿠즈 입문',
+    'badge.binairo_first_clear.desc': '타쿠즈 첫 완료',
+    'badge.binairo_games_10.name': '타쿠즈 열정',
     'badge.binairo_games_10.desc': '10게임 완료',
-    'badge.binairo_games_50.name': '비나이로 베테랑',
+    'badge.binairo_games_50.name': '타쿠즈 베테랑',
     'badge.binairo_games_50.desc': '50게임 완료',
-    'badge.binairo_speed.name': '속도의 비나이로',
+    'badge.binairo_speed.name': '속도의 타쿠즈',
     'badge.binairo_speed.desc': '6×6를 1분 이내 완료',
-    'badge.binairo_perfect.name': '비나이로 퍼펙트',
+    'badge.binairo_perfect.name': '타쿠즈 퍼펙트',
     'badge.binairo_perfect.desc': '실수와 힌트 없이 완료',
     'badge.binairo_no_hint.name': '독립 해결사',
     'badge.binairo_no_hint.desc': '힌트 없이 10게임 완료',
     'badge.binairo_master.name': '마스터 정복',
     'badge.binairo_master.desc': '14×14 마스터 첫 클리어',
-    'badge.binairo_challenge.name': '비나이로 도전자',
+    'badge.binairo_challenge.name': '타쿠즈 도전자',
     'badge.binairo_challenge.desc': '도전 모드 클리어',
-    'badge.binairo_streak_3.name': '연속 비나이로',
+    'badge.binairo_streak_3.name': '연속 타쿠즈',
     'badge.binairo_streak_3.desc': '3일 연속 플레이',
-    'badge.binairo_all_s.name': '비나이로 달인',
+    'badge.binairo_all_s.name': '타쿠즈 달인',
     'badge.binairo_all_s.desc': '모든 난이도 S등급',
 
     // 접근성
@@ -831,8 +831,8 @@ class AppStrings {
     'tutorial.sudoku.step5.title': '직접 풀어보기',
     'tutorial.sudoku.step5.description': '노란 칸에 들어갈 숫자는 무엇일까요?',
     'tutorial.sudoku.step5.hint': '같은 줄에 어떤 숫자들이 있는지 살펴봐요.',
-    // 비나이로
-    'tutorial.binairo.step1.title': '비나이로란?',
+    // 타쿠즈
+    'tutorial.binairo.step1.title': '타쿠즈란?',
     'tutorial.binairo.step1.description': '격자를 ●과 ○로 채우는 이진 논리 퍼즐이에요.\n간단한 규칙이지만 깊은 사고가 필요합니다.',
     'tutorial.binairo.step2.title': '균형 규칙',
     'tutorial.binairo.step2.description': '각 행과 열에 ●과 ○가 같은 수만큼 들어가야 해요.\n예: 6칸 행이면 ● 3개, ○ 3개.',
@@ -1289,7 +1289,7 @@ class AppStrings {
 
     'game.sudoku.name': 'Sudoku',
     'game.sudoku.desc': 'The classic number logic puzzle',
-    'game.binairo.name': 'Binairo',
+    'game.binairo.name': 'Takuzu',
     'game.binairo.desc': 'Fill the grid with ● and ○',
     'game.minesweeper.name': 'Minesweeper',
     'game.minesweeper.desc': 'Find mines using number hints',
@@ -1314,8 +1314,8 @@ class AppStrings {
     'game.kakuro.name': 'Kakuro',
     'game.kakuro.desc': 'Cross-sum number puzzle',
 
-    // Binairo game
-    'binairo.title': 'Binairo',
+    // Takuzu game
+    'binairo.title': 'Takuzu',
     'binairo.subtitle': 'Fill the grid with ● and ○',
     'binairo.back': 'Back',
     'binairo.backToHub': 'Back to hub',
@@ -1325,8 +1325,8 @@ class AppStrings {
     'binairo.selectDifficulty': 'Select difficulty',
     'binairo.pause': 'Pause',
     'binairo.rules.hint': 'Rules: Fill the grid with black and white circles.',
-    'binairo.about.title': 'What is Binairo?',
-    'binairo.about.desc': 'Binairo is a logic puzzle with simple rules and challenging solutions. Fill the empty cells with black circles (●) and white circles (○) to complete the board.',
+    'binairo.about.title': 'What is Takuzu?',
+    'binairo.about.desc': 'Takuzu is a logic puzzle with simple rules and challenging solutions. Fill the empty cells with black circles (●) and white circles (○) to complete the board.',
     'binairo.rules.title': 'Rules',
     'binairo.rules.r1': 'Each row and column must have an equal number of black and white circles.',
     'binairo.rules.r2': 'No three of the same color in a row or column.',
@@ -1358,35 +1358,35 @@ class AppStrings {
     // 탭 필터 (통계/배지)
     'stats.tab.all': 'All',
     'stats.tab.sudoku': 'Sudoku',
-    'stats.tab.binairo': 'Binairo',
+    'stats.tab.binairo': 'Takuzu',
     'badge.tab.all': 'All',
     'badge.tab.sudoku': 'Sudoku',
-    'badge.tab.binairo': 'Binairo',
+    'badge.tab.binairo': 'Takuzu',
 
-    // 비나이로 홈 통계/배지 버튼
+    // 타쿠즈 홈 통계/배지 버튼
     'binairo.statistics': 'Statistics',
     'binairo.badges': 'Badges',
 
-    // 비나이로 배지 이름/설명
-    'badge.binairo_first_clear.name': 'Binairo Beginner',
-    'badge.binairo_first_clear.desc': 'Complete first Binairo',
-    'badge.binairo_games_10.name': 'Binairo Passion',
+    // 타쿠즈 배지 이름/설명
+    'badge.binairo_first_clear.name': 'Takuzu Beginner',
+    'badge.binairo_first_clear.desc': 'Complete first Takuzu',
+    'badge.binairo_games_10.name': 'Takuzu Passion',
     'badge.binairo_games_10.desc': 'Complete 10 games',
-    'badge.binairo_games_50.name': 'Binairo Veteran',
+    'badge.binairo_games_50.name': 'Takuzu Veteran',
     'badge.binairo_games_50.desc': 'Complete 50 games',
-    'badge.binairo_speed.name': 'Speed Binairo',
+    'badge.binairo_speed.name': 'Speed Takuzu',
     'badge.binairo_speed.desc': 'Complete 6×6 within 1 minute',
-    'badge.binairo_perfect.name': 'Binairo Perfect',
+    'badge.binairo_perfect.name': 'Takuzu Perfect',
     'badge.binairo_perfect.desc': 'Complete without mistakes or hints',
     'badge.binairo_no_hint.name': 'Solo Solver',
     'badge.binairo_no_hint.desc': 'Complete 10 games without hints',
     'badge.binairo_master.name': 'Master Conqueror',
     'badge.binairo_master.desc': 'First clear on 14×14 Master',
-    'badge.binairo_challenge.name': 'Binairo Challenger',
+    'badge.binairo_challenge.name': 'Takuzu Challenger',
     'badge.binairo_challenge.desc': 'Clear challenge mode',
-    'badge.binairo_streak_3.name': 'Binairo Streak',
+    'badge.binairo_streak_3.name': 'Takuzu Streak',
     'badge.binairo_streak_3.desc': 'Play 3 days in a row',
-    'badge.binairo_all_s.name': 'Binairo Master',
+    'badge.binairo_all_s.name': 'Takuzu Master',
     'badge.binairo_all_s.desc': 'S-rank on all difficulties',
 
     'a11y.timer.resume': 'Resume timer',
@@ -1725,8 +1725,8 @@ class AppStrings {
     'tutorial.sudoku.step5.title': 'Try it!',
     'tutorial.sudoku.step5.description': 'What digit fits in the yellow cell?',
     'tutorial.sudoku.step5.hint': 'Check which numbers are already in the same row and column.',
-    // Binairo
-    'tutorial.binairo.step1.title': 'What is Binairo?',
+    // Takuzu
+    'tutorial.binairo.step1.title': 'What is Takuzu?',
     'tutorial.binairo.step1.description': 'A binary logic puzzle where you fill the grid with ● and ○.\nSimple rules, but deep thinking required!',
     'tutorial.binairo.step2.title': 'Balance Rule',
     'tutorial.binairo.step2.description': 'Each row and column must have an equal number of ● and ○.\nFor example, a 6-cell row needs 3 of each.',
@@ -2183,8 +2183,8 @@ class AppStrings {
 
     'game.sudoku.name': '数独',
     'game.sudoku.desc': '数字ロジックパズルの定番',
-    'game.binairo.name': 'バイナリパズル',
-    'game.binairo.desc': '●と○で埋めるバイナリパズル',
+    'game.binairo.name': 'Takuzu',
+    'game.binairo.desc': '●と○で埋めるTakuzu',
     'game.minesweeper.name': 'マインスイーパー',
     'game.minesweeper.desc': '数字のヒントで地雷を見つけよう',
     'game.yinyang.name': '陰陽',
@@ -2208,7 +2208,7 @@ class AppStrings {
     'game.kakuro.name': 'カックロ',
     'game.kakuro.desc': '合計で埋めるクロスワード数字',
 
-    'binairo.title': 'バイナリパズル',
+    'binairo.title': 'Takuzu',
     'binairo.subtitle': '●と○でグリッドを埋めるロジックパズル',
     'binairo.back': '戻る',
     'binairo.backToHub': 'ハブへ',
@@ -2251,10 +2251,10 @@ class AppStrings {
     // タブフィルター（統計/バッジ）
     'stats.tab.all': 'すべて',
     'stats.tab.sudoku': '数独',
-    'stats.tab.binairo': 'バイナリパズル',
+    'stats.tab.binairo': 'Takuzu',
     'badge.tab.all': 'すべて',
     'badge.tab.sudoku': '数独',
-    'badge.tab.binairo': 'バイナリパズル',
+    'badge.tab.binairo': 'Takuzu',
 
     // ビナイロホーム 統計/バッジボタン
     'binairo.statistics': '統計',
@@ -2618,7 +2618,7 @@ class AppStrings {
     'tutorial.sudoku.step5.description': '黄色のマスに入る数字は？',
     'tutorial.sudoku.step5.hint': '同じ行と列にある数字を確認しましょう。',
     'tutorial.binairo.step1.title': 'バイナイロとは？',
-    'tutorial.binairo.step1.description': 'グリッドを●と○で埋めるバイナリ論理パズルです。\nシンプルなルールですが深い思考が必要です。',
+    'tutorial.binairo.step1.description': 'グリッドを●と○で埋める二進数の論理パズルです。\nシンプルなルールですが深い思考が必要です。',
     'tutorial.binairo.step2.title': 'バランスルール',
     'tutorial.binairo.step2.description': '各行・列に●と○が同数ずつ入ります。\n例: 6マスの行なら●3個、○3個。',
     'tutorial.binairo.step3.title': '3連続禁止',
@@ -3063,7 +3063,7 @@ class AppStrings {
 
     'game.sudoku.name': '数独',
     'game.sudoku.desc': '经典数字逻辑谜题',
-    'game.binairo.name': '二进制谜题',
+    'game.binairo.name': 'Takuzu',
     'game.binairo.desc': '用●和○填充网格',
     'game.minesweeper.name': '扫雷',
     'game.minesweeper.desc': '通过数字提示找出地雷',
@@ -3088,7 +3088,7 @@ class AppStrings {
     'game.kakuro.name': '数谜',
     'game.kakuro.desc': '以和填空的十字数谜',
 
-    'binairo.title': '二进制谜题',
+    'binairo.title': 'Takuzu',
     'binairo.subtitle': '用●和○填充网格的逻辑谜题',
     'binairo.back': '返回',
     'binairo.backToHub': '返回大厅',
@@ -3098,8 +3098,8 @@ class AppStrings {
     'binairo.selectDifficulty': '选择难度',
     'binairo.pause': '暂停',
     'binairo.rules.hint': '规则：用黑白圆填充网格。',
-    'binairo.about.title': '什么是二进制谜题？',
-    'binairo.about.desc': '二进制谜题(Binairo)是一种规则简单但解法富有挑战性的逻辑谜题。在空格中填入黑圆(●)和白圆(○)来完成棋盘。',
+    'binairo.about.title': '什么是Takuzu？',
+    'binairo.about.desc': 'Takuzu(Takuzu)是一种规则简单但解法富有挑战性的逻辑谜题。在空格中填入黑圆(●)和白圆(○)来完成棋盘。',
     'binairo.rules.title': '规则',
     'binairo.rules.r1': '每行每列必须有相同数量的黑圆和白圆。',
     'binairo.rules.r2': '同色不能连续出现3个以上。',
@@ -3131,10 +3131,10 @@ class AppStrings {
     // 标签筛选（统计/徽章）
     'stats.tab.all': '全部',
     'stats.tab.sudoku': '数独',
-    'stats.tab.binairo': '二进制谜题',
+    'stats.tab.binairo': 'Takuzu',
     'badge.tab.all': '全部',
     'badge.tab.sudoku': '数独',
-    'badge.tab.binairo': '二进制谜题',
+    'badge.tab.binairo': 'Takuzu',
 
     // 二进制首页 统计/徽章按钮
     'binairo.statistics': '统计',
@@ -3497,7 +3497,7 @@ class AppStrings {
     'tutorial.sudoku.step5.title': '试一试',
     'tutorial.sudoku.step5.description': '黄色格中应填什么数字？',
     'tutorial.sudoku.step5.hint': '看看同行同列已有哪些数字。',
-    'tutorial.binairo.step1.title': '什么是二进制谜题？',
+    'tutorial.binairo.step1.title': '什么是Takuzu？',
     'tutorial.binairo.step1.description': '用●和○填充网格的二进制逻辑谜题。\n规则简单，但需要深入思考！',
     'tutorial.binairo.step2.title': '平衡规则',
     'tutorial.binairo.step2.description': '每行每列中●和○的数量必须相等。\n例如：6格的行需要3个●和3个○。',
@@ -3943,7 +3943,7 @@ class AppStrings {
 
     'game.sudoku.name': 'सुडोकू',
     'game.sudoku.desc': 'क्लासिक संख्या तर्क पहेली',
-    'game.binairo.name': 'बिनैरो',
+    'game.binairo.name': 'Takuzu',
     'game.binairo.desc': 'ग्रिड को ● और ○ से भरें',
     'game.minesweeper.name': 'माइनस्वीपर',
     'game.minesweeper.desc': 'संख्या संकेतों से माइन्स खोजें',
@@ -3968,8 +3968,8 @@ class AppStrings {
     'game.kakuro.name': 'काकुरो',
     'game.kakuro.desc': 'योग आधारित क्रॉस-नंबर पहेली',
 
-    // Binairo game
-    'binairo.title': 'बिनैरो',
+    // Takuzu game
+    'binairo.title': 'Takuzu',
     'binairo.subtitle': 'ग्रिड को ● और ○ से भरें',
     'binairo.back': 'वापस',
     'binairo.backToHub': 'हब पर वापस',
@@ -3979,8 +3979,8 @@ class AppStrings {
     'binairo.selectDifficulty': 'कठिनाई चुनें',
     'binairo.pause': 'रोकें',
     'binairo.rules.hint': 'नियम: ग्रिड को काले और सफ़ेद घेरों से भरें।',
-    'binairo.about.title': 'बिनैरो क्या है?',
-    'binairo.about.desc': 'बिनैरो एक तर्क पहेली है जिसमें नियम सरल पर हल चुनौतीपूर्ण हैं। खाली कक्षों में काले घेरे (●) और सफ़ेद घेरे (○) रखकर बोर्ड पूरा करें।',
+    'binairo.about.title': 'Takuzu क्या है?',
+    'binairo.about.desc': 'Takuzu एक तर्क पहेली है जिसमें नियम सरल पर हल चुनौतीपूर्ण हैं। खाली कक्षों में काले घेरे (●) और सफ़ेद घेरे (○) रखकर बोर्ड पूरा करें।',
     'binairo.rules.title': 'नियम',
     'binairo.rules.r1': 'प्रत्येक पंक्ति और स्तंभ में काले और सफ़ेद घेरों की संख्या बराबर होनी चाहिए।',
     'binairo.rules.r2': 'किसी पंक्ति या स्तंभ में एक ही रंग के तीन घेरे लगातार नहीं हो सकते।',
@@ -4012,35 +4012,35 @@ class AppStrings {
     // 탭 필터 (통계/배지)
     'stats.tab.all': 'सभी',
     'stats.tab.sudoku': 'सुडोकू',
-    'stats.tab.binairo': 'बिनैरो',
+    'stats.tab.binairo': 'Takuzu',
     'badge.tab.all': 'सभी',
     'badge.tab.sudoku': 'सुडोकू',
-    'badge.tab.binairo': 'बिनैरो',
+    'badge.tab.binairo': 'Takuzu',
 
-    // 비나이로 홈 통계/배지 버튼
+    // 타쿠즈 홈 통계/배지 버튼
     'binairo.statistics': 'सांख्यिकी',
     'binairo.badges': 'बैज',
 
-    // 비나이로 배지 이름/설명
-    'badge.binairo_first_clear.name': 'बिनैरो शुरुआती',
-    'badge.binairo_first_clear.desc': 'पहला बिनैरो पूर्ण करें',
-    'badge.binairo_games_10.name': 'बिनैरो जुनून',
+    // 타쿠즈 배지 이름/설명
+    'badge.binairo_first_clear.name': 'Takuzu शुरुआती',
+    'badge.binairo_first_clear.desc': 'पहला Takuzu पूर्ण करें',
+    'badge.binairo_games_10.name': 'Takuzu जुनून',
     'badge.binairo_games_10.desc': '10 खेल पूर्ण करें',
-    'badge.binairo_games_50.name': 'बिनैरो दिग्गज',
+    'badge.binairo_games_50.name': 'Takuzu दिग्गज',
     'badge.binairo_games_50.desc': '50 खेल पूर्ण करें',
-    'badge.binairo_speed.name': 'तेज़ बिनैरो',
+    'badge.binairo_speed.name': 'तेज़ Takuzu',
     'badge.binairo_speed.desc': '6×6 को 1 मिनट में पूरा करें',
-    'badge.binairo_perfect.name': 'बिनैरो परफेक्ट',
+    'badge.binairo_perfect.name': 'Takuzu परफेक्ट',
     'badge.binairo_perfect.desc': 'बिना गलती और संकेत के पूरा करें',
     'badge.binairo_no_hint.name': 'स्वयं हल कर्ता',
     'badge.binairo_no_hint.desc': '10 खेल बिना संकेत के पूर्ण करें',
     'badge.binairo_master.name': 'मास्टर विजेता',
     'badge.binairo_master.desc': '14×14 मास्टर पर पहली विजय',
-    'badge.binairo_challenge.name': 'बिनैरो चैलेंजर',
+    'badge.binairo_challenge.name': 'Takuzu चैलेंजर',
     'badge.binairo_challenge.desc': 'चैलेंज मोड पूरा करें',
-    'badge.binairo_streak_3.name': 'बिनैरो स्ट्रीक',
+    'badge.binairo_streak_3.name': 'Takuzu स्ट्रीक',
     'badge.binairo_streak_3.desc': 'लगातार 3 दिन खेलें',
-    'badge.binairo_all_s.name': 'बिनैरो मास्टर',
+    'badge.binairo_all_s.name': 'Takuzu मास्टर',
     'badge.binairo_all_s.desc': 'सभी कठिनाइयों पर S रैंक',
 
     'a11y.timer.resume': 'टाइमर जारी रखें',
@@ -4378,7 +4378,7 @@ class AppStrings {
     'tutorial.sudoku.step5.title': 'आज़माएँ!',
     'tutorial.sudoku.step5.description': 'पीले सेल में कौन सा अंक आएगा?',
     'tutorial.sudoku.step5.hint': 'उसी पंक्ति और स्तंभ में कौन से अंक हैं, जाँचें।',
-    'tutorial.binairo.step1.title': 'बिनैरो क्या है?',
+    'tutorial.binairo.step1.title': 'Takuzu क्या है?',
     'tutorial.binairo.step1.description': 'ग्रिड को ● और ○ से भरने वाली बाइनरी तर्क पहेली।\nसरल नियम, पर गहरी सोच ज़रूरी!',
     'tutorial.binairo.step2.title': 'संतुलन नियम',
     'tutorial.binairo.step2.description': 'हर पंक्ति और स्तंभ में ● और ○ बराबर संख्या में हों।\nजैसे: 6 सेल की पंक्ति में 3 ● और 3 ○।',
@@ -4824,7 +4824,7 @@ class AppStrings {
 
     'game.sudoku.name': 'Sudoku',
     'game.sudoku.desc': 'El clásico puzzle de lógica numérica',
-    'game.binairo.name': 'Binairo',
+    'game.binairo.name': 'Takuzu',
     'game.binairo.desc': 'Llena la cuadrícula con ● y ○',
     'game.minesweeper.name': 'Buscaminas',
     'game.minesweeper.desc': 'Encuentra minas con pistas numéricas',
@@ -4849,8 +4849,8 @@ class AppStrings {
     'game.kakuro.name': 'Kakuro',
     'game.kakuro.desc': 'Puzzle de cruces y sumas',
 
-    // Binairo game
-    'binairo.title': 'Binairo',
+    // Takuzu game
+    'binairo.title': 'Takuzu',
     'binairo.subtitle': 'Rellena la cuadrícula con ● y ○',
     'binairo.back': 'Atrás',
     'binairo.backToHub': 'Volver al hub',
@@ -4860,8 +4860,8 @@ class AppStrings {
     'binairo.selectDifficulty': 'Selecciona dificultad',
     'binairo.pause': 'Pausa',
     'binairo.rules.hint': 'Reglas: Rellena la cuadrícula con círculos negros y blancos.',
-    'binairo.about.title': '¿Qué es Binairo?',
-    'binairo.about.desc': 'El Binairo es un puzzle lógico con reglas simples y soluciones desafiantes. Rellena las celdas vacías con círculos negros (●) y blancos (○) para completar el tablero.',
+    'binairo.about.title': '¿Qué es Takuzu?',
+    'binairo.about.desc': 'El Takuzu es un puzzle lógico con reglas simples y soluciones desafiantes. Rellena las celdas vacías con círculos negros (●) y blancos (○) para completar el tablero.',
     'binairo.rules.title': 'Reglas',
     'binairo.rules.r1': 'Cada fila y columna debe tener el mismo número de círculos negros y blancos.',
     'binairo.rules.r2': 'No puede haber tres del mismo color en una fila o columna.',
@@ -4893,35 +4893,35 @@ class AppStrings {
     // 탭 필터 (통계/배지)
     'stats.tab.all': 'Todos',
     'stats.tab.sudoku': 'Sudoku',
-    'stats.tab.binairo': 'Binairo',
+    'stats.tab.binairo': 'Takuzu',
     'badge.tab.all': 'Todos',
     'badge.tab.sudoku': 'Sudoku',
-    'badge.tab.binairo': 'Binairo',
+    'badge.tab.binairo': 'Takuzu',
 
-    // 비나이로 홈 통계/배지 버튼
+    // 타쿠즈 홈 통계/배지 버튼
     'binairo.statistics': 'Estadísticas',
     'binairo.badges': 'Insignias',
 
-    // 비나이로 배지 이름/설명
-    'badge.binairo_first_clear.name': 'Principiante de Binairo',
-    'badge.binairo_first_clear.desc': 'Completa tu primer Binairo',
-    'badge.binairo_games_10.name': 'Pasión por Binairo',
+    // 타쿠즈 배지 이름/설명
+    'badge.binairo_first_clear.name': 'Principiante de Takuzu',
+    'badge.binairo_first_clear.desc': 'Completa tu primer Takuzu',
+    'badge.binairo_games_10.name': 'Pasión por Takuzu',
     'badge.binairo_games_10.desc': 'Completa 10 partidas',
-    'badge.binairo_games_50.name': 'Veterano de Binairo',
+    'badge.binairo_games_50.name': 'Veterano de Takuzu',
     'badge.binairo_games_50.desc': 'Completa 50 partidas',
-    'badge.binairo_speed.name': 'Binairo veloz',
+    'badge.binairo_speed.name': 'Takuzu veloz',
     'badge.binairo_speed.desc': 'Completa 6×6 en menos de 1 minuto',
-    'badge.binairo_perfect.name': 'Binairo perfecto',
+    'badge.binairo_perfect.name': 'Takuzu perfecto',
     'badge.binairo_perfect.desc': 'Completa sin errores ni pistas',
     'badge.binairo_no_hint.name': 'Solucionador independiente',
     'badge.binairo_no_hint.desc': 'Completa 10 partidas sin pistas',
     'badge.binairo_master.name': 'Conquistador maestro',
     'badge.binairo_master.desc': 'Primera victoria en Maestro 14×14',
-    'badge.binairo_challenge.name': 'Retador de Binairo',
+    'badge.binairo_challenge.name': 'Retador de Takuzu',
     'badge.binairo_challenge.desc': 'Supera el modo desafío',
-    'badge.binairo_streak_3.name': 'Racha Binairo',
+    'badge.binairo_streak_3.name': 'Racha Takuzu',
     'badge.binairo_streak_3.desc': 'Juega 3 días seguidos',
-    'badge.binairo_all_s.name': 'Maestro de Binairo',
+    'badge.binairo_all_s.name': 'Maestro de Takuzu',
     'badge.binairo_all_s.desc': 'Rango S en todas las dificultades',
 
     'a11y.timer.resume': 'Reanudar temporizador',
@@ -5259,7 +5259,7 @@ class AppStrings {
     'tutorial.sudoku.step5.title': '¡Inténtalo!',
     'tutorial.sudoku.step5.description': '¿Qué número va en la celda amarilla?',
     'tutorial.sudoku.step5.hint': 'Mira qué números hay en la misma fila y columna.',
-    'tutorial.binairo.step1.title': '¿Qué es Binairo?',
+    'tutorial.binairo.step1.title': '¿Qué es Takuzu?',
     'tutorial.binairo.step1.description': 'Un puzzle binario: llena la cuadrícula con ● y ○.\n¡Reglas simples, pero requiere pensar!',
     'tutorial.binairo.step2.title': 'Regla de equilibrio',
     'tutorial.binairo.step2.description': 'Cada fila y columna debe tener igual cantidad de ● y ○.\nEj: fila de 6 = 3 ● y 3 ○.',
@@ -5705,7 +5705,7 @@ class AppStrings {
 
     'game.sudoku.name': 'سودوكو',
     'game.sudoku.desc': 'لغز المنطق الرقمي الكلاسيكي',
-    'game.binairo.name': 'بينايرو',
+    'game.binairo.name': 'Takuzu',
     'game.binairo.desc': 'املأ الشبكة بـ ● و ○',
     'game.minesweeper.name': 'كاسحة الألغام',
     'game.minesweeper.desc': 'ابحث عن الألغام باستخدام تلميحات الأرقام',
@@ -5730,8 +5730,8 @@ class AppStrings {
     'game.kakuro.name': 'كاكورو',
     'game.kakuro.desc': 'لغز الأرقام المتقاطعة بالمجاميع',
 
-    // Binairo game
-    'binairo.title': 'بينايرو',
+    // Takuzu game
+    'binairo.title': 'Takuzu',
     'binairo.subtitle': 'املأ الشبكة بـ ● و ○',
     'binairo.back': 'رجوع',
     'binairo.backToHub': 'العودة إلى الهب',
@@ -5741,8 +5741,8 @@ class AppStrings {
     'binairo.selectDifficulty': 'اختر الصعوبة',
     'binairo.pause': 'إيقاف مؤقت',
     'binairo.rules.hint': 'القواعد: املأ الشبكة بدوائر سوداء وبيضاء.',
-    'binairo.about.title': 'ما هي بينايرو؟',
-    'binairo.about.desc': 'بينايرو لغز منطقي بقواعد بسيطة وحلول مثيرة. املأ الخلايا الفارغة بدوائر سوداء (●) وبيضاء (○) لإكمال اللوحة.',
+    'binairo.about.title': 'ما هي Takuzu؟',
+    'binairo.about.desc': 'Takuzu لغز منطقي بقواعد بسيطة وحلول مثيرة. املأ الخلايا الفارغة بدوائر سوداء (●) وبيضاء (○) لإكمال اللوحة.',
     'binairo.rules.title': 'القواعد',
     'binairo.rules.r1': 'يجب أن يحتوي كل صف وعمود على عدد متساوٍ من الدوائر السوداء والبيضاء.',
     'binairo.rules.r2': 'لا يجوز وجود ثلاث دوائر بنفس اللون متتالية في صف أو عمود.',
@@ -5774,35 +5774,35 @@ class AppStrings {
     // 탭 필터 (통계/배지)
     'stats.tab.all': 'الكل',
     'stats.tab.sudoku': 'سودوكو',
-    'stats.tab.binairo': 'بينايرو',
+    'stats.tab.binairo': 'Takuzu',
     'badge.tab.all': 'الكل',
     'badge.tab.sudoku': 'سودوكو',
-    'badge.tab.binairo': 'بينايرو',
+    'badge.tab.binairo': 'Takuzu',
 
-    // 비나이로 홈 통계/배지 버튼
+    // 타쿠즈 홈 통계/배지 버튼
     'binairo.statistics': 'الإحصائيات',
     'binairo.badges': 'الشارات',
 
-    // 비나이로 배지 이름/설명
-    'badge.binairo_first_clear.name': 'مبتدئ بينايرو',
-    'badge.binairo_first_clear.desc': 'أكمل أول بينايرو',
-    'badge.binairo_games_10.name': 'شغف بينايرو',
+    // 타쿠즈 배지 이름/설명
+    'badge.binairo_first_clear.name': 'مبتدئ Takuzu',
+    'badge.binairo_first_clear.desc': 'أكمل أول Takuzu',
+    'badge.binairo_games_10.name': 'شغف Takuzu',
     'badge.binairo_games_10.desc': 'أكمل 10 ألعاب',
-    'badge.binairo_games_50.name': 'مخضرم بينايرو',
+    'badge.binairo_games_50.name': 'مخضرم Takuzu',
     'badge.binairo_games_50.desc': 'أكمل 50 لعبة',
-    'badge.binairo_speed.name': 'بينايرو سريع',
+    'badge.binairo_speed.name': 'Takuzu سريع',
     'badge.binairo_speed.desc': 'أكمل 6×6 في أقل من دقيقة',
-    'badge.binairo_perfect.name': 'بينايرو مثالي',
+    'badge.binairo_perfect.name': 'Takuzu مثالي',
     'badge.binairo_perfect.desc': 'أكمل بدون أخطاء أو تلميحات',
     'badge.binairo_no_hint.name': 'محلل ذاتي',
     'badge.binairo_no_hint.desc': 'أكمل 10 ألعاب بدون تلميحات',
     'badge.binairo_master.name': 'فاتح المستوى المحترف',
     'badge.binairo_master.desc': 'أول إنجاز للمستوى المحترف 14×14',
-    'badge.binairo_challenge.name': 'متحدي بينايرو',
+    'badge.binairo_challenge.name': 'متحدي Takuzu',
     'badge.binairo_challenge.desc': 'أكمل وضع التحدي',
-    'badge.binairo_streak_3.name': 'متتالية بينايرو',
+    'badge.binairo_streak_3.name': 'متتالية Takuzu',
     'badge.binairo_streak_3.desc': 'العب 3 أيام متتالية',
-    'badge.binairo_all_s.name': 'محترف بينايرو',
+    'badge.binairo_all_s.name': 'محترف Takuzu',
     'badge.binairo_all_s.desc': 'تقييم S في جميع المستويات',
 
     'a11y.timer.resume': 'استئناف المؤقت',
@@ -6140,7 +6140,7 @@ class AppStrings {
     'tutorial.sudoku.step5.title': 'جرّب!',
     'tutorial.sudoku.step5.description': 'أي رقم يناسب الخلية الصفراء؟',
     'tutorial.sudoku.step5.hint': 'تحقق من الأرقام الموجودة في نفس الصف والعمود.',
-    'tutorial.binairo.step1.title': 'ما هو بينايرو؟',
+    'tutorial.binairo.step1.title': 'ما هو Takuzu؟',
     'tutorial.binairo.step1.description': 'لغز ثنائي: املأ الشبكة بـ ● و ○.\nقواعد بسيطة لكنها تحتاج تفكيرًا عميقًا!',
     'tutorial.binairo.step2.title': 'قاعدة التوازن',
     'tutorial.binairo.step2.description': 'كل صف وعمود يحتوي على عدد متساوٍ من ● و ○.\nمثال: صف من 6 = 3 ● و 3 ○.',
@@ -6586,7 +6586,7 @@ class AppStrings {
 
     'game.sudoku.name': 'Sudoku',
     'game.sudoku.desc': 'Puzzle de logique numérique classique',
-    'game.binairo.name': 'Binairo',
+    'game.binairo.name': 'Takuzu',
     'game.binairo.desc': 'Remplissez la grille de ● et ○',
     'game.minesweeper.name': 'Démineur',
     'game.minesweeper.desc': 'Trouvez les mines grâce aux indices numériques',
@@ -6611,8 +6611,8 @@ class AppStrings {
     'game.kakuro.name': 'Kakuro',
     'game.kakuro.desc': 'Puzzle de sommes croisées',
 
-    // Binairo game
-    'binairo.title': 'Binairo',
+    // Takuzu game
+    'binairo.title': 'Takuzu',
     'binairo.subtitle': 'Remplissez la grille de ● et ○',
     'binairo.back': 'Retour',
     'binairo.backToHub': 'Retour au hub',
@@ -6622,8 +6622,8 @@ class AppStrings {
     'binairo.selectDifficulty': 'Choisir la difficulté',
     'binairo.pause': 'Pause',
     'binairo.rules.hint': 'Règles : Remplissez la grille de cercles noirs et blancs.',
-    'binairo.about.title': "Qu'est-ce que le Binairo ?",
-    'binairo.about.desc': 'Le Binairo est un puzzle de logique aux règles simples mais aux solutions stimulantes. Remplissez les cases vides avec des cercles noirs (●) et blancs (○) pour terminer la grille.',
+    'binairo.about.title': "Qu'est-ce que le Takuzu ?",
+    'binairo.about.desc': 'Le Takuzu est un puzzle de logique aux règles simples mais aux solutions stimulantes. Remplissez les cases vides avec des cercles noirs (●) et blancs (○) pour terminer la grille.',
     'binairo.rules.title': 'Règles',
     'binairo.rules.r1': 'Chaque ligne et colonne doit contenir autant de cercles noirs que de blancs.',
     'binairo.rules.r2': 'Pas trois cercles de la même couleur à la suite dans une ligne ou une colonne.',
@@ -6655,35 +6655,35 @@ class AppStrings {
     // 탭 필터 (통계/배지)
     'stats.tab.all': 'Tout',
     'stats.tab.sudoku': 'Sudoku',
-    'stats.tab.binairo': 'Binairo',
+    'stats.tab.binairo': 'Takuzu',
     'badge.tab.all': 'Tout',
     'badge.tab.sudoku': 'Sudoku',
-    'badge.tab.binairo': 'Binairo',
+    'badge.tab.binairo': 'Takuzu',
 
-    // 비나이로 홈 통계/배지 버튼
+    // 타쿠즈 홈 통계/배지 버튼
     'binairo.statistics': 'Statistiques',
     'binairo.badges': 'Badges',
 
-    // 비나이로 배지 이름/설명
-    'badge.binairo_first_clear.name': 'Débutant Binairo',
-    'badge.binairo_first_clear.desc': 'Terminez votre premier Binairo',
-    'badge.binairo_games_10.name': 'Passion Binairo',
+    // 타쿠즈 배지 이름/설명
+    'badge.binairo_first_clear.name': 'Débutant Takuzu',
+    'badge.binairo_first_clear.desc': 'Terminez votre premier Takuzu',
+    'badge.binairo_games_10.name': 'Passion Takuzu',
     'badge.binairo_games_10.desc': 'Terminez 10 parties',
-    'badge.binairo_games_50.name': 'Vétéran Binairo',
+    'badge.binairo_games_50.name': 'Vétéran Takuzu',
     'badge.binairo_games_50.desc': 'Terminez 50 parties',
-    'badge.binairo_speed.name': 'Binairo rapide',
+    'badge.binairo_speed.name': 'Takuzu rapide',
     'badge.binairo_speed.desc': 'Terminez un 6×6 en moins de 1 minute',
-    'badge.binairo_perfect.name': 'Binairo parfait',
+    'badge.binairo_perfect.name': 'Takuzu parfait',
     'badge.binairo_perfect.desc': 'Terminez sans erreur ni indice',
     'badge.binairo_no_hint.name': 'Solveur autonome',
     'badge.binairo_no_hint.desc': 'Terminez 10 parties sans indices',
     'badge.binairo_master.name': 'Conquérant maître',
     'badge.binairo_master.desc': 'Première victoire en Maître 14×14',
-    'badge.binairo_challenge.name': 'Challenger Binairo',
+    'badge.binairo_challenge.name': 'Challenger Takuzu',
     'badge.binairo_challenge.desc': 'Réussissez le mode défi',
-    'badge.binairo_streak_3.name': 'Série Binairo',
+    'badge.binairo_streak_3.name': 'Série Takuzu',
     'badge.binairo_streak_3.desc': 'Jouez 3 jours de suite',
-    'badge.binairo_all_s.name': 'Maître Binairo',
+    'badge.binairo_all_s.name': 'Maître Takuzu',
     'badge.binairo_all_s.desc': 'Note S à toutes les difficultés',
 
     'a11y.timer.resume': 'Reprendre le chrono',
@@ -7021,7 +7021,7 @@ class AppStrings {
     'tutorial.sudoku.step5.title': 'Essayez !',
     'tutorial.sudoku.step5.description': 'Quel chiffre va dans la case jaune ?',
     'tutorial.sudoku.step5.hint': 'Vérifiez quels chiffres sont déjà dans la même ligne et colonne.',
-    'tutorial.binairo.step1.title': 'Qu\'est-ce que Binairo ?',
+    'tutorial.binairo.step1.title': 'Qu\'est-ce que Takuzu ?',
     'tutorial.binairo.step1.description': 'Un puzzle binaire : remplissez la grille de ● et ○.\nRègles simples, mais réflexion profonde requise !',
     'tutorial.binairo.step2.title': 'Règle d\'équilibre',
     'tutorial.binairo.step2.description': 'Chaque ligne et colonne a autant de ● que de ○.\nEx : ligne de 6 = 3 ● et 3 ○.',
