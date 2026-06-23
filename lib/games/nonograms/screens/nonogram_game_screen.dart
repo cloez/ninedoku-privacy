@@ -397,7 +397,7 @@ class _NonogramGameScreenState extends ConsumerState<NonogramGameScreen> {
 
                   // 통계
                   // 정통 노노그램: 실수 표시 없음 (시간/난이도/힌트 3개)
-                  _StatRow(label: AppStrings.get('result.time'), value: timeText, isDark: isDark, valueWidget: CountUpText(value: state.elapsedSeconds, formatter: (v) => '\${(v ~/ 60).toString().padLeft(2, "0")}:\${(v % 60).toString().padLeft(2, "0")}', style: const TextStyle(fontWeight: FontWeight.w600))),
+                  _StatRow(label: AppStrings.get('result.time'), value: timeText, isDark: isDark, valueWidget: CountUpText(value: state.elapsedSeconds, formatter: (v) => '${(v ~/ 60).toString().padLeft(2, "0")}:${(v % 60).toString().padLeft(2, "0")}', style: const TextStyle(fontWeight: FontWeight.w600))),
                   _StatRow(label: AppStrings.get('result.difficulty'), value: state.difficulty.label, isDark: isDark),
                   _StatRow(label: AppStrings.get('result.hints'), value: '${state.hintCount}', isDark: isDark),
                   const SizedBox(height: 16),
