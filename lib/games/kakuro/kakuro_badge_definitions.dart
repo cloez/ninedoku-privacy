@@ -93,9 +93,9 @@ final kakuroBadgeDefinitions = <BadgeDefinition>[
   const BadgeDefinition(
     id: 'kakuro_nohint',
     name: '카쿠로 자력',
-    description: '힌트 없이 카쿠로 10게임 완료',
+    description: '힌트 없이 카쿠로 완료',
     icon: '💡',
-    condition: KakuroNoHintGamesCondition(10),
+    condition: KakuroNoHintGamesCondition(1),
   ),
 
   // 6. 오늘의 퍼즐 클리어

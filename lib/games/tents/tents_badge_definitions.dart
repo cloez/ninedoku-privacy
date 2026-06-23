@@ -76,9 +76,9 @@ final tentsBadgeDefinitions = <BadgeDefinition>[
   const BadgeDefinition(
     id: 'tents_nohint',
     name: '텐트 자력',
-    description: '힌트 없이 텐트 10게임 완료',
+    description: '힌트 없이 텐트 완료',
     icon: '💡',
-    condition: TentsNoHintGamesCondition(10),
+    condition: TentsNoHintGamesCondition(1),
   ),
 
   // 6. 오늘의 퍼즐 클리어

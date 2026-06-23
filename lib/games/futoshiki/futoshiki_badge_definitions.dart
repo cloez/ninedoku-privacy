@@ -76,9 +76,9 @@ final futoshikiBadgeDefinitions = <BadgeDefinition>[
   const BadgeDefinition(
     id: 'futoshiki_nohint',
     name: '후토시키 자력',
-    description: '힌트 없이 후토시키 10게임 완료',
+    description: '힌트 없이 후토시키 완료',
     icon: '💡',
-    condition: FutoshikiNoHintCondition(10),
+    condition: FutoshikiNoHintCondition(1),
   ),
 
   // 6. 데일리 퍼즐 클리어

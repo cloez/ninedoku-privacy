@@ -94,7 +94,7 @@ final minesweeperBadgeDefinitions = <BadgeDefinition>[
     name: '자력 해결사',
     description: '힌트 없이 10판 클리어',
     icon: '💪',
-    condition: NoHintGamesCondition(10),
+    condition: NoHintGamesCondition(1),
   ),
 
   // 8. 어려움 클리어 (어려움)

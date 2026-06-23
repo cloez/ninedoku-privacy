@@ -70,9 +70,9 @@ final killerSudokuBadgeDefinitions = <BadgeDefinition>[
   const BadgeDefinition(
     id: 'killer_nohint',
     name: '킬러 자력',
-    description: '힌트 없이 10게임 완료',
+    description: '힌트 없이 완료',
     icon: '💡',
-    condition: KillerNoHintGamesCondition(10),
+    condition: KillerNoHintGamesCondition(1),
   ),
 
   // 6. 오늘의 퍼즐 클리어

@@ -102,9 +102,9 @@ final binairoBadgeDefinitions = <BadgeDefinition>[
   const BadgeDefinition(
     id: 'binairo_no_hint',
     name: '비나이로 자력',
-    description: '힌트 없이 비나이로 10게임 완료',
+    description: '힌트 없이 비나이로 완료',
     icon: '💡',
-    condition: NoHintGamesCondition(10),
+    condition: NoHintGamesCondition(1),
   ),
 
   // 7. 14×14(마스터) 첫 클리어

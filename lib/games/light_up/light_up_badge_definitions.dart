@@ -76,9 +76,9 @@ final lightUpBadgeDefinitions = <BadgeDefinition>[
   const BadgeDefinition(
     id: 'lightup_nohint',
     name: '💡 자력',
-    description: '힌트 없이 10게임 완료',
+    description: '힌트 없이 완료',
     icon: '💪',
-    condition: LightUpNoHintGamesCondition(10),
+    condition: LightUpNoHintGamesCondition(1),
   ),
 
   // 6. 데일리 퍼즐 완료

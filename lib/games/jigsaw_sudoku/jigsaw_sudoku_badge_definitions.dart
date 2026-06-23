@@ -53,9 +53,9 @@ final jigsawSudokuBadgeDefinitions = <BadgeDefinition>[
   const BadgeDefinition(
     id: 'jigsaw_nohint',
     name: '직소 자력',
-    description: '힌트 없이 10게임 완료',
+    description: '힌트 없이 완료',
     icon: '💡',
-    condition: JigsawNoHintGamesCondition(10),
+    condition: JigsawNoHintGamesCondition(1),
   ),
 
   // 6. 오늘의 퍼즐 클리어

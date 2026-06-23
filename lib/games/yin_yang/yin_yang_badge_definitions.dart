@@ -66,7 +66,7 @@ final yinYangBadgeDefinitions = <BadgeDefinition>[
   const BadgeDefinition(
     id: 'yinyang_nohint', name: '직관의 달인',
     description: '힌트 없이 10판 클리어', icon: '💡',
-    condition: NoHintGamesYY(10),
+    condition: NoHintGamesYY(1),
   ),
   const BadgeDefinition(
     id: 'yinyang_daily', name: '매일의 균형',

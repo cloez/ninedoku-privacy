@@ -93,9 +93,9 @@ final starBattleBadgeDefinitions = <BadgeDefinition>[
   const BadgeDefinition(
     id: 'star_nohint',
     name: '★ 자력',
-    description: '힌트 없이 스타 배틀 10게임 완료',
+    description: '힌트 없이 스타 배틀 완료',
     icon: '💡',
-    condition: StarBattleNoHintGamesCondition(10),
+    condition: StarBattleNoHintGamesCondition(1),
   ),
 
   // 6. 데일리 퍼즐 완료

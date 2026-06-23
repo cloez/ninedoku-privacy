@@ -84,9 +84,9 @@ final nonogramBadgeDefinitions = <BadgeDefinition>[
   const BadgeDefinition(
     id: 'nono_nohint',
     name: '노노그램 자력',
-    description: '힌트 없이 노노그램 10게임 완료',
+    description: '힌트 없이 노노그램 완료',
     icon: '💡',
-    condition: NoHintGamesNono(10),
+    condition: NoHintGamesNono(1),
   ),
 
   // 6. 데일리 퍼즐 첫 완료

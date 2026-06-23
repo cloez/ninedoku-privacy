@@ -93,9 +93,9 @@ final skyscrapersBadgeDefinitions = <BadgeDefinition>[
   const BadgeDefinition(
     id: 'sky_nohint',
     name: '빌딩 자력',
-    description: '힌트 없이 빌딩 10게임 완료',
+    description: '힌트 없이 빌딩 완료',
     icon: '💡',
-    condition: SkyNoHintGamesCondition(10),
+    condition: SkyNoHintGamesCondition(1),
   ),
 
   // 6. 오늘의 퍼즐 클리어
